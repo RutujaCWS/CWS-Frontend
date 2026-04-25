@@ -116,14 +116,15 @@
 }
 
 /* Responsive */
-/* Responsive */
 @media (max-width: 576px) {
   .notification-dropdown-fullwidth {
     width: 320px !important;
     max-width: 95vw !important;
-    right: 8px !important;
-    left: auto !important;
-    top: 58px !important;
-    max-height: calc(100vh - 70px) !important;
+    right: 0 !important; 
+    top: 26px !important;  
+    left: -175px !important;
+    /* CHANGED: from 70px to 80px - more space below bell icon */
+    max-height: calc(100vh - 95px) !important; 
+    /* CHANGED: Adjusted for new top position */
+   }
   }
-}
