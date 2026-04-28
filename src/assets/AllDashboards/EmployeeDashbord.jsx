@@ -350,7 +350,7 @@ function EmployeeDashboard({ user }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("https://cws-backend-roan.vercel.app/leave/apply", {
+      await axios.post("https://cws-backend-roan.vercel.appleave/apply", {
         employeeId: user._id,
         ...form,
       });
@@ -366,9 +366,9 @@ function EmployeeDashboard({ user }) {
     const fetchData = async () => {
       try {
         const [leaveRes, regRes] = await Promise.all([
-          axios.get(`https://cws-backend-roan.vercel.app/leave/my/${user._id}`),
+          axios.get(`https://cws-backend-roan.vercel.appleave/my/${user._id}`),
           axios.get(
-            `https://cws-backend-roan.vercel.app/attendance/regularization/my/${user._id}`,
+            `https://cws-backend-roan.vercel.appattendance/regularization/my/${user._id}`,
           ),
         ]);
 

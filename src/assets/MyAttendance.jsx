@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
-import "react-calendarhttdist/Calendar.css";
+import "react-calendar/dist/Calendar.css";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./MyAttendance.css";
@@ -65,7 +65,7 @@ function MyAttendance({ employeeId }) {
     if (selectedRecord?.leaveRef?.reportingManager) {
       axios
         .get(
-          `https://cws-backend-roan.vercel.app/users/${selectedRecord.leaveRef.reportingManager}`,
+          `https://cws-backend-roan.vercel.appusers/${selectedRecord.leaveRef.reportingManager}`,
         )
         .then((res) => setManager(res.data))
         .catch((err) => console.error("Error fetching manager:", err));
@@ -78,14 +78,14 @@ function MyAttendance({ employeeId }) {
       try {
         const [attRes, leaveRes, weeklyRes, holidayRes, regRes] =
           await Promise.all([
-            axios.get(`https://cws-backend-roan.vercel.app/attendance/${employeeId}`),
-            axios.get(`https://cws-backend-roan.vercel.app/leave/my/${employeeId}`),
+            axios.get(`https://cws-backend-roan.vercel.appattendance/${employeeId}`),
+            axios.get(`https://cws-backend-roan.vercel.appleave/my/${employeeId}`),
             axios.get(
-              `https://cws-backend-roan.vercel.app/admin/weeklyoff/${new Date().getFullYear()}`,
+              `https://cws-backend-roan.vercel.appadmin/weeklyoff/${new Date().getFullYear()}`,
             ),
-            axios.get(`https://cws-backend-roan.vercel.app/getHolidays`),
+            axios.get(`https://cws-backend-roan.vercel.appgetHolidays`),
             axios.get(
-              `https://cws-backend-roan.vercel.app/attendance/regularization/my/${employeeId}`,
+              `https://cws-backend-roan.vercel.appattendance/regularization/my/${employeeId}`,
             ),
           ]);
 
@@ -847,7 +847,7 @@ function MyAttendance({ employeeId }) {
     const fetchBreaks = async () => {
       try {
         const token = localStorage.getItem("accessToken");
-        const res = await axios.get("https://cws-backend-roan.vercel.app/api/break/my", {
+        const res = await axios.get("https://cws-backend-roan.vercel.appapi/break/my", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setBreakData(res.data);
