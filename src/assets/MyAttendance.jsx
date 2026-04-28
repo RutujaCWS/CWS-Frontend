@@ -65,7 +65,7 @@ function MyAttendance({ employeeId }) {
     if (selectedRecord?.leaveRef?.reportingManager) {
       axios
         .get(
-          `https://cws-backend-roan.vercel.appusers/${selectedRecord.leaveRef.reportingManager}`,
+          `https://cws-backend-roan.vercel.app/users/${selectedRecord.leaveRef.reportingManager}`,
         )
         .then((res) => setManager(res.data))
         .catch((err) => console.error("Error fetching manager:", err));
