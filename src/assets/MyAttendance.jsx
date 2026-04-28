@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
+import "react-calendarhttdist/Calendar.css";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./MyAttendance.css";
@@ -37,6 +37,20 @@ function MyAttendance({ employeeId }) {
   useEffect(() => {
     localStorage.setItem("workMode", workMode);
   }, [workMode]);
+
+  useEffect(() => {
+    const savedMode = localStorage.getItem("workMode");
+    if (savedMode) {
+      setWorkMode(savedMode);
+    }
+  }, []);
+  
+  
+  useEffect(() => {
+    if (attendance?.mode) {
+      setWorkMode(attendance.mode === "WFH" ? "WFH" : "WFO");
+    }
+  }, [attendance]);
 
   const navigate = useNavigate();
   const { role, username, id } = useParams();
@@ -928,6 +942,11 @@ function MyAttendance({ employeeId }) {
               <span>
                 <span className="legend-box today"></span> Today
               </span>
+              <span>
+            <span className="legend-box" style={{ background: "#7b2cbf" }}
+            ></span>{" "}
+              Selected
+            </span>
             </div>
           </div>
           {/* Calender card End */}
@@ -1072,7 +1091,7 @@ function MyAttendance({ employeeId }) {
                         className="form-check-input"
                         type="checkbox"
                         checked={workMode === "WFO"}
-                        onChange={() => setWorkMode("WFO")}
+                        onChange={() => setWorkMode(workMode === "WFO" ? "" : "WFO")}
                         disabled={!!todayRecord?.checkIn}
                         // onChange={(e) => setWorkMode(e.target.value)}
                       />
@@ -1083,7 +1102,7 @@ function MyAttendance({ employeeId }) {
                         className="form-check-input"
                         type="checkbox"
                         checked={workMode === "WFH"}
-                        onChange={() => setWorkMode("WFH")}
+                        onChange={() => setWorkMode(workMode === "WFH" ? "" : "WFH")}
                         disabled={!!todayRecord?.checkIn}
                         // onChange={(e) => setWorkMode(e.target.value)}
                       />

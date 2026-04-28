@@ -17,7 +17,7 @@ function EmployeeDashboard({ user }) {
   const [events, setEvents] = useState([]);
   // Initialize workMode from localStorage, fallback to WFO
   const [workMode, setWorkMode] = useState(
-    localStorage.getItem("workMode") || "WFO",
+    localStorage.getItem("workMode") ?? "WFO",
   );
 
   // rutuja code
@@ -27,6 +27,16 @@ function EmployeeDashboard({ user }) {
   useEffect(() => {
     localStorage.setItem("workMode", workMode);
   }, [workMode]);
+
+  useEffect(() => {
+    if (attendance?.mode) {
+      if (attendance.mode === "WFH") {
+        setWorkMode("WFH");
+      } else {
+        setWorkMode("WFO");
+      }
+    }
+  }, [attendance]);
 
   const handleToggle = (mode) => {
     if (workMode === mode) {
@@ -77,8 +87,8 @@ function EmployeeDashboard({ user }) {
           from &&
           to &&
           today >= from &&
-          today <= to &&
-          leave.status?.toLowerCase() !== "rejected"
+          today <= to 
+          // leave.status?.toLowerCase() !== "rejected"
         );
       });
 
@@ -137,7 +147,7 @@ function EmployeeDashboard({ user }) {
         "❗ You have applied for leave today. Check-in is not allowed.",
       );
     }
-
+    
     if (attendance?.checkIn) {
       const time = new Date(attendance.checkIn).toLocaleTimeString();
       return alert(`Already checked in today at ${time}`);
@@ -159,6 +169,8 @@ function EmployeeDashboard({ user }) {
           });
 
           setAttendance(res.data.attendance);
+
+          localStorage.setItem("workMode", res.data.attendance.mode === "WFH" ? "WFH" : "WFO");
           alert("Checked in successfully");
         } catch (err) {
           alert(err.response?.data?.message || "Check-in failed");
@@ -1621,7 +1633,7 @@ const handleStartBreak = async () => {
             {/* ✅ Break Card */}
           </div>
 
-      <div className="col-md-4 mb-2 mt-2">
+      <div className="col-md-4 mb-4 mt-2">
             <div
               className="w-100"
               style={{
@@ -1634,17 +1646,14 @@ const handleStartBreak = async () => {
               <MyAttendanceCalender employeeId={user._id} />
             </div>
           </div>
-          <div className="row g-3 mt-1">
-        
-      
-
-      {/*  Poll */}
-       <div className="col-md-4 mb-2">
-        <ActivePolls user={user} />
-      </div>
-
-    </div>
+          
         </div>
+
+        <div className="row g-4 ">
+  <div className="col-12 col-md-4">
+    <ActivePolls user={user} />
+  </div>
+  </div>
       </div>
     </>
   );

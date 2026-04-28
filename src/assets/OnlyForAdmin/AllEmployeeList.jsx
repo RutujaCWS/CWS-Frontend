@@ -808,23 +808,24 @@ useEffect(() => {
                           Assign MD
                         </button>
                       ) : (
-                        <button
+                        emp.role?.trim().toLowerCase() !== "ceo" && (
+                          <button
                             className="btn btn-sm btn-outline-success me-2"
                             disabled={restrictedRoles.includes(
-                              emp.role?.trim().toLowerCase(),
-                            )} //added jayu
+                              emp.role?.trim().toLowerCase()
+                            )}
                             style={{
                               whiteSpace: "nowrap",
-                              height: "31px", // Same as Bootstrap btn-sm default
+                              height: "31px",
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
-                              //  backgroundColor: "#3A5FBE", color: "#fff"
                             }}
                             onClick={() => handleAssignManagerClick(emp)}
                           >
                             Assign Manager
-                        </button>
+                          </button>
+                        )
                       )}
                     </>
                   )}
@@ -1039,13 +1040,17 @@ useEffect(() => {
 
       {/* Back Button */}
       <div className="text-end mt-3">
-        <button
-          className="btn btn-sm custom-outline-btn"
-          style={{ minWidth: 90 }}
-          onClick={() => window.history.go(-1)}
-        >
-          Back
-        </button>
+      <button
+        className="btn btn-sm custom-outline-btn"
+        style={{ minWidth: 90 }}
+        onClick={() =>
+          navigate(
+            `/dashboard/${role}/${username}/${id}/hr-core-dashboard`
+          )
+        }
+      >
+        Back
+      </button>
       </div>
     </div>
   );

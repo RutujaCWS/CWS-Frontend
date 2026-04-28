@@ -616,6 +616,12 @@ const internalStyles = `
         <span>
           <span className="legend-box today"></span> Today
         </span>
+        <span>
+          <span
+      className="legend-box"
+      style={{ background: "#7b2cbf" }}></span>{" "}
+      Selected
+     </span>
       </div>
     </div>
   );

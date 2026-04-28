@@ -259,3 +259,15 @@ color: red !important;
   gap: 8px !important;            
   padding: 0px !important; 
 }
+
+.react-calendar__tile--active,
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+  background: #7b2cbf !important;
+  color: #fff !important;
+}
+
+.react-calendar__tile--active abbr {
+  color: #fff !important;
+  font-weight: 700 !important;
+}

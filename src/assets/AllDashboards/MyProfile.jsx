@@ -554,6 +554,17 @@ function MyProfile({ user, setUser }) {
             ))}
           </div>
 
+        <div className="row g-3 mt-3">
+          <div className="col-md-6">
+            <label className="form-label" style={{ color: "#007BFF" }}>Profile Created:</label>
+            <div className="form-control bg-light border-0">
+              {profile.createAt ? new Date(profile.createAt).toLocaleDateString() : "-"}
+            </div>
+          </div>
+        </div>
+
+                  
+
           {/* Current Address */}
           <h6 className="fw-bold text-primary mt-4">Current Address</h6>
           <div className="row g-3">

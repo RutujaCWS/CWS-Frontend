@@ -188,6 +188,7 @@ function Login() {
                 type="text"
                 placeholder="Email"
                 value={email}
+                  maxLength={50}
                 onChange={(e) => setEmail(e.target.value)}
               />
               {errors.email && (
@@ -199,10 +200,11 @@ function Login() {
             <div className="input-group">
               <label>Password</label>
               <div className="password-wrapper">
-                <input
+              <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   value={password}
+                    maxLength={20}
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <span

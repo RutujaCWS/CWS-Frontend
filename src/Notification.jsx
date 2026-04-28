@@ -88,26 +88,30 @@ function Notification({ userId,notifications, fetchNotifications}) {
       }
     } 
     else if (n.type === "Regularization") {
-      if (isRequestNotification || n.message?.includes("Approved") || n.message?.includes("Rejected") || n.message?.includes("approved") || n.message?.includes("rejected")) {
-         //rutuja 08-04-26
-         const isApprovedOrRejected = n.message?.includes("Approved") || n.message?.includes("Rejected") || n.message?.includes("approved") || n.message?.includes("rejected");
-        const isOtherEmployeeRequest = n.message?.includes("regularization request from") || (isApprovedOrRejected && n.message?.includes("'s regularization request"));
-
-        if (role === "manager") {
-          navigate(`/dashboard/${role}/${username}/${id}/manager-core-dashboard`);
-        } else if (role === "Team_Leader") {
-          navigate(`/dashboard/${role}/${username}/${id}/tl-dashboard`);
-        } else if (role === "hr") {
-          if (isOtherEmployeeRequest) {
-            navigate(`/dashboard/${role}/${username}/${id}/hr-employee-regularization`);
-          } else {
-            navigate(`/dashboard/${role}/${username}/${id}/regularization`);
-          }
+      const isPersonalNotification = n.message?.startsWith("Your");
+      
+      if (role === "Team_Leader") {
+        if (isPersonalNotification) {
+          navigate(`/dashboard/${role}/${username}/${id}/regularization`);  
+        } else {
+          navigate(`/dashboard/${role}/${username}/${id}/tl-dashboard`);   
         }
-        else if (role === "admin" || role === "ceo" || role === "coo" || role === "md") {
+      } 
+      else if (role === "manager") {
+        if (isPersonalNotification) {
           navigate(`/dashboard/${role}/${username}/${id}/regularization`);
-        } 
-      } else {
+        } else {
+          navigate(`/dashboard/${role}/${username}/${id}/manager-core-dashboard`); 
+        }
+      }
+      else if (role === "hr") {
+        if (isPersonalNotification) {
+          navigate(`/dashboard/${role}/${username}/${id}/regularization`);  
+        } else {
+          navigate(`/dashboard/${role}/${username}/${id}/hr-employee-regularization`);
+        }
+      }
+      else {
         navigate(`/dashboard/${role}/${username}/${id}/regularization`);
       }
     }

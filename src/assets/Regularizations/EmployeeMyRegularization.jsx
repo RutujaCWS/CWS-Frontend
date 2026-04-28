@@ -499,8 +499,13 @@ function EmployeeMyRegularization({ employeeId, refreshKey }) {
               </label>
               <input
                 id="dateFromFilter"
-                type="date"
+                type="text"
                 className="form-control"
+                placeholder="dd-mm-yyyy"
+                onFocus={(e) => (e.target.type = "date")}
+                onBlur={(e) => {
+                  if (!e.target.value) e.target.type = "text";
+                }}
                 value={dateFromFilter}
                 onChange={(e) => setDateFromFilter(e.target.value)}
                 style={{ minWidth: "140px" }}
@@ -522,8 +527,13 @@ function EmployeeMyRegularization({ employeeId, refreshKey }) {
               </label>
               <input
                 id="dateToFilter"
-                type="date"
+                type="text"
                 className="form-control"
+                placeholder="dd-mm-yyyy"
+                onFocus={(e) => (e.target.type = "date")}
+                onBlur={(e) => {
+                  if (!e.target.value) e.target.type = "text";
+                }}
                 value={dateToFilter}
                 onChange={(e) => setDateToFilter(e.target.value)}
                 style={{ minWidth: "140px" }}
@@ -658,9 +668,13 @@ function EmployeeMyRegularization({ employeeId, refreshKey }) {
               {currentRequests.length === 0 ? (
                 <tr>
                   <td
-                    colSpan="6"
+                    colSpan="8"
                     className="text-center py-4"
-                    style={{ color: "#6c757d" }}
+                    style={{
+                      color: "#6c757d",
+                      fontWeight: "400",
+                      verticalAlign: "middle",
+                    }}
                   >
                     No regularization requests found.
                   </td>

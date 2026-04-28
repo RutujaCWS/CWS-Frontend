@@ -165,7 +165,8 @@ function HRDashboard({ user }) {
           <div className="row g-2">
             {/* Total Employees */}
             <div className="col-md-6 mt-3">
-              <div className="card shadow-sm h-100">
+              <div className="card shadow-sm h-100 border-0 "
+      style={{ borderRadius: "10px" }}>
                 <div className="card-body d-flex justify-content-between align-items-center">
                   <div
                     style={{
@@ -215,7 +216,7 @@ function HRDashboard({ user }) {
             {/* Pending Leaves */}
             <div className="col-md-6 mt-3">
               {/* onClick={() => navigate(`/dashboard/${role}/${username}/${id}/leavebalance`)} */}
-              <div className="card shadow-sm h-100">
+              <div className="card shadow-sm h-100 border-0 "style={{ borderRadius: "10px" }}>
                 <div className="card-body d-flex justify-content-between align-items-center">
                   <div
                     style={{
@@ -266,7 +267,7 @@ function HRDashboard({ user }) {
 
             {/* Regularization */}
             <div className="col-md-6">
-              <div className="card shadow-sm h-100">
+              <div className="card shadow-sm h-100 border-0 " style={{ borderRadius: "10px" }}  >
                 <div className="card-body d-flex justify-content-between align-items-center">
                   <div
                     style={{
@@ -316,7 +317,7 @@ function HRDashboard({ user }) {
 
             {/* Today's Attendance */}
             <div className="col-md-6">
-              <div className="card shadow-sm h-100">
+              <div className="card shadow-sm h-100 border-0 " style={{ borderRadius: "10px" }}>
                 <div className="card-body d-flex justify-content-between align-items-center">
                   <div
                     style={{
@@ -375,7 +376,7 @@ function HRDashboard({ user }) {
       <div className="row g-3 mt-3">
         {/* Recent Employees */}
         <div className="col-md-4">
-          <div className="card shadow-sm h-100">
+          <div className="card shadow-sm h-100 border-0 "style={{ borderRadius: "10px" }} >
             <div
               className="card-header d-flex justify-content-between align-items-center"
               style={{ backgroundColor: "#fff" }}
@@ -465,7 +466,7 @@ function HRDashboard({ user }) {
 
         {/* Leave & Regularization */}
         <div className="col-md-4">
-          <div className="card shadow-sm h-100">
+          <div className="card shadow-sm h-100 border-0 "style={{ borderRadius: "10px" }}>
             <div
               className="card-header d-flex justify-content-between align-items-center"
               style={{ backgroundColor: "#fff" }}

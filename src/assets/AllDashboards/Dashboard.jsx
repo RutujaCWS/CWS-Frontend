@@ -861,6 +861,7 @@ const fetchNotifications = async () => {
                   user.role === "hr" ||
                     user.role === "admin" ||
                     user.role === "ceo" ||
+                    user.role === "md" ||
                     user.role === "coo" ? (
                     <Performances user={user} />
                   ) : user.role === "manager" ? (

@@ -688,7 +688,7 @@ style={{
                             border: "1px solid #ced4da",
                             borderRadius: "4px",
                           }}
-                          min={minDate} // cannot select past date
+                          min={form.dateFrom || minDate}
                           max={maxDate} // cannot select beyond next 2 months
                         />
                       </div>

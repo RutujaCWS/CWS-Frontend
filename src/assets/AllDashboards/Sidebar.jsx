@@ -522,6 +522,7 @@ if (
           role === "employee" ||
           role === "admin" ||
           role === "ceo" ||
+          role === "md" ||
           role === "Team_Leader"||
           role === "coo") && (
           <li className="nav-item">

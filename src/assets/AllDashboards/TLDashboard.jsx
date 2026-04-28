@@ -595,6 +595,7 @@ function TeamLeaderDashboard({ user }) {
                 type="date"
                 className="form-control"
                 value={leaveDateToFilter}
+                min={leaveDateFromFilter}
                 onChange={(e) => setLeaveDateToFilter(e.target.value)}
                 placeholder="dd-mm-yyyy"
                 style={{ minWidth: 140 }}
@@ -1321,6 +1322,7 @@ function TeamLeaderDashboard({ user }) {
                     type="date"
                     className="form-control"
                     value={regDateToFilter}
+                    min={regDateFromFilter}
                     onChange={(e) => setRegDateToFilter(e.target.value)}
                     placeholder="dd-mm-yyyy"
                     style={{ minWidth: 140 }}

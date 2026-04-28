@@ -447,6 +447,68 @@ const EmployeeCareer = ({ user }) => {
     });
   };
 
+  const validateField = (name, value, files = null) => {
+    let error = "";
+  
+    switch (name) {
+      case "firstName":
+        if (!value.trim()) error = "First name is required";
+        else if (!/^[A-Za-z ]+$/.test(value))
+          error = "Only letters allowed";
+        break;
+  
+      case "middleName":
+        if (value && !/^[A-Za-z ]+$/.test(value))
+          error = "Only letters allowed";
+        break;
+  
+      case "lastName":
+        if (!value.trim()) error = "Last name is required";
+        else if (!/^[A-Za-z ]+$/.test(value))
+          error = "Only letters allowed";
+        break;
+  
+      case "email":
+        if (!value.trim()) error = "Email is required";
+        else if (!/^\S+@\S+\.\S+$/.test(value))
+          error = "Enter valid email";
+        break;
+  
+      case "phone":
+        if (!value.trim()) error = "Phone number is required";
+        else if (!/^\d{10}$/.test(value))
+          error = "Enter valid 10 digit number";
+        break;
+  
+      case "experience":
+        if (!value) error = "Experience is required";
+        else if (Number(value) < 0)
+          error = "Invalid experience";
+        break;
+  
+      case "city":
+        if (!value.trim()) error = "City is required";
+        else if (!/^[A-Za-z ]+$/.test(value))
+          error = "Only letters allowed";
+        break;
+  
+      case "resume":
+        if (!files || !files[0])
+          error = "Resume is required";
+        break;
+  
+      default:
+        break;
+    }
+  
+    setErrors((prev) => ({
+      ...prev,
+      [name]: error,
+    }));
+  
+    return error;
+  };
+
   const paginatedJobs = filteredJobs.slice(
     jobsPage * rowsPerPage,
     jobsPage * rowsPerPage + rowsPerPage,
@@ -702,7 +764,10 @@ const EmployeeCareer = ({ user }) => {
             {/* filter code end*/}
 
             {/* Category */}
-            <div className="d-flex flex-row justify-content-start justify-content-md-center gap-2 mb-3 list-unstyled flex-wrap">
+            <div
+              className="d-flex flex-row justify-content-center align-items-center gap-2 mb-3 flex-wrap"
+              style={{ width: "100%", margin: "0 auto" }}
+            >
               {[
                 { label: "All Jobs", value: "ALL" },
                 { label: "In-house Jobs", value: "INHOUSE" },
@@ -1557,9 +1622,17 @@ const EmployeeCareer = ({ user }) => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="5" className="text-center text-muted py-4">
-                          No referral data available
-                        </td>
+                        <td
+                            colSpan="6"
+                            className="text-center text-muted"
+                            style={{
+                              padding: "20px",
+                              verticalAlign: "middle",
+                              fontWeight: "500",
+                            }}
+                          >
+                            No referral data available
+                          </td>
                       </tr>
                     )}
                   </tbody>
@@ -1745,12 +1818,16 @@ const EmployeeCareer = ({ user }) => {
                     }`}
                 >
                   {/* Modal Tabs */}
-                  <div className="d-flex justify-content-center gap-2 mb-3 flex-wrap">
+                  <div className="d-flex justify-content-center align-items-center gap-2 flex-wrap">
                     <button
-                      className={`btn btn-sm custom-outline-btn ${activeViewTab === "DESC"
-                        ? "btn-primary"
-                        : "btn-outline-primary"
-                        }`}
+                      type="button"
+                      className="btn btn-sm custom-outline-btn"
+                      style={{
+                        backgroundColor: activeViewTab === "DESC" ? "#3A5FBE" : "",
+                        borderColor: "#3A5FBE",
+                        color: activeViewTab === "DESC" ? "#fff" : "",
+                        marginBottom:"10px"
+                      }}
                       onClick={() => setActiveViewTab("DESC")}
                     >
                       Job Description
@@ -1760,6 +1837,12 @@ const EmployeeCareer = ({ user }) => {
                       <button
                         type="button"
                         className="btn btn-sm custom-outline-btn"
+                        style={{
+                          backgroundColor: activeViewTab === "APPLY" ? "#3A5FBE" : "",
+                          borderColor: "#3A5FBE",
+                          color: activeViewTab === "APPLY" ? "#fff" : "",
+                          marginBottom:"10px"
+                        }}
                         onClick={() => setActiveViewTab("APPLY")}
                       >
                         Application Form
@@ -1891,11 +1974,15 @@ const EmployeeCareer = ({ user }) => {
                       }}
                     >
 
-                      {/* First Name */}
-                      <div className="row align-items-center mb-3">
+                     <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-4 fw-semibold">First Name</div>
                         <div className="col-12 col-md-8">
-                          <input className="form-control" name="firstName" required />
+                        <input
+                          name="firstName"
+                          className={`form-control ${errors.firstName ? "is-invalid" : ""}`}
+                          onChange={(e) => validateField("firstName", e.target.value)}
+                        />
+                        <div className="invalid-feedback">{errors.firstName}</div>
                         </div>
                       </div>
 
@@ -1903,7 +1990,12 @@ const EmployeeCareer = ({ user }) => {
                       <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-4 fw-semibold">Middle Name</div>
                         <div className="col-12 col-md-8">
-                          <input className="form-control" name="middleName" />
+                         <input
+                          name="middleName"
+                          className={`form-control ${errors.middleName ? "is-invalid" : ""}`}
+                          onChange={(e) => validateField("middleName", e.target.value)}
+                        />
+                        <div className="invalid-feedback">{errors.middleName}</div>
                         </div>
                       </div>
 
@@ -1911,7 +2003,12 @@ const EmployeeCareer = ({ user }) => {
                       <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-4 fw-semibold">Last Name</div>
                         <div className="col-12 col-md-8">
-                          <input className="form-control" name="lastName" required />
+                          <input
+                            name="lastName"
+                          className={`form-control ${errors.lastName ? "is-invalid" : ""}`}
+                          onChange={(e) => validateField("lastName", e.target.value)}
+                        />
+                        <div className="invalid-feedback">{errors.lastName}</div>
                         </div>
                       </div>
 
@@ -1919,7 +2016,13 @@ const EmployeeCareer = ({ user }) => {
                       <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-4 fw-semibold">Email</div>
                         <div className="col-12 col-md-8">
-                          <input className="form-control" name="email" type="email" required />
+                         <input
+                            type="email"
+                            name="email"
+                            className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                            onChange={(e) => validateField("email", e.target.value)}
+                          />
+                          <div className="invalid-feedback">{errors.email}</div>
                         </div>
                       </div>
 
@@ -1927,7 +2030,16 @@ const EmployeeCareer = ({ user }) => {
                       <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-4 fw-semibold">Phone Number</div>
                         <div className="col-12 col-md-8">
-                          <input className="form-control" name="phone" required />
+                        <input
+                        name="phone"
+                        maxLength={10}
+                        className={`form-control ${errors.phone ? "is-invalid" : ""}`}
+                        onInput={(e) => {
+                          e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                          validateField("phone", e.target.value);
+                        }}
+                      />
+                      <div className="invalid-feedback">{errors.phone}</div>
                         </div>
                       </div>
 
@@ -1935,13 +2047,14 @@ const EmployeeCareer = ({ user }) => {
                       <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-4 fw-semibold">Experience</div>
                         <div className="col-12 col-md-8">
-                          <input
-                            className="form-control"
-                            name="experience"
-                            type="number"
-                            min="0"
-                            required
-                          />
+                        <input
+                          type="number"
+                          name="experience"
+                          min="0"
+                          className={`form-control ${errors.experience ? "is-invalid" : ""}`}
+                          onChange={(e) => validateField("experience", e.target.value)}
+                        />
+                        <div className="invalid-feedback">{errors.experience}</div>
                         </div>
                       </div>
 
@@ -1949,7 +2062,12 @@ const EmployeeCareer = ({ user }) => {
                       <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-4 fw-semibold">Current City</div>
                         <div className="col-12 col-md-8">
-                          <input className="form-control" name="city" required />
+                          <input
+                          name="city"
+                          className={`form-control ${errors.city ? "is-invalid" : ""}`}
+                          onChange={(e) => validateField("city", e.target.value)}
+                        />
+                        <div className="invalid-feedback">{errors.city}</div>
                         </div>
                       </div>
 
@@ -1957,13 +2075,14 @@ const EmployeeCareer = ({ user }) => {
                       <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-4 fw-semibold">Resume</div>
                         <div className="col-12 col-md-8">
-                          <input
-                            className="form-control"
-                            name="resume"
-                            type="file"
-                            accept=".doc,.docx,.pdf"
-                            required
-                          />
+                         <input
+                          type="file"
+                          name="resume"
+                          accept=".pdf,.doc,.docx"
+                          className={`form-control ${errors.resume ? "is-invalid" : ""}`}
+                          onChange={(e) => validateField("resume", "", e.target.files)}
+                        />
+                        <div className="invalid-feedback">{errors.resume}</div>
                         </div>
                       </div>
 
@@ -2026,20 +2145,33 @@ const EmployeeCareer = ({ user }) => {
                     }`}
                 >
                   {/* Modal Tabs */}
-                  <div className="d-flex justify-content-center gap-2 mb-3 flex-wrap">
+                  <div className="d-flex justify-content-center align-items-center gap-2 flex-wrap">
                     <button
-                      className={`btn btn-sm custom-outline-btn ${activeReferralTab === "DESC"
-                        ? "btn-primary"
-                        : "btn-outline-primary"
-                        }`}
-                      onClick={() => setActiveReferralTab("DESC")}
+                      type="button"
+                      className="btn btn-sm custom-outline-btn"
+                      style={{
+                        backgroundColor: activeViewTab === "DESC" ? "#3A5FBE" : "",
+                        borderColor: "#3A5FBE",
+                        color: activeViewTab === "DESC" ? "#fff" : "",
+                        marginBottom:"10px"
+                      }}
+                      onClick={() => setActiveViewTab("DESC")}
                     >
                       Job Description
                     </button>
+
                     {!isExpired(selectedJob?.dueOn) && (
                       <button
+                        type="button"
                         className="btn btn-sm custom-outline-btn"
-                        onClick={() => setActiveReferralTab("APPLY")}
+                        style={{
+                          backgroundColor: activeViewTab === "APPLY" ? "#3A5FBE" : "",
+                          borderColor: "#3A5FBE",
+                          color: activeViewTab === "APPLY" ? "#fff" : "",
+                          marginBottom:"10px"
+
+                        }}
+                        onClick={() => setActiveViewTab("APPLY")}
                       >
                         Application Form
                       </button>
@@ -2183,67 +2315,115 @@ const EmployeeCareer = ({ user }) => {
                     >
 
                       {/* Candidate Info */}
-                      {/* Candidate Info */}
-                      {/* Candidate Info */}
-                      <div className="row align-items-center mb-3">
+                     <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-4 fw-semibold">First Name</div>
                         <div className="col-12 col-md-8">
-                          <input className="form-control" name="firstName" required />
+                        <input
+                          name="firstName"
+                          className={`form-control ${errors.firstName ? "is-invalid" : ""}`}
+                          onChange={(e) => validateField("firstName", e.target.value)}
+                        />
+                        <div className="invalid-feedback">{errors.firstName}</div>
                         </div>
                       </div>
 
+                      {/* Middle Name */}
                       <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-4 fw-semibold">Middle Name</div>
                         <div className="col-12 col-md-8">
-                          <input className="form-control" name="middleName" />
+                         <input
+                          name="middleName"
+                          className={`form-control ${errors.middleName ? "is-invalid" : ""}`}
+                          onChange={(e) => validateField("middleName", e.target.value)}
+                        />
+                        <div className="invalid-feedback">{errors.middleName}</div>
                         </div>
                       </div>
 
+                      {/* Last Name */}
                       <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-4 fw-semibold">Last Name</div>
                         <div className="col-12 col-md-8">
-                          <input className="form-control" name="lastName" required />
+                          <input
+                            name="lastName"
+                          className={`form-control ${errors.lastName ? "is-invalid" : ""}`}
+                          onChange={(e) => validateField("lastName", e.target.value)}
+                        />
+                        <div className="invalid-feedback">{errors.lastName}</div>
                         </div>
                       </div>
 
+                      {/* Email */}
                       <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-4 fw-semibold">Email ID</div>
+                        <div className="col-12 col-md-4 fw-semibold">Email</div>
                         <div className="col-12 col-md-8">
-                          <input className="form-control" name="email" type="email" required />
+                         <input
+                            type="email"
+                            name="email"
+                            className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                            onChange={(e) => validateField("email", e.target.value)}
+                          />
+                          <div className="invalid-feedback">{errors.email}</div>
                         </div>
                       </div>
 
+                      {/* Phone */}
                       <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-4 fw-semibold">Phone Number</div>
                         <div className="col-12 col-md-8">
-                          <input className="form-control" name="phone" type="tel" required />
+                        <input
+                        name="phone"
+                        maxLength={10}
+                        className={`form-control ${errors.phone ? "is-invalid" : ""}`}
+                        onInput={(e) => {
+                          e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                          validateField("phone", e.target.value);
+                        }}
+                      />
+                      <div className="invalid-feedback">{errors.phone}</div>
                         </div>
                       </div>
 
+                      {/* Experience */}
                       <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-4 fw-semibold">Experience</div>
                         <div className="col-12 col-md-8">
-                          <input className="form-control" name="experience" type="number" min="0" required />
+                        <input
+                          type="number"
+                          name="experience"
+                          min="0"
+                          className={`form-control ${errors.experience ? "is-invalid" : ""}`}
+                          onChange={(e) => validateField("experience", e.target.value)}
+                        />
+                        <div className="invalid-feedback">{errors.experience}</div>
                         </div>
                       </div>
 
+                      {/* City */}
                       <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-4 fw-semibold">Current City</div>
                         <div className="col-12 col-md-8">
-                          <input className="form-control" name="city" required />
+                          <input
+                          name="city"
+                          className={`form-control ${errors.city ? "is-invalid" : ""}`}
+                          onChange={(e) => validateField("city", e.target.value)}
+                        />
+                        <div className="invalid-feedback">{errors.city}</div>
                         </div>
                       </div>
 
+                      {/* Resume */}
                       <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-4 fw-semibold">Resume</div>
                         <div className="col-12 col-md-8">
-                          <input
-                            className="form-control"
-                            name="resume"
-                            type="file"
-                            accept=".doc,.docx,.pdf"
-                            required
-                          />
+                         <input
+                          type="file"
+                          name="resume"
+                          accept=".pdf,.doc,.docx"
+                          className={`form-control ${errors.resume ? "is-invalid" : ""}`}
+                          onChange={(e) => validateField("resume", "", e.target.files)}
+                        />
+                        <div className="invalid-feedback">{errors.resume}</div>
                         </div>
                       </div>
 

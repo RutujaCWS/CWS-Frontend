@@ -178,13 +178,14 @@ const VisualDiary = () => {
                         {item.createdAt && (
                           <div className="event-details">
                             {new Date(item.createdAt).toLocaleDateString(
-                              "en-CA",
-                              {
-                                weekday: "short",
-                                month: "short",
-                                day: "numeric",
-                              },
-                            )}
+                          "en-GB",
+                          {
+                            weekday: "short",
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          },
+                        )}
                           </div>
                         )}
                       </div>
@@ -266,7 +267,7 @@ const VisualDiary = () => {
             className="custom-modal-dialog"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="custom-modal-content"style={{marginTop:100}}>
+            <div className="custom-modal-content">
               {/* HEADER */}
               <div
                 className="custom-modal-header"

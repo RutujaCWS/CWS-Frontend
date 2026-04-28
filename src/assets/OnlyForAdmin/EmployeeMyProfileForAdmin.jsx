@@ -819,6 +819,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
                             <option value="manager">Manager</option>
                             <option value="ceo">CEO</option>
                             <option value="md">MD</option>
+                            <option value ="Team_Leader">Team_Leader</option>
                           </select>
                         ) : (
                           <input
@@ -958,6 +959,16 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
                   </div>
                 )}
               </div>
+
+              <div className="col-md-6">
+                <label className="form-label text-primary">
+                  Profile Created:
+                </label>
+                <div className="form-control bg-light border-0">
+                  {employee.createAt ? new Date(employee.createAt).toLocaleDateString() : "-"}
+                </div>
+              </div>
+
             </div>
 
             {/* Addresses */}
@@ -1421,21 +1432,30 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
     </button>
     </div> */}
       <div className="text-end mt-3">
-        <button
-          className="btn btn-sm custom-outline-btn"
-          style={{ minWidth: 90 }}
- onClick={() => {
-  if (location.state?.fromOldEmployees) {
-    navigate(`/dashboard/${role}/${username}/${id}/allemployeedetails`, {
-      state: { openOldEmployees: true },
-    });
-  } else {
-    navigate(`/dashboard/${role}/${username}/${id}/allemployeedetails`);
-  }
-}}
-        >
-          Back
-        </button>
+      <button
+        className="btn btn-sm custom-outline-btn"
+        style={{ minWidth: 90 }}
+        onClick={() => {
+          if (location.state?.fromOldEmployees) {
+            navigate(
+              `/dashboard/${role}/${username}/${id}/allemployeedetails`,
+              {
+                state: { openOldEmployees: true },
+                replace: false,
+              }
+            );
+          } else {
+            navigate(
+              `/dashboard/${role}/${username}/${id}/allemployeedetails`,
+              {
+                replace: false,
+              }
+            );
+          }
+        }}
+      >
+        Back
+      </button>
       </div>
     </div>
   );
