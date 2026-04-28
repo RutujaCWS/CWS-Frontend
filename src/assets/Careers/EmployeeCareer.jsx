@@ -11,7 +11,8 @@ const EmployeeCareer = ({ user }) => {
   const [jobsPage, setJobsPage] = useState(0);
   const [appliedPage, setAppliedPage] = useState(0);
   const [referralPage, setReferralPage] = useState(0);
-
+  const [errors, setErrors] = useState({});
+const [referralErrors, setReferralErrors] = useState({});
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchText, setSearchText] = useState("");
   const [locationFilter, setLocationFilter] = useState("All");
