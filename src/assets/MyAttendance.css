@@ -502,3 +502,7 @@ color: red !important;
   color: #fff !important;
   font-weight: 700 !important;
 }
+
+.react-calendar__tile.holiday-day:enabled:hover:not(.react-calendar__tile--active) {
+  background-color: #ffcccc !important;
+}

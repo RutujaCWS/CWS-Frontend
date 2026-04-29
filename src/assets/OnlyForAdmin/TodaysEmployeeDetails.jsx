@@ -232,25 +232,26 @@ function TodaysEmployeeDetails() {
         let lateCheckIn = 0;
 
         employees.forEach((emp) => {
-          const checkIn = emp.checkInTime ? new Date(emp.checkInTime) : null;
-          const checkOut = emp.checkOutTime ? new Date(emp.checkOutTime) : null;
-
-          if (!checkIn && !checkOut) {
-            absent++;
-          } else {
-            present++;
-
-            // Check if late check-in (>= 10:00 AM)
-            if (checkIn) {
-              const hours = checkIn.getHours();
-              const minutes = checkIn.getMinutes();
-              if (hours > 10 || (hours === 10 && minutes > 0)) {
-                lateCheckIn++;
-              }
+          const checkIn = emp.checkInTime;
+          const checkOut = emp.checkOutTime;
+          const workingHours = calculateWorkingHours(checkIn, checkOut);
+          const status = getStatus(checkIn, checkOut, workingHours);
+        
+          if (status === "Present") present++;
+          else if (status === "Absent") absent++;
+        
+          // Late check-in logic same
+          if (checkIn) {
+            const dt = new Date(checkIn);
+            const hours = dt.getHours();
+            const minutes = dt.getMinutes();
+        
+            if (hours > 10 || (hours === 10 && minutes > 0)) {
+              lateCheckIn++;
             }
           }
         });
-
+        
         setSummary({ present, absent, lateCheckIn });
         //Added by Harshada - to include breaks in employee data
         setAttendanceData({

@@ -163,25 +163,6 @@ function ManagerDashboard({ user }) {
     </p>
   </div>;
 
-  // // ===== Pagination Logic =====
-  // const totalLeavePages = Math.ceil(leaves.length / itemsPerPage);
-  // const totalRegPages = Math.ceil(regularizations.length / itemsPerPage);
-
-  // const indexOfLastLeave = leavePage * itemsPerPage;
-  // const indexOfFirstLeave = indexOfLastLeave - itemsPerPage;
-  // const paginatedLeaves = leaves.slice(indexOfFirstLeave, indexOfLastLeave);
-
-  // const indexOfLastReg = regPage * itemsPerPage;
-  // const indexOfFirstReg = indexOfLastReg - itemsPerPage;
-  // const paginatedRegularizations = regularizations.slice(
-  //   indexOfFirstReg,
-  //   indexOfLastReg
-  // );
-
-  // ===== Pagination Logic =====
-  // const totalLeavePages = Math.ceil(leaves.length / itemsPerPage);
-  // const totalRegPages = Math.ceil(regularizations.length / itemsPerPage);
-
   const totalLeavePages = Math.ceil(filteredLeaves.length / itemsPerPage);
   const totalRegPages = Math.ceil(
     filteredRegularizations.length / itemsPerPage,
@@ -201,13 +182,6 @@ function ManagerDashboard({ user }) {
   // Step 1: calculate first and last index
   const indexOfLastReg = regPage * itemsPerPage;
   const indexOfFirstReg = indexOfLastReg - itemsPerPage;
-
-  // Step 2: sort regularizations by appliedAt descending (latest first)
-  // const sortedRegularizations = [...regularizations].sort(
-  //   (a, b) =>
-  //     new Date(b.regularizationRequest.appliedAt || b.createdAt) -
-  //     new Date(a.regularizationRequest.appliedAt || a.createdAt)
-  // );
 
   const sortedRegularizations = [...filteredRegularizations].sort((a, b) => {
     const aDate =
@@ -877,12 +851,8 @@ function ManagerDashboard({ user }) {
                           whiteSpace: "nowrap",
                         }}
                       >
-                        {l.duration === "half"
-                          ? 0.5
-                          : Math.floor(
-                              (new Date(l.dateTo) - new Date(l.dateFrom)) /
-                                (1000 * 60 * 60 * 24),
-                            ) + 1}
+                         {l.duration === "half" ? 0.5 : (l.totalDays || 1)}
+
                       </td>
                       {/* <td style={{ padding: '12px', verticalAlign: 'middle', fontSize: '14px', borderBottom: '1px solid #dee2e6', whiteSpace: 'nowrap' }}>{l.reason}</td> */}
 
@@ -1082,7 +1052,7 @@ function ManagerDashboard({ user }) {
                           Duration
                         </div>
                         <div className="col-sm-9 col-5">
-                          {selectedLeave.duration}
+                        {selectedLeave.duration === "half" ? "0.5 day" : `${selectedLeave.totalDays || 1} ${(selectedLeave.totalDays || 1) === 1 ? "day" : "days"}`}
                         </div>
                       </div>
 

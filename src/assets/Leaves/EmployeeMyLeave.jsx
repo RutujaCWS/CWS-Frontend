@@ -6,6 +6,7 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
 
+  const [previewDaysMap, setPreviewDaysMap] = useState({});//prateek
   // ✅ Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
@@ -224,6 +225,46 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
     }
   };
 
+  // prateek code 
+  useEffect(() => {
+    const fetchPreview = async () => {
+      const map = {};
+  
+      for (let leave of leaves) {
+        try {
+          const res = await axios.post(
+            "https://cws-backend-roan.vercel.app/leave/calculate",
+            {
+              // employeeId: leave.employee,
+              employeeId:
+                typeof leave.employee === "object"
+                ? leave.employee._id
+                : leave.employee,
+              // start: leave.dateFrom,
+              // end: leave.dateTo,
+              dateFrom: leave.dateFrom,
+              dateTo: leave.dateTo,
+              leaveType: leave.leaveType,
+            }
+          );
+  
+          map[leave._id] = res.data.totalDays;
+        } catch (err) {
+          map[leave._id] = leave.totalDays || 1;
+        }
+      }
+  
+      setPreviewDaysMap(map);
+    };
+  
+    if (leaves.length > 0) {
+      fetchPreview();
+    }
+  }, [leaves]);
+  
+  
+  
+
   if (loading) {
     return (
       <div className="d-flex flex-column justify-content-center align-items-center mt-5" style={{ height: "100vh", width: "100%", position: "absolute", top: 0, left: 0 }}>
@@ -259,6 +300,10 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
         fetchNotifications();
         alert("Failed to delete leave");
       }
+      else {
+        fetchNotifications();
+        alert("Leave deleted successfully.");
+      }
     } catch (err) {
       setLeaves(prevLeaves);
       alert(err.message || "Something went wrong while deleting.");
@@ -266,15 +311,15 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
       setDeletingId(null);
     }
   };
-  const calculateDays = (from, to) => {
-  const start = new Date(from);
-  const end = new Date(to);
+//   const calculateDays = (from, to) => {
+//   const start = new Date(from);
+//   const end = new Date(to);
 
-  const diffTime = end - start;
-  const diffDays = diffTime / (1000 * 60 * 60 * 24) + 1;
+//   const diffTime = end - start;
+//   const diffDays = diffTime / (1000 * 60 * 60 * 24) + 1;
 
-  return diffDays > 0 ? diffDays : 0;
-};
+//   return diffDays > 0 ? diffDays : 0;
+// };
   
   return (
     <>
@@ -619,7 +664,8 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
                       whiteSpace: "nowrap",
                     }}
                   >
-                   {calculateDays(l.dateFrom, l.dateTo)}
+                   {/* {calculateDays(l.dateFrom, l.dateTo)} */}
+                   {l.status === "approved" ? (l.totalDays ?? 1) : (previewDaysMap[l._id] ?? l.totalDays ?? 1)}
                   </td>
                   <td
                     style={{
@@ -806,7 +852,8 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
                   <div className="row mb-2">
                     <div className="col-5 col-sm-3 fw-semibold">Duration</div>
                     <div className="col-sm-9 col-7">
-                     {calculateDays(selectedLeave.dateFrom, selectedLeave.dateTo)}
+                     {/* {calculateDays(selectedLeave.dateFrom, selectedLeave.dateTo)} */}
+                     {selectedLeave.totalDays}
                     </div>
                   </div>
 

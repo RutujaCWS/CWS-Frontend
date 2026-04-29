@@ -350,7 +350,7 @@ function EmployeeDashboard({ user }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("https://cws-backend-roan.vercel.appleave/apply", {
+      await axios.post("https://cws-backend-roan.vercel.app/leave/apply", {
         employeeId: user._id,
         ...form,
       });
@@ -366,7 +366,7 @@ function EmployeeDashboard({ user }) {
     const fetchData = async () => {
       try {
         const [leaveRes, regRes] = await Promise.all([
-          axios.get(`https://cws-backend-roan.vercel.appleave/my/${user._id}`),
+          axios.get(`https://cws-backend-roan.vercel.app/leave/my/${user._id}`),
           axios.get(
             `https://cws-backend-roan.vercel.appattendance/regularization/my/${user._id}`,
           ),
@@ -1499,7 +1499,10 @@ const handleStartBreak = async () => {
                   <div className="card shadow-sm border-0 mb-2">
                     <div className="card-body d-flex justify-content-between align-items-center">
                       {/* Left Content */}
-                      <div style={{ color: "#3A5FBE", fontSize: "25px" }}>
+                      <div style={{ color: "#3A5FBE", fontSize: "25px" }}
+                      onClick={() =>
+                        navigate(`/dashboard/${role}/${username}/${id}/leavebalance`)
+                      }>
                         <h6
                           className="mb-2 ms-2"
                           style={{ color: "#3A5FBE", fontSize: "25px" }}

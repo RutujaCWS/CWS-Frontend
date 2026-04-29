@@ -1151,16 +1151,29 @@ function MyAttendance({ employeeId }) {
                 style={{ marginLeft: "18px" }}
               >
                 <h2
-                  style={{
-                    textAlign: "center",
-                    color: "#3A5FBE",
-                    fontSize: "20px",
-                    fontWeight: "600",
-                    marginBottom: "15px",
-                  }}
-                >
-                  {selectedDate.toDateString()}
-                </h2>
+                style={{
+                  textAlign: "center",
+                  color: "#3A5FBE",
+                  fontSize: "20px",
+                  fontWeight: "600",
+                  marginBottom: "15px",
+                }}
+              >
+                Attendance Details
+              </h2>
+
+              <p
+              style={{
+                textAlign: "center",
+                fontSize: "16px",
+                    fontWeight: "500",
+                color: "#3A5FBE",
+                marginBottom: "15px",
+              }}
+            >
+              {selectedDate.toDateString()}
+            </p>
+
                 <hr
                   style={{ width: "100%", margin: "10px 0", opacity: "0.2" }}
                 ></hr>

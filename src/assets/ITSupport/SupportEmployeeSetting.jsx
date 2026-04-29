@@ -178,8 +178,11 @@ useEffect(() => {
 
     // Description word limit (200)
     if (name === "description") {
-      const wordCount = value.trim().split(/\s+/).filter(Boolean).length;
-      if (wordCount > 200) return;
+      const words = value.split(/\s+/).filter(Boolean);
+  
+      if (words.length > 200) {
+        return;
+      }
     }
 
     setFormData((prev) => ({
@@ -251,7 +254,9 @@ useEffect(() => {
         attachment: [],
       });
 
+      setShowRaiseModal(false);
       fetchTickets();
+
     } catch (err) {
       console.error("Submit ticket error:", err.response?.data || err);
       alert(err.response?.data?.message || "Ticket submit failed");
@@ -731,6 +736,14 @@ const resetFilter = () => {
                   onChange={handleChange}
                   placeholder="Describe your issue"
                 />
+                <div className="text-end">
+                  <small>
+                  {formData.description.trim()
+                    ? formData.description.trim().split(/\s+/).filter(Boolean).length
+                    : 0}
+                  /200 words
+                </small>
+                </div>
 
                 <br />
                 {errors.description && (

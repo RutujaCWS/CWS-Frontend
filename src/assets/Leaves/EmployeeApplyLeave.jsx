@@ -197,13 +197,15 @@ function EmployeeApplyLeave({ user, onLeaveApplied }) {
         const res = await axios.post(
           "https://cws-backend-roan.vercel.app/leave/calculate",
           {
+            employeeId: user._id,
+            leaveType: form.leaveType,
             dateFrom: form.dateFrom,
             dateTo: form.dateTo,
             duration: form.duration,
           }
         );
 
-        setDaysCount(res.data.totalDays || 0);
+        setDaysCount(res.data.previewDays || res.data.totalDays || 0);
       } catch (err) {
         console.error("Error calculating leave days:", err);
         setDaysCount(0);
@@ -487,7 +489,7 @@ style={{
                         minWidth: "fit-content",
                       }}
                     >
-                      Leave type:
+                      Leave type:<span style={{ color: "red" }}>  *</span>
                     </label>
                     {/* NEW: Fixed width for all labels */}
              <div className="d-flex flex-wrap gap-3 w-100">
@@ -635,7 +637,7 @@ style={{
                         flexShrink: 0,
                       }}
                     >
-                      Select Date:
+                      Select Date:<span style={{ color: "red" }}>  *</span>
                     </label>
                     <div className="row">
                       <div className="col-md-4">
@@ -646,7 +648,7 @@ style={{
                             marginBottom: "6px",
                           }}
                         >
-                          From
+                          From<span style={{ color: "red" }}>  *</span>
                         </label>
                         <input
                           type="date"
@@ -673,7 +675,7 @@ style={{
                             marginBottom: "6px",
                           }}
                         >
-                          To
+                          To<span style={{ color: "red" }}>  *</span>
                         </label>
                         <input
                           type="date"
@@ -770,7 +772,7 @@ style={{
       flexShrink: 0,
     }}
   >
-    Reason:
+    Reason:<span style={{ color: "red" }}>  *</span>
   </label>
 
   <div style={{ flex: 1 }}>

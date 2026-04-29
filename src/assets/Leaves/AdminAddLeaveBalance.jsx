@@ -10,6 +10,8 @@ function AdminAddLeaveBalance({fetchNotifications}) {
   const [loadingLeaves, setLoadingLeaves] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [pendingRequests, setPendingRequests] = useState(0);
+  const [previewDaysMap, setPreviewDaysMap] = useState({});
+
 
   // 🔹 Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -75,36 +77,36 @@ function AdminAddLeaveBalance({fetchNotifications}) {
   // dipali code
   
   //NEW CODE
-  useEffect(() => {
-    axios
-      .get("https://cws-backend-roan.vercel.app/leaves")
-      .then((res) => {
-        const now = new Date();
+  // useEffect(() => {
+  //   axios
+  //     .get("https://cws-backend-roan.vercel.app/leaves")
+  //     .then((res) => {
+  //       const now = new Date();
 
-        const filteredByDate = res.data.filter((l) => {
-          const appliedDate = new Date(l.appliedAt);
+  //       const filteredByDate = res.data.filter((l) => {
+  //         const appliedDate = new Date(l.appliedAt);
 
-          const monthsDiff =
-            (now.getFullYear() - appliedDate.getFullYear()) * 12 +
-            (now.getMonth() - appliedDate.getMonth());
+  //         const monthsDiff =
+  //           (now.getFullYear() - appliedDate.getFullYear()) * 12 +
+  //           (now.getMonth() - appliedDate.getMonth());
 
-          return monthsDiff < 3;
-        });
+  //         return monthsDiff < 3;
+  //       });
 
-        const sortedLeaves = filteredByDate.sort(
-          (a, b) => new Date(b.appliedAt) - new Date(a.appliedAt),
-        );
+  //       const sortedLeaves = filteredByDate.sort(
+  //         (a, b) => new Date(b.appliedAt) - new Date(a.appliedAt),
+  //       );
 
-        setLeaves(sortedLeaves);
-        setFilteredLeaves(sortedLeaves);
+  //       setLeaves(sortedLeaves);
+  //       setFilteredLeaves(sortedLeaves);
 
-        setPendingRequests(
-          filteredByDate.filter((l) => l.status === "pending").length,
-        );
-      })
-      .catch((err) => console.error("Leaves fetch error:", err))
-      .finally(() => setLoadingLeaves(false));
-  }, []);
+  //       setPendingRequests(
+  //         filteredByDate.filter((l) => l.status === "pending").length,
+  //       );
+  //     })
+  //     .catch((err) => console.error("Leaves fetch error:", err))
+  //     .finally(() => setLoadingLeaves(false));
+  // }, []);
 
   // new code filter
 
@@ -120,6 +122,41 @@ function AdminAddLeaveBalance({fetchNotifications}) {
       .then((res) => setUser(res.data))
       .catch((err) => console.error("User fetch error:", err));
   }, []);
+
+  // prateek code
+  useEffect(() => {
+    const fetchPreview = async () => {
+      const map = {};
+  
+      for (let leave of leaves) {
+        try {
+          if (!leave.employee?._id) continue;
+          const res = await axios.post(
+            "https://cws-backend-roan.vercel.app/leave/calculate",
+            {
+              // employeeId: leave.employee,
+              employeeId: leave.employee?._id,
+              leaveType: leave.leaveType,
+              dateFrom: leave.dateFrom,
+              dateTo: leave.dateTo,
+              duration: leave.duration,
+            }
+          );
+  
+          map[leave._id] = res.data.totalDays;
+        } catch (err) {
+          map[leave._id] = leave.totalDays || 1;
+        }
+      }
+  
+      setPreviewDaysMap(map);
+    };
+  
+    if (leaves.length > 0 && user) {
+      fetchPreview();
+    }
+  }, [leaves]);
+    
 
   // 🔹 Fetch all leaves Added by Rutuja
   useEffect(() => {
@@ -170,44 +207,61 @@ function AdminAddLeaveBalance({fetchNotifications}) {
 
   const updateStatus = async (leaveId, status) => {
     if (!user?._id) return;
-    //Added by Rutuja
+    
     if (!confirm(`Are you sure you want to ${status} this leave request?`)) {
       return;
     }
-
+  
     try {
-      await axios.put(`https://cws-backend-roan.vercel.app/leave/${leaveId}/status`, {
+      const response = await axios.put(`https://cws-backend-roan.vercel.app/leave/${leaveId}/status`, {
         status,
         userId: user._id,
         role: "admin",
       });
-
-      // 🔥 Update leaves list instantly
+  
+      const updatedLeaveFromBackend = response.data.leave;
+      const breakdown = response.data.breakdown;
+  
       const updatedLeaves = leaves.map((l) =>
-        l._id === leaveId ? { ...l, status } : l,
+        l._id === leaveId 
+          ? { 
+              ...l, 
+              status: status,
+              totalDays: breakdown?.totalDays ?? updatedLeaveFromBackend?.totalDays ?? l.totalDays,
+              paidDays: breakdown?.paidDays ?? updatedLeaveFromBackend?.paidDays,
+              lwpDays: breakdown?.lwpDays ?? updatedLeaveFromBackend?.lwpDays
+            } 
+          : l,
       );
-
+  
       setLeaves(updatedLeaves);
-
-      // 🔥 VERY IMPORTANT — update filteredLeaves also
       setFilteredLeaves((prev) =>
-        prev.map((l) => (l._id === leaveId ? { ...l, status } : l)),
+        prev.map((l) => 
+          l._id === leaveId 
+            ? { 
+                ...l, 
+                status: status,
+                totalDays: breakdown?.totalDays ?? updatedLeaveFromBackend?.totalDays ?? l.totalDays
+              } 
+            : l
+        ),
       );
-
-      // update pending count
+  
+      if (breakdown?.totalDays) {
+        setPreviewDaysMap(prev => ({
+          ...prev,
+          [leaveId]: breakdown.totalDays
+        }));
+      }
+  
       setPendingRequests((prev) => (status !== "pending" ? prev - 1 : prev));
-      //Added by Rutuja
       alert(`Leave request ${status} successfully!`);
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.error ||
-        "Something went wrong while applying leave.";
-
+      const errorMessage = err.response?.data?.error || "Something went wrong while applying leave.";
       alert(`❌ ${errorMessage}`);
       setMessage(errorMessage);
     }
   };
-
   // const grantYearly = async () => {
   //   try {
   //     const res = await axios.post("https://cws-backend-roan.vercel.app/leave/grant-yearly", {
@@ -325,13 +379,6 @@ function AdminAddLeaveBalance({fetchNotifications}) {
 
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
-  const calculateDays = (from, to) => {
-    const fromDate = new Date(from);
-    const toDate = new Date(to);
-    const timeDiff = toDate - fromDate; // difference in milliseconds
-    const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1; // include both start & end
-    return dayDiff;
-  };
 
   const HandleDelete = async (leaveId) => {
     const confirmDelete = window.confirm(
@@ -345,7 +392,8 @@ function AdminAddLeaveBalance({fetchNotifications}) {
       // ✅ Remove the deleted leave from state
       setLeaves((prev) => prev.filter((l) => l._id !== leaveId));
       //Added by jaicy
-      setFilteredLeaves((prev) => prev.filter((l) => l._id !== leaveId));
+      // setFilteredLeaves((prev) => prev.filter((l) => l._id !== leaveId));
+      
 fetchNotifications();
       alert("🗑️ Leave deleted successfully!");
     } catch (err) {
@@ -398,13 +446,13 @@ fetchNotifications();
     }
 
     const days =
-      Math.floor(
-        (new Date(leave.dateTo) - new Date(leave.dateFrom)) /
-          (1000 * 60 * 60 * 24),
-      ) + 1;
+  leave.status === "approved"
+    ? leave.totalDays
+    : (previewDaysMap[leave._id] ?? leave.totalDays ?? 1);
 
     return `${days} ${days === 1 ? "day" : "days"}`;
   };
+
 
   // dipali code
   //NEW CODE
@@ -785,10 +833,21 @@ fetchNotifications();
                 type="date"
                 id="dateFromFilter"
                 value={dateFromFilter}
-                onChange={(e) => setDateFromFilter(e.target.value)}
-                placeholder="dd-mm-yyyy"
+                onKeyDown={(e) => e.preventDefault()}
+                onClick={(e) => e.target.showPicker?.()}
+                onFocus={(e) => e.target.showPicker?.()}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setDateFromFilter(value);
+
+                  if (dateToFilter && value > dateToFilter) {
+                    setDateError('"From Date" cannot be later than "To Date".');
+                  } else {
+                    setDateError("");
+                  }
+                }}
                 className="form-control"
-                
+                placeholder="dd-mm-yyyy"
               />
             </div>
 
@@ -811,10 +870,22 @@ fetchNotifications();
                 type="date"
                 id="dateToFilter"
                 value={dateToFilter}
-                onChange={(e) => setDateToFilter(e.target.value)}
-                placeholder="dd-mm-yyyy"
+                min={dateFromFilter || ""}
+                onKeyDown={(e) => e.preventDefault()}
+                onClick={(e) => e.target.showPicker?.()}
+                onFocus={(e) => e.target.showPicker?.()}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setDateToFilter(value);
+
+                  if (dateFromFilter && dateFromFilter > value) {
+                    setDateError('"From Date" cannot be later than "To Date".');
+                  } else {
+                    setDateError("");
+                  }
+                }}
                 className="form-control"
-                
+                placeholder="dd-mm-yyyy"
               />
             </div>
             {/* Filter and Reset buttons */}
@@ -1004,12 +1075,16 @@ fetchNotifications();
                   {currentLeaves.length === 0 ? (
                     <tr>
                       <td
-                        colSpan="7"
+                        colSpan="10"
                         className="text-center py-4"
-                        style={{ color: "#6c757d" }}
-                      >
+                        style={{
+                          color: "#6c757d",
+                          textAlign: "center",
+                          verticalAlign: "middle",
+                        }}
+                        >
                         No leave requests found with status "{statusFilter}"
-                      </td>
+                        </td>
                     </tr>
                   ) : (
                     currentLeaves.map((l) => (
@@ -1110,12 +1185,18 @@ fetchNotifications();
                             whiteSpace: "nowrap",
                           }}
                         >
-                          {l.duration === "half"
+                          {/* {l.duration === "half"
                             ? 0.5
                             : Math.floor(
                                 (new Date(l.dateTo) - new Date(l.dateFrom)) /
                                   (1000 * 60 * 60 * 24),
-                              ) + 1}
+                              ) + 1} */}
+                          {l.duration === "half" 
+                            ? 0.5 
+                            : (l.status === "approved" 
+                                ? (l.totalDays ?? previewDaysMap[l._id] ?? 1)
+                                : (previewDaysMap[l._id] ?? l.totalDays ?? 1))
+                          }
                         </td>
                         <td
                           style={{

@@ -294,7 +294,7 @@ const AdminFeedback = () => {
                 id="searchInput"
                 type="text"
                 className="form-control"
-                placeholder="Search by sender, receiver, title, etc..."
+                placeholder="Search by any Field."
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
               />
@@ -599,7 +599,10 @@ const AdminFeedback = () => {
             style={{ maxWidth: "600px", width: "95%", marginTop: "80px" }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="modal-content">
+            <div className="modal-content" style={{
+                maxHeight: "80vh",  
+                overflow: "hidden",  
+              }}>
               <div
                 className="modal-header text-white"
                 style={{ backgroundColor: "#3A5FBE" }}
@@ -614,7 +617,10 @@ const AdminFeedback = () => {
                 />
               </div>
 
-              <div className="modal-body">
+              <div className="modal-body" style={{                  
+                  overflowY: "auto",
+                  maxHeight: "60vh", 
+                }}>
                 <div className="container-fluid">
                   {/* Sender info */}
                   <div className="row mb-3">

@@ -1377,15 +1377,23 @@ const TLTaskLog = ({ user }) => {
         </nav>
       )}
 
-      <div className="d-flex justify-content-end mt-3">
-        <button 
-        className="btn btn-sm custom-outline-btn" 
-        style={{ minWidth: 90 }} 
-        onClick={() => window.history.go(-1)}
-        >
-          Back
-        </button>
-      </div>
+     {/* Back Button */}
+<div className="d-flex justify-content-end mt-3">
+  <button
+    className="btn btn-sm custom-outline-btn"
+    style={{ minWidth: 90 }}
+    onClick={() => {
+      if (activeTab === "work") {
+        setActiveTab("task");
+        setCurrentPage(1);
+      } else {
+        window.history.go(-1);
+      }
+    }}
+  >
+    Back
+  </button>
+</div>
     </div>
   );
 };

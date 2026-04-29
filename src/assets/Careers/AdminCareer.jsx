@@ -341,45 +341,56 @@ function AdminCareer({ user }) {
   //   setCurrentPage(1);
   // };
   const applyFilters = () => {
-    let temp = jobs.filter(
-      (job) => job.jobType === activeTab || job.jobType === "both",
-    );
+      let temp = [...jobs];
+    
+      // :white_check_mark: Tab filter always apply
+      temp = temp.filter(
+        (job) => job.jobType === activeTab || job.jobType === "both"
+      );
+    
+      // :exclamation: Check if ANY filter is applied
+      const isSearchEmpty = searchTerm.trim() === "";
+      const isStatusDefault = statusFilter === "All";
+      const isDateEmpty = !assignDateFromFilter && !assignDateToFilter;
+    
+      // :white_check_mark: If ALL filters empty → return only tab data (no filtering)
+      if (isSearchEmpty && isStatusDefault && isDateEmpty) {
+        setFilteredJobs(temp);
+        return;
+      }
+    
+      // :white_check_mark: SEARCH
+      if (!isSearchEmpty) {
+        const lowerSearch = searchTerm.toLowerCase();
+        temp = temp.filter((job) =>
+          job.jobTitle?.toLowerCase().includes(lowerSearch) ||
+          job.department?.toLowerCase().includes(lowerSearch) ||
+          job.location?.toLowerCase().includes(lowerSearch)
+        );
+      }
+    
+      // :white_check_mark: STATUS
+      if (!isStatusDefault) {
+        temp = temp.filter((job) => job.status === statusFilter);
+      }
+    
+      // :white_check_mark: DATE FROM
+      if (assignDateFromFilter) {
+        const fromDate = new Date(assignDateFromFilter);
+        temp = temp.filter((job) => new Date(job.createdAt) >= fromDate);
+      }
+    
+      // :white_check_mark: DATE TO
+      if (assignDateToFilter) {
+        const toDate = new Date(assignDateToFilter);
+        temp = temp.filter((job) => new Date(job.dueOn) <= toDate);
+      }
+    
+      setFilteredJobs(temp);
+      setCurrentPage(1);
+    };
 
-    // Status Filter
-    if (statusFilter !== "All") {
-      temp = temp.filter((job) => job.status === statusFilter);
-    }
 
-    // Created Date Filter
-    if (assignDateFromFilter) {
-      const fromDate = new Date(assignDateFromFilter);
-      fromDate.setHours(0, 0, 0, 0);
-
-      temp = temp.filter((job) => {
-        const created = new Date(job.createdAt);
-        created.setHours(0, 0, 0, 0);
-        return created >= fromDate;
-      });
-    }
-
-    // Due Date Filter
-    if (assignDateToFilter) {
-      const toDate = new Date(assignDateToFilter);
-      toDate.setHours(23, 59, 59, 999);
-
-      temp = temp.filter((job) => {
-        const due = new Date(job.dueOn);
-        due.setHours(0, 0, 0, 0);
-        return due <= toDate;
-      });
-    }
-
-    // ✅ LIFO SORT (LATEST FIRST)
-    temp.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    setFilteredJobs(temp);
-    setCurrentPage(1);
-  };
   const getApplicantsInfo = async (jobId) => {
     try {
       setLoadingApplicants(true);
@@ -411,20 +422,32 @@ function AdminCareer({ user }) {
   //   setCurrentPage(1);
   // };
   const resetFilters = () => {
+    setSearchTerm("");
     setStatusFilter("All");
     setAssignDateFromFilter("");
     setAssignDateToFilter("");
-
-    const temp = jobs.filter(
-      (job) => job.jobType === activeTab || job.jobType === "both",
-    );
-
-    setFilteredJobs(temp);
+  
+    // ✅ FULL DATA (no filter at all)
+    setFilteredJobs(jobs);
     setCurrentPage(1);
   };
 
-  const handleFilterSubmit = (e) => {
+  
+   const handleFilterSubmit = (e) => {
     e.preventDefault();
+  
+    //  check if ANY filter is applied
+    if (
+      searchTerm.trim() === "" &&
+      statusFilter === "All" &&
+      !assignDateFromFilter &&
+      !assignDateToFilter
+    ) {
+      //  do nothing if no filters
+      return;
+    }
+  
+    //  apply only when filters exist
     applyFilters();
   };
 
@@ -712,7 +735,7 @@ const handleRowClick = (job) => {
         </div>
       </div>
 
-      <div className="d-flex flex-row justify-content-start justify-content-md-center gap-2 mb-3 list-unstyled flex-wrap">
+      <div className="d-flex flex-row justify-content-center gap-2 mb-3 flex-wrap">
         <button
           className={`btn btn-sm job-tab-btn ${activeTab === "inhouse" ? "active" : ""
             }`}
@@ -843,7 +866,7 @@ const handleRowClick = (job) => {
               {currentJobs.length === 0 ? (
                 <tr>
                   <td
-                    colSpan="4"
+                    colSpan="8"
                     className="text-center py-4"
                     style={{ color: "#212529" }}
                   >
@@ -1242,6 +1265,7 @@ const handleRowClick = (job) => {
                     <div className="col-12 col-md-8">
                       <input
                         type="number"
+                        min="0"
                         className="form-control"
                         value={newJob.noOfOpenings}
                         onChange={(e) =>
@@ -1256,31 +1280,36 @@ const handleRowClick = (job) => {
 
                   {/* Description */}
                   <div className="row mb-3">
-                    <div className="col-12 col-md-4 fw-semibold">Job Description *</div>
-                    <div className="col-12 col-md-8">
-                      <RichTextEditor
-                        value={newJob.jobDescription}
-                        onChange={(value) =>
-                          setNewJob((prev) => ({
-                            ...prev,
-                            jobDescription: value,
-                          }))
-                        }
-                      />
-                      <div
-                        className="char-count"
-                        style={{
-                          display: "flex",
-                          justifyContent: "flex-end",
-                          fontSize: "12px",
-                          color: "#6c757d",
-                          marginTop: "4px",
-                        }}
-                      >
-                        {newJob.jobDescription.replace(/<[^>]+>/g, '').length}/300 characters
-                      </div>
+                  <div className="col-12 col-md-4 fw-semibold">Job Description *</div>
+
+                  <div className="col-12 col-md-8">
+                    <textarea
+                      className="form-control"
+                      rows={4}
+                      maxLength={300}   // direct limit
+                      value={newJob.jobDescription}
+                      onChange={(e) =>
+                        setNewJob({
+                          ...newJob,
+                          jobDescription: e.target.value,
+                        })
+                      }
+                    />
+
+                    <div
+                      className="char-count"
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        marginTop: "4px",
+                      }}
+                    >
+                      {newJob.jobDescription.length}/300 characters
                     </div>
                   </div>
+                </div>
                   
 
                   <h5 className="section-title">CTC Details (₹)</h5>
@@ -1340,6 +1369,7 @@ const handleRowClick = (job) => {
                     <div className="col-12 col-md-8">
                       <input
                         type="number"
+                        min="0"
                         className="form-control"
                         value={newJob.experience?.min || ""}
                         onChange={(e) =>
@@ -1362,6 +1392,7 @@ const handleRowClick = (job) => {
                     <div className="col-12 col-md-8">
                       <input
                         type="number"
+                        min="0"
                         className="form-control"
                         value={newJob.experience?.max || ""}
                         onChange={(e) =>
@@ -1462,8 +1493,12 @@ const handleRowClick = (job) => {
                   onClick={() => setShowViewPopup(false)}
                 ></button>
               </div>
-
-
+            {
+              isExpired(viewJob?.dueOn) && (
+                <div className="closed-watermark">
+                  APPLICATION CLOSED
+                </div>
+              )}
 
 
               <h5 className="section-title" style={{ marginLeft: 15 }}>Job Details</h5>

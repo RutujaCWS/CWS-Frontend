@@ -401,13 +401,18 @@ function AdminDashboard({ user }) {
           <HolidaysCards />
         </div>
 
+         {/* Events Section */}
+      <div className="col-12 col-sm-6 col-md-4">
+          <EventCard />
+        </div>
+       
+
         {/* Today’s Attendance */}
-      </div>
+     
 
       {/* Row 3: Employee Registry + Leave Requests + Events */}
-      <div className="row g-2 mt-2">
         {/* Recent Employee Registry */}
-       <div className="col-12 col-sm-6 col-md-4">
+       <div className="col-12 col-sm-6 col-md-4 order-3 order-sm-3 order-md-0">
   <div
       className="card shadow-sm h-100 border-0 "
       style={{ borderRadius: "10px" }}
@@ -505,7 +510,7 @@ function AdminDashboard({ user }) {
         </div>
 
         {/* Leave & Regularization Requests */}
-       <div className="col-12 col-sm-6 col-md-4">
+       <div className="col-12 col-sm-6 col-md-4 order-3 order-md-0">
       <div
       className="card shadow-sm h-100 border-0 "
       style={{ borderRadius: "10px" }}
@@ -646,13 +651,9 @@ function AdminDashboard({ user }) {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Events Section */}
-      <div className="col-12 col-sm-6 col-md-4">
-          <EventCard />
-        </div>
        
+
+        </div>
         
       
 
@@ -663,6 +664,7 @@ function AdminDashboard({ user }) {
 
     
       </div>
+
     </div>
   );
 }

@@ -19,6 +19,7 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
   const [filteredRegularizations, setFilteredRegularizations] = useState([]);
 
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [loading, setLoading] = useState(true);
   const modalRef = useRef(null);
   useEffect(() => {
     if (!selectedRequest || !modalRef.current) return;
@@ -85,6 +86,7 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
   }, [selectedRequest]);
   const fetchData = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem("accessToken");
       const res = await axios.get(
         "https://cws-backend-roan.vercel.app/attendance/regularization/all",
@@ -147,6 +149,9 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
       );
     } catch (err) {
       console.error("Error fetching regularizations", err);
+    }
+    finally {
+      setLoading(false); // ✅ STOP loading
     }
   };
 
@@ -305,6 +310,26 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
   console.log("currentRegularizations", currentRegularizations);
   return (
     <div className="container-fluid">
+
+{loading ? (               //shivani code 
+    // FULL PAGE LOADER
+      <div
+        className="d-flex flex-column justify-content-center align-items-center"
+        style={{ minHeight: "100vh" }}
+      >
+        <div
+          className="spinner-grow"
+          role="status"
+          style={{ width: "4rem", height: "4rem", color: "#3A5FBE" }}
+        >
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <p className="mt-3 fw-semibold" style={{ color: "#3A5FBE" }}>
+          Loading ...
+        </p>
+      </div>
+      ) : (
+        <>
       <h3 className="mb-4 ms-3" style={{ color: "#3A5FBE", fontSize: "25px" }}>
         Regularization
       </h3>
@@ -1235,6 +1260,8 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
             </div>
           )}
         </>
+      )}
+      </>
       )}
     </div>
   );

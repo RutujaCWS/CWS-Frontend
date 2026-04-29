@@ -407,6 +407,17 @@ td {
 }
 
 
-
+.closed-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-25deg);
+  font-size: 60px;
+  font-weight: 700;
+  color: rgba(220, 53, 69, 0.25); /* light red transparent */
+  pointer-events: none; /* don't block clicks */
+  white-space: nowrap;
+  z-index: 10;
+}
 
 

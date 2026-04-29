@@ -50,24 +50,41 @@ if (
     };
   }, [isOpen]);
 
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+useEffect(() => {
+  const checkModal = () => {
+    const modal = document.querySelector(".modal.show");
+    setIsModalOpen(!!modal);
+  };
+
+  checkModal();
+
+  const interval = setInterval(checkModal, 300);
+
+  return () => clearInterval(interval);
+}, []);
+
   return (
     <>
       {/* Toggle button for small screens */}
       <button
-        ref={buttonRef}
-        className="btn btn-primary d-md-none position-fixed m-2"
-        style={{
-          zIndex: 1100,
-          backgroundColor: "#3A5FBE",
-          borderColor: "#fcfcfcff",
-        }}
-        onClick={(e) => {
-  e.stopPropagation();
-  setIsOpen((prev) => !prev);
-}}
-      >
-        ☰
-      </button>
+  ref={buttonRef}
+  className="btn btn-primary d-md-none position-fixed m-2"
+  style={{
+    zIndex: 1100,
+    backgroundColor: "#3A5FBE",
+    borderColor: "#fcfcfcff",
+    display: isModalOpen ? "none" : "block",
+  }}
+  onClick={(e) => {
+    e.stopPropagation();
+    setIsOpen((prev) => !prev);
+  }}
+>
+  ☰
+</button>
 
       <div
         ref={sidebarRef}
@@ -372,6 +389,7 @@ if (
               <NavLink
                 to={`/dashboard/${role}/${username}/${id}/feedback`}
                 className="nav-link d-flex flex-column align-items-center"
+                onClick={handleLinkClick}
               >
                 <ChatLeftTextFill size={20} />
                 <h6 className="mt-1">HR Feedback</h6>
@@ -384,6 +402,7 @@ if (
               <NavLink
                 to={`/dashboard/${role}/${username}/${id}/feedback`}
                 className="nav-link d-flex flex-column align-items-center"
+                onClick={handleLinkClick}
               >
                 <ChatLeftTextFill size={20} />
                 <h6 className="mt-1">Feedback</h6>
@@ -414,6 +433,7 @@ if (
                    <NavLink
                          to={`/dashboard/${role}/${username}/${id}/schedule-interview`}
                          className="nav-link text-white d-flex flex-column align-items-center"
+                         onClick={handleLinkClick}
                     >
                     <CalendarCheckFill size={20} />
                     <h6 className="mt-1">Schedule Interview</h6>
@@ -427,6 +447,7 @@ if (
                       <NavLink
                         to={`/dashboard/${role}/${username}/${id}/interviews`}
                         className="nav-link text-white d-flex flex-column align-items-center"
+                        onClick={handleLinkClick}
                       >
                         <CalendarCheckFill size={20} />
                         <h6 className="mt-1">Schedule Interviews</h6>
@@ -439,6 +460,7 @@ if (
                       <NavLink
                         to={`/dashboard/${role}/${username}/${id}/manager/interviews`}
                         className="nav-link text-white d-flex flex-column align-items-center"
+                        onClick={handleLinkClick}
                       >
                         <CalendarCheckFill size={20} />
                         <h6 className="mt-1">Schedule Interviews</h6>
@@ -467,6 +489,7 @@ if (
             <NavLink
               to={`/dashboard/${role}/${username}/${id}/resignation`}
               className="nav-link sidebar-link d-flex flex-column align-items-center"
+              onClick={handleLinkClick}
             >
               <i className="bi bi-box-arrow-right fs-5 mb-1"></i>
               <span style={{ fontSize: "12px" }}>Resignation</span>
@@ -479,6 +502,7 @@ if (
             <NavLink
               to={`/dashboard/${role}/${username}/${id}/employee-resignation`}
               className="nav-link d-flex flex-column align-items-center"
+              onClick={handleLinkClick}
             >
               {/* Bootstrap box-arrow-right icon */}
               <i className="bi bi-box-arrow-right fs-5"></i>
@@ -508,6 +532,7 @@ if (
               role === "hr" ? "Hr-Resignation" : "Manager-Resignation"
             }`}
             className="nav-link d-flex flex-column align-items-center"
+            onClick={handleLinkClick}
           >
             <i className="bi bi-box-arrow-right fs-5"></i>
             <h6 className="mt-1">Resignation</h6>

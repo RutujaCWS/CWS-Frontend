@@ -118,7 +118,11 @@ const EventCard = () => {
       <div className="card-body text-center" style={{ color: "#3A5FBE" }}>
         {currentEvent.type === "Birthday" ? (
           <i className="bi bi-cake fs-2 " style={{ color: "#3A5FBE" }}></i>
-        ) : (
+        ) : 
+        currentEvent.type === "Anniversary" ? (
+          <i className="bi bi-calendar-event fs-2" style={{ color: "#3A5FBE" }}></i>
+        ):
+        (
           <i className="bi bi-building fs-2" style={{ color: "#3A5FBE" }}></i>
         )}
 

@@ -647,7 +647,7 @@ if (
               {console.log("formData",formData)}
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label className="form-label">Candidate Name</label>
+                  <label className="form-label">Candidate Name<span style={{ color: "red" }}> *</span></label>
                   <input
                     type="text"
                     name="candidateName"
@@ -660,7 +660,7 @@ if (
                 </div>
 
                 <div className="col-md-6">
-                  <label className="form-label">Email</label>
+                  <label className="form-label">Email<span style={{ color: "red" }}> *</span></label>
                   <input
                     type="email"
                     name="email"
@@ -675,7 +675,7 @@ if (
               {/* Role */}
                        <div className="row mb-3">
                      <div className="col-md-6">
-                <label className="form-label">Role / Position</label>
+                <label className="form-label">Role / Position<span style={{ color: "red" }}> *</span></label>
                 <select
                   name="role"
                   className={`form-select ${errors.role ? "is-invalid" : ""}`}
@@ -699,7 +699,7 @@ if (
               {/* //snehal code */}
              
   <div className="col-md-6">
-    <label className="form-label">Date</label>
+    <label className="form-label">Date<span style={{ color: "red" }}> *</span></label>
     <input
       type="date"
       name="date"
@@ -826,7 +826,7 @@ if (
               {/* Interviewer */}
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label className="form-label">Interviewer</label>
+                  <label className="form-label">Interviewer<span style={{ color: "red" }}> *</span></label>
                   <select
                     name="interviewerId"
                     className={`form-select ${errors.interviewer ? "is-invalid" : ""}`}
@@ -863,7 +863,7 @@ if (
 
               {/* Resume */}
               <div className="mb-3">
-                <label className="form-label">Upload Resume</label>
+                <label className="form-label">Upload Resume<span style={{ color: "red" }}> *</span></label>
                 {/* Existing Resume Preview */}
                 {formData.resumeUrl && !formData.resume &&(
                   <div className="mb-2">
@@ -900,7 +900,7 @@ if (
 
               {/* Link */}
               {formData.interviewType === "Online"&&<div className="mb-3">
-                <label className="form-label">Interview Link</label>
+                <label className="form-label">Interview Link<span style={{ color: "red" }}> *</span></label>
                 <input
                   type="text"
                   name="link"

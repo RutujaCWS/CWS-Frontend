@@ -1337,7 +1337,14 @@ const ManagerTasklog = ({ user }) => {
         <button
           className="btn btn-sm custom-outline-btn"
           style={{ minWidth: 90 }}
-          onClick={() => window.history.go(-1)}
+          onClick={() => {
+            if (activeTab === "work") {
+              setActiveTab("task");
+              setCurrentPage(1);
+            } else {
+              window.history.go(-1);
+            }
+          }}
         >
           Back
         </button>

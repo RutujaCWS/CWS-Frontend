@@ -131,7 +131,7 @@ function HrPolicy() {
     console.log("Selected Policy:", policy);
     setSelectedPolicy(policy);
     fetchReadEmployees(policy._id); //Added by harshada 25 Feb 2026
-    setShowModal(true);
+    // setShowModal(true);
   };
 
   const handleRowClick = (policy) => {

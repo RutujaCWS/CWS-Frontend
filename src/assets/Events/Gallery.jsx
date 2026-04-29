@@ -1142,10 +1142,16 @@ useEffect(() => {
                     <input
                       className="form-control"
                       value={editData.title}
+                      maxLength="50"
                       onChange={(e) =>
                         setEditData((p) => ({ ...p, title: e.target.value }))
                       }
                     />
+                    <div className="text-end mt-1">
+                    <small>
+                      {editData.title.length}/50
+                    </small>
+                  </div>
                   </div>
                 </div>
 

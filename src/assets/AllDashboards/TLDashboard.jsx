@@ -454,6 +454,14 @@ function TeamLeaderDashboard({ user }) {
       document.documentElement.style.overflow = "";
     };
   }, [selectedLeave, selectedRegularization]);
+
+
+  const handleOnlyAlphabets = (value, setter) => {
+    if (/^[A-Za-z\s]*$/.test(value)) {
+      setter(value);
+    }
+  };
+
   // dip code changes 09-02-2026
   return (
     <div className="container-fluid">
@@ -526,8 +534,10 @@ function TeamLeaderDashboard({ user }) {
                 type="text"
                 className="form-control"
                 value={leaveNameFilter}
-                onChange={(e) => setLeaveNameFilter(e.target.value)}
+                onChange={(e) => handleOnlyAlphabets(e.target.value, setLeaveNameFilter)}
                 placeholder="Employee name"
+                pattern="[A-Za-z\s]*"
+                title="Only alphabets allowed"
                 style={{ minWidth: 150 }}
               />
             </div>
@@ -863,12 +873,7 @@ function TeamLeaderDashboard({ user }) {
                           whiteSpace: "nowrap",
                         }}
                       >
-                        {l.duration === "half"
-                          ? 0.5
-                          : Math.floor(
-                              (new Date(l.dateTo) - new Date(l.dateFrom)) /
-                                (1000 * 60 * 60 * 24),
-                            ) + 1}
+                         {l.duration === "half" ? 0.5 : (l.totalDays || 1)}
                       </td>
                       {/* <td style={{ padding: '12px', verticalAlign: 'middle', fontSize: '14px', borderBottom: '1px solid #dee2e6', whiteSpace: 'nowrap' }}>{l.reason}</td> */}
 
@@ -1068,7 +1073,7 @@ function TeamLeaderDashboard({ user }) {
                           Duration
                         </div>
                         <div className="col-sm-9 col-5">
-                          {selectedLeave.duration}
+                        {selectedLeave.duration === "half" ? "0.5 day" : `${selectedLeave.totalDays || 1} ${(selectedLeave.totalDays || 1) === 1 ? "day" : "days"}`}
                         </div>
                       </div>
 

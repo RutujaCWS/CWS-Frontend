@@ -377,10 +377,12 @@ const [referralErrors, setReferralErrors] = useState({});
         job.location?.toLowerCase().includes(searchText.toLowerCase()) ||
         job.department?.toLowerCase().includes(searchText.toLowerCase());
 
-      const dateMatch =
-        !filterDate ||
-        new Date(job.createdAt).toDateString() ===
-        new Date(filterDate).toDateString();
+        const dueDate = job?.dueOn;
+
+        const dateMatch =
+          !filterDate ||
+          (dueDate &&
+            new Date(dueDate).toISOString().split("T")[0] === filterDate);
 
       return (
         categoryMatch &&
@@ -431,10 +433,12 @@ const [referralErrors, setReferralErrors] = useState({});
           item.status?.toLowerCase().includes(searchText.toLowerCase()));
 
       const createdAt = item.createdAt || job.createdAt;
-      const dateMatch =
-        !filterDate ||
-        new Date(createdAt).toDateString() ===
-        new Date(filterDate).toDateString();
+      const dueDate = job?.dueOn;
+
+        const dateMatch =
+          !filterDate ||
+          (dueDate &&
+            new Date(dueDate).toISOString().split("T")[0] === filterDate);
 
       return (
         categoryMatch &&
@@ -555,6 +559,9 @@ const [referralErrors, setReferralErrors] = useState({});
     });
 
     setJobsPage(0);
+    setAppliedPage(0);     
+    setReferralPage(0);
+
   };
 
   const handleFilter = () => {
@@ -568,6 +575,8 @@ const [referralErrors, setReferralErrors] = useState({});
       category: jobCategoryView,
     });
     setJobsPage(0);
+    setAppliedPage(0);     
+    setReferralPage(0);
   };
 
   const handleReset = () => {
@@ -734,6 +743,7 @@ const [referralErrors, setReferralErrors] = useState({});
                     </label>
                     <input
                       className="form-control"
+                      value={filterDate}
                       type="date"
                       onChange={(e) => setFilterDate(e.target.value)}
                       style={{ minWidth: 150 }}
@@ -1011,7 +1021,8 @@ const [referralErrors, setReferralErrors] = useState({});
               setPage={setJobsPage}
               rowsPerPage={rowsPerPage}
               setRowsPerPage={setRowsPerPage}
-              totalCount={filteredJobs.length}
+              // totalCount={filteredJobs.length}
+              totalCount={filteredJobs.length}   
             />
           </>
         )}
@@ -1058,6 +1069,7 @@ const [referralErrors, setReferralErrors] = useState({});
                     </label>
                     <input
                       className="form-control"
+                      value={filterDate}
                       type="date"
                       onChange={(e) => setFilterDate(e.target.value)}
                       style={{ minWidth: 150 }}
@@ -1245,7 +1257,8 @@ const [referralErrors, setReferralErrors] = useState({});
               setPage={setAppliedPage}
               rowsPerPage={rowsPerPage}
               setRowsPerPage={setRowsPerPage}
-              totalCount={filteredJobs.length}
+              // totalCount={filteredJobs.length}
+              totalCount={filteredAppliedJobs.length}
             />
           </>
         )}
@@ -1429,6 +1442,7 @@ const [referralErrors, setReferralErrors] = useState({});
                     </label>
                     <input
                       className="form-control"
+                      value={filterDate}
                       type="date"
                       onChange={(e) => setFilterDate(e.target.value)}
                       style={{ minWidth: 150 }}
@@ -1645,7 +1659,7 @@ const [referralErrors, setReferralErrors] = useState({});
               setPage={setReferralPage}
               rowsPerPage={rowsPerPage}
               setRowsPerPage={setRowsPerPage}
-              totalCount={referralJobs.length}
+              totalCount={filteredReferralJobs.length}
             />
           </>
         )}
