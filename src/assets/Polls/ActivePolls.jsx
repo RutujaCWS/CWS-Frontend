@@ -680,139 +680,139 @@ const ActivePolls = ({ user }) => {
             }
           }}
         >
-<div
-  className="modal-dialog modal-lg modal-dialog-centered"
-  style={{
-    width: "600px",
-    marginTop: window.innerWidth < 768 ? "80px" : "",
-    maxHeight: window.innerWidth < 768 ? "calc(100vh - 80px)" : "auto"
-  }}
->
-            <div
-  className="modal-content"
-  style={{
-    maxHeight: "90vh",
-    overflowY: "auto"
-  }}
->
-              {/* HEADER */}
-              <div className="modal-header text-white"
-                style={{ backgroundColor: "#3A5FBE" }}
-              >
-                <h5 className="modal-title mb-0">
-                  Previous Polls Details
-                </h5>
-                <button
-                  className="btn-close btn-close-white"
-                  onClick={() => setPopupPreviousPolls(null)}
-                />
-              </div>
-
-              {/*rutuja replace BODY */}
-              <div className="modal-body">
-                {previousPolls.length > 0 ? (
-                  previousPolls.map((poll) => (
-                    <div key={poll._id} className="border rounded p-3 mb-3">
-
-                      {/* <p className="fw-semibold">{poll.question}</p> */}
-                      <div className="d-flex justify-content-between align-items-start mb-3">
-                        <p className="fw-semibold mb-0" style={{
-                          flex: 1,
-                          marginRight: "1rem",
-                          maxHeight: "80px",
-                          overflowY: "auto",
-                          whiteSpace: "pre-wrap",
-                          wordBreak: "break-word",
-                          paddingRight: "10px",
-                          scrollbarWidth: "thin",
-                        }}>
-                          {poll.question}
-                        </p>
-
-                        {/* Delete Button only admin */}
-                        <div className="d-flex gap-2 align-items-center">
-                          {/* View Voters button */}
-                          <button
-                            className="btn btn-sm custom-outline-btn"
-                            style={{
-                              minWidth: "100px",
-                              whiteSpace: "nowrap",
-                              flexShrink: 0
-                            }}
-                            onClick={() => fetchVotedMembers(poll._id, poll.question, poll.options, "previous")}
-                          >
-                            View Voters
-                          </button>
-
-                          {/* Delete button - admin only */}
-                          {user?.role === "admin" && (
-                            <button
-                              onClick={() => deletePoll(poll._id)}
-                              disabled={deleteLoading}
-                              className="btn btn-sm btn-outline-danger"
-                              title="Delete Poll"
-                            >
-                              Delete
-                            </button>
-                          )}
-                        </div>
+        <div
+          className="modal-dialog modal-lg modal-dialog-centered"
+          style={{
+            width: "600px",
+            margin: "20px auto",   // 🔥 reduces top space
+            maxHeight: "90vh"
+          }}
+        >
+          <div
+          className="modal-content"
+          style={{
+            maxHeight: "90vh",
+            overflowY: "auto"
+          }}
+        >
+                      {/* HEADER */}
+                      <div className="modal-header text-white"
+                        style={{ backgroundColor: "#3A5FBE" }}
+                      >
+                        <h5 className="modal-title mb-0">
+                          Previous Polls Details
+                        </h5>
+                        <button
+                          className="btn-close btn-close-white"
+                          onClick={() => setPopupPreviousPolls(null)}
+                        />
                       </div>
 
-                      {poll.options.map((opt, idx) => {
-                        const userVote = poll?.votedUsers?.find(
-                          v => v.userId?.toString() === loggedInUserId?.toString()
-                        );
+                      {/*rutuja replace BODY */}
+                      <div className="modal-body">
+                        {previousPolls.length > 0 ? (
+                          previousPolls.map((poll) => (
+                            <div key={poll._id} className="border rounded p-3 mb-3">
 
-                        return (
-                          <div key={idx} className="d-flex justify-content-between mb-1">
-                            <label className="d-flex align-items-center">
-                              <input
-                                type="radio"
-                                name={`poll-${poll._id}`}
-                                className="me-2"
-                                checked={userVote?.optionIndex === idx}
-                                disabled={!!userVote || user?.role === "admin" || voting}
-                                onChange={() => votePoll(poll._id, idx)}
-                              />
-                              <span>{opt.text}</span>
-                            </label>
+                              {/* <p className="fw-semibold">{poll.question}</p> */}
+                              <div className="d-flex justify-content-between align-items-start mb-3">
+                                <p className="fw-semibold mb-0" style={{
+                                  flex: 1,
+                                  marginRight: "1rem",
+                                  maxHeight: "80px",
+                                  overflowY: "auto",
+                                  whiteSpace: "pre-wrap",
+                                  wordBreak: "break-word",
+                                  paddingRight: "10px",
+                                  scrollbarWidth: "thin",
+                                }}>
+                                  {poll.question}
+                                </p>
 
-                            {user?.role === "admin" ? (
-                              <span
-                                className="badge bg-secondary"
-                                style={{ minWidth: "60px" }}
-                              >
-                                {opt.votes} {opt.votes === 1 ? 'vote' : 'votes'}
-                              </span>
-                            ) : (
-                              <span className="badge bg-secondary">
-                                {opt.votes} {opt.votes === 1 ? 'vote' : 'votes'}
-                              </span>
-                            )}
-                          </div>
-                        );
-                      })}
+                                {/* Delete Button only admin */}
+                                <div className="d-flex gap-2 align-items-center">
+                                  {/* View Voters button */}
+                                  <button
+                                    className="btn btn-sm custom-outline-btn"
+                                    style={{
+                                      minWidth: "100px",
+                                      whiteSpace: "nowrap",
+                                      flexShrink: 0
+                                    }}
+                                    onClick={() => fetchVotedMembers(poll._id, poll.question, poll.options, "previous")}
+                                  >
+                                    View Voters
+                                  </button>
+
+                                  {/* Delete button - admin only */}
+                                  {user?.role === "admin" && (
+                                    <button
+                                      onClick={() => deletePoll(poll._id)}
+                                      disabled={deleteLoading}
+                                      className="btn btn-sm btn-outline-danger"
+                                      title="Delete Poll"
+                                    >
+                                      Delete
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+
+                              {poll.options.map((opt, idx) => {
+                                const userVote = poll?.votedUsers?.find(
+                                  v => v.userId?.toString() === loggedInUserId?.toString()
+                                );
+
+                                return (
+                                  <div key={idx} className="d-flex justify-content-between mb-1">
+                                    <label className="d-flex align-items-center">
+                                      <input
+                                        type="radio"
+                                        name={`poll-${poll._id}`}
+                                        className="me-2"
+                                        checked={userVote?.optionIndex === idx}
+                                        disabled={!!userVote || user?.role === "admin" || voting}
+                                        onChange={() => votePoll(poll._id, idx)}
+                                      />
+                                      <span>{opt.text}</span>
+                                    </label>
+
+                                    {user?.role === "admin" ? (
+                                      <span
+                                        className="badge bg-secondary"
+                                        style={{ minWidth: "60px" }}
+                                      >
+                                        {opt.votes} {opt.votes === 1 ? 'vote' : 'votes'}
+                                      </span>
+                                    ) : (
+                                      <span className="badge bg-secondary">
+                                        {opt.votes} {opt.votes === 1 ? 'vote' : 'votes'}
+                                      </span>
+                                    )}
+                                  </div>
+                                );
+                              })}
+
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-muted text-center">
+                            No previous polls found
+                          </p>
+                        )}
+                      </div>
+        <div className="modal-footer">
+          <button
+            className="btn btn-sm custom-outline-btn"
+            style={{ minWidth: "90px" }}
+            onClick={() => setPopupPreviousPolls(null)}
+          >
+            Close
+          </button>
+        </div>
 
                     </div>
-                  ))
-                ) : (
-                  <p className="text-muted text-center">
-                    No previous polls found
-                  </p>
-                )}
-              </div>
-<div className="modal-footer">
-  <button
-    className="btn btn-sm custom-outline-btn"
-    style={{ minWidth: "90px" }}
-    onClick={() => setPopupPreviousPolls(null)}
-  >
-    Close
-  </button>
-</div>
-
-            </div>
-          </div>
+                  </div>
         </div>
       )}
 

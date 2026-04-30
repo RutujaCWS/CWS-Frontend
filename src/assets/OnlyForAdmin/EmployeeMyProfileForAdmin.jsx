@@ -25,6 +25,8 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [activeTab, setActiveTab] = useState("active");
+
   // Fetch employee data if not passed via props
   useEffect(() => {
     if (!stateEmployee) {
@@ -55,6 +57,12 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
     }
   }, [empId, stateEmployee]);
 
+  useEffect(() => {
+    if (location.state?.openOldEmployees) {
+      setActiveTab("old");
+    }
+  }, [location.state]);
+  
   const validateField = (name, value) => {
     let error = "";
 
@@ -213,38 +221,45 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
   };
 
   const handleFileChange = (e) => {
-    const { name, files: selectedFiles } = e.target;
-
-    const file = selectedFiles[0];
+    const { name, files } = e.target;
+    const file = files[0];
+  
     let error = "";
-
+  
     if (!file) {
-      error = "This file is required.";
+      error = "Please select a file.";
     } else {
-      const allowedImageTypes = ["image/jpeg", "image/png", "image/jpg"];
-      const allowedDocTypes = [...allowedImageTypes, "application/pdf"];
-
-      if (name === "image") {
-        if (!allowedImageTypes.includes(file.type)) {
-          error = "Profile image must be JPG or PNG format.";
-        }
-      } else {
-        if (!allowedDocTypes.includes(file.type)) {
-          error = "Only PDF or image formats are allowed.";
-        }
+      const allowedTypes = [
+        "application/pdf",
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+      ];
+  
+      const maxSize = 5 * 1024 * 1024; // 5MB
+  
+      if (!allowedTypes.includes(file.type)) {
+        error = "Only PDF, JPG, JPEG, PNG files are allowed.";
+      } else if (file.size > maxSize) {
+        error = "File size must be less than 5 MB.";
       }
     }
-
-    // Set error for this file field
-    setErrors((prev) => ({ ...prev, [name]: error }));
-
-    // Save file only if valid
+  
+    setErrors((prev) => ({
+      ...prev,
+      [name]: error,
+    }));
+  
     if (!error) {
-      setFiles((prev) => ({ ...prev, [name]: file }));
+      setFormData((prev) => ({
+        ...prev,
+        [name]: file,
+      }));
     } else {
-      setFiles((prev) => ({ ...prev, [name]: null }));
+      e.target.value = "";
     }
   };
+  
 
   // Handle input changes with validation
   const handleChange = (e) => {
@@ -1433,29 +1448,20 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
     </div> */}
       <div className="text-end mt-3">
       <button
-        className="btn btn-sm custom-outline-btn"
-        style={{ minWidth: 90 }}
-        onClick={() => {
-          if (location.state?.fromOldEmployees) {
-            navigate(
-              `/dashboard/${role}/${username}/${id}/allemployeedetails`,
-              {
-                state: { openOldEmployees: true },
-                replace: false,
-              }
-            );
-          } else {
-            navigate(
-              `/dashboard/${role}/${username}/${id}/allemployeedetails`,
-              {
-                replace: false,
-              }
-            );
-          }
-        }}
-      >
-        Back
-      </button>
+          className="btn btn-sm custom-outline-btn"
+          style={{ minWidth: 90 }}
+          onClick={() => {
+            if (location.state?.from === "old") {
+              navigate(`/dashboard/${role}/${username}/${id}/allemployeedetails`, {
+                state: { openOldEmployees: true }
+              });
+            } else {
+              navigate(`/dashboard/${role}/${username}/${id}/allemployeedetails`);
+            }
+          }}
+        >
+          Back
+        </button>
       </div>
     </div>
   );

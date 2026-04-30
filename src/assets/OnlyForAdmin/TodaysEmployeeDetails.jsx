@@ -350,20 +350,16 @@ function TodaysEmployeeDetails() {
         const checkOut = emp.checkOutTime;
         const workingHours = calculateWorkingHours(checkIn, checkOut);
         const status = getStatus(checkIn, checkOut, workingHours);
-        if (statusFilter === "Late Check-In") {
           // Late check-in: Present AND after 10:00 am
-          if (checkIn) {
-            const dt = new Date(checkIn);
-            const hours = dt.getHours();
-            const minutes = dt.getMinutes();
-            return (
-              (status === "Present" ||
-                status === "Half Day" ||
-                status === "Working") &&
-              (hours > 10 || (hours === 10 && minutes > 0))
-            );
-          }
-          return false;
+          if (statusFilter === "Late Check-In") {
+            if (checkIn) {
+              const dt = new Date(checkIn);
+              const hours = dt.getHours();
+              const minutes = dt.getMinutes();
+          
+              return hours > 10 || (hours === 10 && minutes > 0);
+            }
+            return false;
         } else {
           return status === statusFilter;
         }
@@ -560,12 +556,17 @@ function TodaysEmployeeDetails() {
                 Name
               </label>
               <input
-                id="employeeNameFilter"
-                type="text"
-                className="form-control"
-                value={employeeNameFilter}
-                onChange={(e) => setEmployeeNameFilter(e.target.value)}
-                placeholder="Employee name"
+                 id="employeeNameFilter"
+                 type="text"
+                 className="form-control"
+                 value={employeeNameFilter}
+                 placeholder="Employee name"
+                 onChange={(e) => {
+                   const value = e.target.value;
+                    const cleaned = value.replace(/[^A-Za-z\s]/g, "");
+               
+                   setEmployeeNameFilter(cleaned);
+                 }}
               />
             </div>
 

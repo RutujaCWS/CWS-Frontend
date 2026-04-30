@@ -50,7 +50,7 @@ const VisualDiary = () => {
   };
 
   
-
+ 
   useEffect(() => {
     axios
       .get("https://cws-backend-roan.vercel.app/api/gallery")
@@ -148,7 +148,20 @@ const VisualDiary = () => {
                     >
                       <div className="card-body">
                         {/* TOP TITLE */}
-                        <h6 className="card-title fw-semibold">{item.title} </h6>
+                <h6
+  className="card-title fw-semibold"
+  style={{
+    maxWidth: "150px",        // 🔥 important
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    margin: "0 auto",
+    fontSize: "14px",
+  }}
+  title={item.title}
+>
+  {item.title || "-"}
+</h6>
 
                         <hr className="card-divider" />
 
@@ -170,9 +183,22 @@ const VisualDiary = () => {
                         </div>
 
                         {/* NAME */}
-                        <div className="holiday-details">
-                          {item.description}
-                        </div>
+                     <div
+  className="holiday-details"
+  style={{
+    maxWidth: "150px",        
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    fontSize: "16px",
+    color: "#3a5fbe",
+    margin: "0 auto",
+    fontWeight: 500, 
+  }}
+  title={item.description}
+>
+  {item.description || "-"}
+</div>
 
                         {/* DATE */}
                         {item.createdAt && (
@@ -307,9 +333,24 @@ const VisualDiary = () => {
                   />
                 )}
 
-                {popupItem.description && (
-                  <p className="mt-2 event-details">{popupItem.description}</p>
-                )}
+             {popupItem.description && (
+  <div
+    style={{
+      maxHeight: "100px",       
+      overflowY: "auto",       
+      fontSize: "18px",
+      marginTop: "10px",
+      color: "#3a5fbe",
+      textAlign: "left",
+      whiteSpace: "pre-wrap",  
+      wordBreak: "break-word",
+      paddingRight: "5px",
+      fontWeight:"800px"
+    }}
+  >
+    {popupItem.description}
+  </div>
+)}
                 <div className="text-end mt-3">
                   <button
                     className="btn btn-sm custom-outline-btn"

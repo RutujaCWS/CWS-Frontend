@@ -123,7 +123,7 @@ const EventCard = () => {
           <i className="bi bi-calendar-event fs-2" style={{ color: "#3A5FBE" }}></i>
         ):
         (
-          <i className="bi bi-building fs-2" style={{ color: "#3A5FBE" }}></i>
+          <i className="bi bi-calendar-event fs-2" style={{ color: "#3A5FBE" }}></i>
         )}
 
         <p className="mb-0 fw-semibold" style={{ textTransform: "capitalize" }}>

@@ -8,6 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 function AdminCareer({ user }) {
   const [formErrors, setFormErrors] = useState({}); //Added by Rutuja
   const userRole = user.role || localStorage.getItem("role");
+  
 
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
@@ -99,59 +100,113 @@ function AdminCareer({ user }) {
   //Addeed by Rutuja
   const validateForm = () => {
     const errors = {};
-
+  
+    // Job Title
     if (!newJob.jobTitle.trim()) {
       errors.jobTitle = "Job Title is required";
+    } else if (!/^[A-Za-z\s]+$/.test(newJob.jobTitle)) {
+      errors.jobTitle = "Only letters allowed";
+    } else if (newJob.jobTitle.trim().length < 3) {
+      errors.jobTitle = "Minimum 3 characters required";
+    } else if (newJob.jobTitle.trim().length > 50) {
+      errors.jobTitle = "Maximum 50 characters allowed";
     }
-
-    if (!newJob.location) {
+      
+    // Department
+    if (!newJob.department) {
+      errors.department = "Department is required";
+    }
+  
+    // Location
+    if (!newJob.location.trim()) {
       errors.location = "Location is required";
+    } else if (!/^[A-Za-z\s]+$/.test(newJob.location)) {
+      errors.location = "Only letters allowed";
+    } else if (newJob.location.trim().length > 50) {
+      errors.location = "Maximum 50 characters allowed";
     }
-
+  
+    // Hiring Type
     if (!newJob.hiringType) {
       errors.hiringType = "Hiring Type is required";
     }
-
+  
+    // Job Type
     if (!newJob.jobType) {
       errors.jobType = "Job Type is required";
     }
-
-    if (!newJob.noOfOpenings || newJob.noOfOpenings < 1) {
-      errors.noOfOpenings = "Number of openings must be at least 1";
+  
+    // Openings
+    if (!newJob.noOfOpenings) {
+      errors.noOfOpenings = "Number of openings required";
+    } else if (Number(newJob.noOfOpenings) < 1) {
+      errors.noOfOpenings = "Minimum 1 opening required";
+    } else if (Number(newJob.noOfOpenings) > 100) {
+      errors.noOfOpenings = "Maximum 100 openings allowed";
     }
-
-    if (!newJob.jobDescription || newJob.jobDescription.trim() === "") {
+  
+    // Description
+    const plainText = newJob.jobDescription.replace(/<[^>]+>/g, "").trim();
+    if (!plainText) {
       errors.jobDescription = "Job Description is required";
-    } else {
-      const plainText = newJob.jobDescription.replace(/<[^>]+>/g, '');
-      if (plainText.length > 300) {
-        errors.jobDescription = "Job Description cannot exceed 300 characters";
-      }
+    } else if (plainText.length > 300) {
+      errors.jobDescription = "Maximum 300 characters allowed";
     }
-
-    if (
-      !newJob.importantSkills ||
-      newJob.importantSkills.length === 0 ||
-      (Array.isArray(newJob.importantSkills) &&
-        newJob.importantSkills.length === 0) ||
-      (typeof newJob.importantSkills === "string" &&
-        newJob.importantSkills.trim() === "")
-    ) {
-      errors.importantSkills = "Important Skills are required";
+  
+    // Skills
+    const skillsText = Array.isArray(newJob.importantSkills)
+      ? newJob.importantSkills.join(", ")
+      : "";
+  
+    if (!skillsText.trim()) {
+      errors.importantSkills = "Important Skills required";
+    } else if (skillsText.length > 100) {
+      errors.importantSkills = "Maximum 100 characters allowed";
     }
-
+  
+    // Due Date
     if (!newJob.dueOn) {
-      errors.dueOn = "Due date is required";
+      errors.dueOn = "Due date required";
     } else {
-      const dueDate = new Date(newJob.dueOn);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-
-      if (dueDate < today) {
-        errors.dueOn = "Due date cannot be in the past";
+  
+      const due = new Date(newJob.dueOn);
+      due.setHours(0, 0, 0, 0);
+  
+      if (due < today) {
+        errors.dueOn = "Past date not allowed";
       }
     }
-
+  
+    // CTC (Required + Range + Limit)
+    if (!newJob.ctc.min || !newJob.ctc.max) {
+      errors.ctc = "CTC range is required";
+    } else if (Number(newJob.ctc.min) <= 0 || Number(newJob.ctc.max) <= 0) {
+      errors.ctc = "CTC cannot be negative";
+    } else if (Number(newJob.ctc.min) >= Number(newJob.ctc.max)) {
+      errors.ctc = "Min CTC cannot exceed Max CTC";
+    } else if (Number(newJob.ctc.max) > 10000000) {
+      errors.ctc = "CTC too large";
+    }
+  
+    // Experience (Required + Range + Limit)
+    if (!newJob.experience.min || !newJob.experience.max) {
+      errors.experience = "Experience range is required";
+    } else if (
+      Number(newJob.experience.min) <0 ||
+      Number(newJob.experience.max) < 0
+    ) {
+      errors.experience = "Experience cannot be negative";
+    } else if (
+      Number(newJob.experience.min) > Number(newJob.experience.max)
+    ) {
+      errors.experience =
+        "Min Experience cannot exceed Max Experience";
+    } else if (Number(newJob.experience.max) > 50) {
+      errors.experience = "Experience too high";
+    }
+  
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -426,10 +481,13 @@ function AdminCareer({ user }) {
     setStatusFilter("All");
     setAssignDateFromFilter("");
     setAssignDateToFilter("");
-  
-    // ✅ FULL DATA (no filter at all)
-    setFilteredJobs(jobs);
     setCurrentPage(1);
+  
+    // immediately reset list
+    let temp = jobs.filter(
+      (job) => job.jobType === activeTab || job.jobType === "both"
+    );
+    setFilteredJobs(temp);
   };
 
   
@@ -618,6 +676,7 @@ const handleRowClick = (job) => {
 };
 //snehal code
   return (
+
     <div className="container-fluid ">
       <div className="d-flex justify-content-between mb-3">
         <h2 style={{ color: "#3A5FBE", fontSize: "25px", marginLeft: "15px" }}>
@@ -868,7 +927,7 @@ const handleRowClick = (job) => {
                   <td
                     colSpan="8"
                     className="text-center py-4"
-                    style={{ color: "#212529" }}
+                    style={{ color: "#6c757d" }}
                   >
                     No jobs found.
                   </td>
@@ -963,7 +1022,7 @@ const handleRowClick = (job) => {
                         textOverflow: "ellipsis",
                         maxWidth: "250px",
                       }}
-                      onClick={() => {
+                      onClick={(e) => {
                         if (isExpired(job)) return;
                         e.stopPropagation();
                         setExpandedJobId(
@@ -1166,308 +1225,409 @@ const handleRowClick = (job) => {
         <button
           className="btn btn-sm custom-outline-btn"
           style={{ minWidth: 90 }}
-          onClick={() => window.history.go(-1)}
+          onClick={() => {
+            if (activeTab === "referral") {
+              setActiveTab("inhouse");
+            } else {
+              window.history.go(-1);
+            }
+          }}
         >
           Back
         </button>
       </div>
 
       {/* //added by Rushikesh */}
-      {showAddJob && (
-        <div
-          ref={modalRef}
-          tabIndex="-1"
-          className="modal fade show d-block"
+      {/* //added by Rushikesh */}
+{showAddJob && (
+  <div
+    ref={modalRef}
+    tabIndex="-1"
+    className="modal fade show d-block"
+    style={{ background: "#00000080" }}
+  >
+    <div className="modal-dialog modal-dialog-centered"
+      style={{ width: "600px" }}
+    >
+      <div className="modal-content shadow-lg"
+        ref={modalRef}
+        tabIndex="-1" 
+      >
+        <div className="modal-header-custom">
+          {editJobId ? "Edit Job" : "Add Job"}
+          <button
+            type="button"
+            className="modal-close-btn"
+            onClick={() => {
+              setShowAddJob(false);
+              setEditJobId(null);
+            }}
+          >
+            ✕
+          </button>
+        </div>
 
-          style={{ background: "#00000080" }}
-        >
-          <div  className="modal-dialog modal-dialog-centered"
-            style={{ width: "600px" }}
-            >
-            <div className="modal-content shadow-lg"
-            ref={modalRef}
-            tabIndex="-1" 
-              >
-              <div className="modal-header-custom">
-                {editJobId ? "Edit Job" : "Add Job"}
-
-                <button
-                  type="button"
-                  className="modal-close-btn"
-                  onClick={() => {
-                    setShowAddJob(false);
-                    setEditJobId(null);
-                  }}
-                >
-                  ✕
-                </button>
+        <div className="modal-body">
+          <form onSubmit={handleSaveJob}>
+            <h5 className="section-title">Basic Information</h5>
+            
+            {/* Job Title */}
+            <div className="row align-items-center mb-3">
+              <div className="col-12 col-md-4 fw-semibold">
+                Job Title *
               </div>
-
-              <div className="modal-body">
-                <form onSubmit={handleSaveJob}>
-                  <h5 className="section-title">Basic Information</h5>
-
-                  {/* Location */}
-                  <div className="row align-items-center mb-3">
-                    <div className="col-12 col-md-4 fw-semibold">Location *</div>
-                    <div className="col-12 col-md-8">
-                      <input
-                        className="form-control"
-                        value={newJob.location}
-                        onChange={(e) =>
-                          setNewJob({ ...newJob, location: e.target.value })
-                        }
-                      >
-
-                      </input>
-                    </div>
+              <div className="col-12 col-md-8">
+                <input
+                  type="text"
+                  className={`form-control ${formErrors.jobTitle ? 'is-invalid' : ''}`}
+                  value={newJob.jobTitle}
+                  maxLength={50}
+                  onChange={(e) =>
+                    setNewJob({
+                      ...newJob,
+                      jobTitle: e.target.value,
+                    })
+                  }
+                  placeholder="Enter Job Title"
+                />
+                {formErrors.jobTitle && (
+                  <div className="invalid-feedback d-block">
+                    {formErrors.jobTitle}
                   </div>
-
-                  {/* Hiring Type */}
-                  <div className="row align-items-center mb-3">
-                    <div className="col-12 col-md-4 fw-semibold">Hiring Type *</div>
-                    <div className="col-12 col-md-8">
-                      <select
-                        className="form-select"
-                        value={newJob.hiringType}
-                        onChange={(e) =>
-                          setNewJob({ ...newJob, hiringType: e.target.value })
-                        }
-                      >
-                        <option value="">Select Type</option>
-                        <option>Full-Time</option>
-                        <option>Contract</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Job Type */}
-                  <div className="row align-items-center mb-3">
-                    <div className="col-12 col-md-4 fw-semibold">Job Type *</div>
-                    <div className="col-12 col-md-8">
-                      <select
-                        className="form-select"
-                        value={newJob.jobType}
-                        onChange={(e) =>
-                          setNewJob({ ...newJob, jobType: e.target.value })
-                        }
-                      >
-                        <option value="">Select Job Type</option>
-                        <option value="inhouse">In-House</option>
-                        <option value="referral">Open for Referral</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Openings */}
-                  <div className="row align-items-center mb-3">
-                    <div className="col-12 col-md-4 fw-semibold">No of Openings *</div>
-                    <div className="col-12 col-md-8">
-                      <input
-                        type="number"
-                        min="0"
-                        className="form-control"
-                        value={newJob.noOfOpenings}
-                        onChange={(e) =>
-                          setNewJob({
-                            ...newJob,
-                            noOfOpenings: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  {/* Description */}
-                  <div className="row mb-3">
-                  <div className="col-12 col-md-4 fw-semibold">Job Description *</div>
-
-                  <div className="col-12 col-md-8">
-                    <textarea
-                      className="form-control"
-                      rows={4}
-                      maxLength={300}   // direct limit
-                      value={newJob.jobDescription}
-                      onChange={(e) =>
-                        setNewJob({
-                          ...newJob,
-                          jobDescription: e.target.value,
-                        })
-                      }
-                    />
-
-                    <div
-                      className="char-count"
-                      style={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        fontSize: "12px",
-                        color: "#6c757d",
-                        marginTop: "4px",
-                      }}
-                    >
-                      {newJob.jobDescription.length}/300 characters
-                    </div>
-                  </div>
-                </div>
-                  
-
-                  <h5 className="section-title">CTC Details (₹)</h5>
-
-
-                  <div className="row mb-3">
-
-                    <div className="col-12 col-md-4 fw-semibold">Min CTC</div>
-                    <div className="col-12 col-md-8">
-                      <input
-                        type="number"
-                        className="form-control"
-                        value={newJob.ctc?.min || ""}
-                        onChange={(e) =>
-                          setNewJob({
-                            ...newJob,
-                            ctc: {
-                              ...newJob.ctc,
-                              min: e.target.value,
-                            },
-                          })
-                        }
-                      />
-                    </div>
-
-                  </div>
-
-
-                  <div className="row align-items-center">
-                    <div className="col-12 col-md-4 fw-semibold">Max CTC</div>
-                    <div className="col-12 col-md-8">
-                      <input
-                        type="number"
-                        className="form-control"
-                        value={newJob.ctc?.max || ""}
-                        onChange={(e) =>
-                          setNewJob({
-                            ...newJob,
-                            ctc: {
-                              ...newJob.ctc,
-                              max: e.target.value,
-                            },
-                          })
-                        }
-                      />
-
-                    </div>
-                  </div>
-
-
-                  <h5 className="section-title">Experience & Skills</h5>
-
-
-
-                  <div className="row mb-3">
-                    <div className="col-12 col-md-4 fw-semibold">Min Experience(Years)</div>
-                    <div className="col-12 col-md-8">
-                      <input
-                        type="number"
-                        min="0"
-                        className="form-control"
-                        value={newJob.experience?.min || ""}
-                        onChange={(e) =>
-                          setNewJob({
-                            ...newJob,
-                            experience: {
-                              ...newJob.experience,
-                              min: e.target.value,
-                            },
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-
-
-
-                  <div className="row mb-3">
-                    <div className="col-12 col-md-4 fw-semibold">Max Experience(Years)</div>
-                    <div className="col-12 col-md-8">
-                      <input
-                        type="number"
-                        min="0"
-                        className="form-control"
-                        value={newJob.experience?.max || ""}
-                        onChange={(e) =>
-                          setNewJob({
-                            ...newJob,
-                            experience: {
-                              ...newJob.experience,
-                              max: e.target.value,
-                            },
-                          })
-                        }
-                      />
-                    </div>
-
-                  </div>
-
-
-                  {/* Skills */}
-                  <div className="row align-items-center mb-3">
-                    <div className="col-12 col-md-4 fw-semibold">Important Skills *</div>
-                    <div className="col-12 col-md-8">
-                      <input
-                        className="form-control"
-                        value={newJob.importantSkills.join(", ") || ""}
-                        onChange={(e) =>
-                          setNewJob({
-                            ...newJob,
-                            importantSkills: e.target.value
-                              .split(",")
-                              .map((s) => s.trim()),
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  {/* Due Date */}
-                  <div className="row align-items-center mb-3">
-                    <div className="col-12 col-md-4 fw-semibold">Due On *</div>
-                    <div className="col-12 col-md-8">
-                      <input
-                        type="date"
-                        className="form-control"
-                        value={newJob.dueOn || ""}
-                        onChange={(e) =>
-                          setNewJob({ ...newJob, dueOn: e.target.value })
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="modal-footer">
-                    <button
-                      type="button"
-                      className="btn btn-sm custom-outline-btn "
-                      style={{ minWidth: 90 }}
-                      onClick={() => {
-                        setShowAddJob(false);
-                        setEditJobId(null);
-                      }}
-                    >
-                      Cancel
-                    </button>
-
-                    <button type="submit" className="btn btn-sm custom-outline-btn" style={{ minWidth: 90 }}>
-
-                      {editJobId ? "Save Changes" : "Save"}
-                    </button>
-                  </div>
-                </form>
+                )}
               </div>
             </div>
-          </div>
+
+            {/* Department */}
+            <div className="row align-items-center mb-3">
+              <div className="col-12 col-md-4 fw-semibold">
+                Department *
+              </div>
+              <div className="col-12 col-md-8">
+                <select
+                  className={`form-select ${formErrors.department ? 'is-invalid' : ''}`}
+                  value={newJob.department}
+                  onChange={(e) =>
+                    setNewJob({
+                      ...newJob,
+                      department: e.target.value,
+                    })
+                  }
+                >
+                  <option value="">Select Department</option>
+                  <option value="IT">IT</option>
+                  <option value="HR">HR</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Operations">Operations</option>
+                  <option value="Admin">Admin</option>
+                </select>
+                {formErrors.department && (
+                  <div className="invalid-feedback d-block">
+                    {formErrors.department}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Location */}
+            <div className="row align-items-center mb-3">
+              <div className="col-12 col-md-4 fw-semibold">Location *</div>
+              <div className="col-12 col-md-8">
+                <input
+                  className={`form-control ${formErrors.location ? 'is-invalid' : ''}`}
+                  maxLength={50}
+                  value={newJob.location}
+                  onChange={(e) =>
+                    setNewJob({ ...newJob, location: e.target.value })
+                  }
+                  placeholder="Enter Location"
+                />
+                {formErrors.location && (
+                  <div className="invalid-feedback d-block">
+                    {formErrors.location}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Hiring Type */}
+            <div className="row align-items-center mb-3">
+              <div className="col-12 col-md-4 fw-semibold">Hiring Type *</div>
+              <div className="col-12 col-md-8">
+                <select
+                  className={`form-select ${formErrors.hiringType ? 'is-invalid' : ''}`}
+                  value={newJob.hiringType}
+                  onChange={(e) =>
+                    setNewJob({ ...newJob, hiringType: e.target.value })
+                  }
+                >
+                  <option value="">Select Type</option>
+                  <option>Full-Time</option>
+                  <option>Contract</option>
+                </select>
+                {formErrors.hiringType && (
+                  <div className="invalid-feedback d-block">
+                    {formErrors.hiringType}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Job Type */}
+            <div className="row align-items-center mb-3">
+              <div className="col-12 col-md-4 fw-semibold">Job Type *</div>
+              <div className="col-12 col-md-8">
+                <select
+                  className={`form-select ${formErrors.jobType ? 'is-invalid' : ''}`}
+                  value={newJob.jobType}
+                  onChange={(e) =>
+                    setNewJob({ ...newJob, jobType: e.target.value })
+                  }
+                >
+                  <option value="">Select Job Type</option>
+                  <option value="inhouse">In-House</option>
+                  <option value="referral">Open for Referral</option>
+                </select>
+                {formErrors.jobType && (
+                  <div className="invalid-feedback d-block">
+                    {formErrors.jobType}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Openings */}
+            <div className="row align-items-center mb-3">
+              <div className="col-12 col-md-4 fw-semibold">No of Openings *</div>
+              <div className="col-12 col-md-8">
+                <input
+                  type="number"
+                  className={`form-control ${formErrors.noOfOpenings ? 'is-invalid' : ''}`}
+                  value={newJob.noOfOpenings}
+                  min={1} 
+                  max={100}
+                  onChange={(e) =>
+                    setNewJob({
+                      ...newJob,
+                      noOfOpenings: e.target.value,
+                    })
+                  }
+                />
+                {formErrors.noOfOpenings && (
+                  <div className="invalid-feedback d-block">
+                    {formErrors.noOfOpenings}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="row mb-3">
+              <div className="col-12 col-md-4 fw-semibold">Job Description *</div>
+              <div className="col-12 col-md-8">
+                <RichTextEditor
+                  value={newJob.jobDescription}
+                  onChange={(value) =>
+                    setNewJob((prev) => ({
+                      ...prev,
+                      jobDescription: value,
+                    }))
+                  }
+                />
+                {formErrors.jobDescription && (
+                  <div className="invalid-feedback d-block">
+                    {formErrors.jobDescription}
+                  </div>
+                )}
+                <div
+                  className="char-count"
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    fontSize: "12px",
+                    color: "#6c757d",
+                    marginTop: "4px",
+                  }}
+                >
+                  {newJob.jobDescription.replace(/<[^>]+>/g, '').length}/300 characters
+                </div>
+              </div>
+            </div>
+
+            <h5 className="section-title">CTC Details (₹)</h5>
+
+            {/* Min CTC */}
+            <div className="row mb-3">
+              <div className="col-12 col-md-4 fw-semibold">Min CTC</div>
+              <div className="col-12 col-md-8">
+                <input
+                  type="number"
+                  className={`form-control ${formErrors.ctc ? 'is-invalid' : ''}`}
+                  min={0} 
+                  value={newJob.ctc?.min || ""}
+                  onChange={(e) =>
+                    setNewJob({
+                      ...newJob,
+                      ctc: {
+                        ...newJob.ctc,
+                        min: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </div>
+            </div>
+
+            {/* Max CTC */}
+            <div className="row align-items-center mb-3">
+              <div className="col-12 col-md-4 fw-semibold">Max CTC</div>
+              <div className="col-12 col-md-8">
+                <input
+                  type="number"
+                  min={0} 
+                  className={`form-control ${formErrors.ctc ? 'is-invalid' : ''}`}
+                  value={newJob.ctc?.max || ""}
+                  onChange={(e) =>
+                    setNewJob({
+                      ...newJob,
+                      ctc: {
+                        ...newJob.ctc,
+                        max: e.target.value,
+                      },
+                    })
+                  }
+                />
+                {formErrors.ctc && (
+                  <div className="invalid-feedback d-block">
+                    {formErrors.ctc}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <h5 className="section-title">Experience & Skills</h5>
+
+            {/* Min Experience */}
+            <div className="row mb-3">
+              <div className="col-12 col-md-4 fw-semibold">Min Experience(Years)</div>
+              <div className="col-12 col-md-8">
+                <input
+                  type="number"
+                  className={`form-control ${formErrors.experience ? 'is-invalid' : ''}`}
+                  value={newJob.experience?.min || ""}
+                  min={0} 
+                  max={50}
+                  onChange={(e) =>
+                    setNewJob({
+                      ...newJob,
+                      experience: {
+                        ...newJob.experience,
+                        min: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </div>
+            </div>
+
+            {/* Max Experience */}
+            <div className="row mb-3">
+              <div className="col-12 col-md-4 fw-semibold">Max Experience(Years)</div>
+              <div className="col-12 col-md-8">
+                <input
+                  type="number"
+                  className={`form-control ${formErrors.experience ? 'is-invalid' : ''}`}
+                  min={0} 
+                  max={50}
+                  value={newJob.experience?.max || ""}
+                  onChange={(e) =>
+                    setNewJob({
+                      ...newJob,
+                      experience: {
+                        ...newJob.experience,
+                        max: e.target.value,
+                      },
+                    })
+                  }
+                />
+                {formErrors.experience && (
+                  <div className="invalid-feedback d-block">
+                    {formErrors.experience}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Skills */}
+            <div className="row align-items-center mb-3">
+              <div className="col-12 col-md-4 fw-semibold">Important Skills *</div>
+              <div className="col-12 col-md-8">
+                <input
+                  className={`form-control ${formErrors.importantSkills ? 'is-invalid' : ''}`}
+                  maxLength={100}
+                  value={newJob.importantSkills.join(", ") || ""}
+                  onChange={(e) =>
+                    setNewJob({
+                      ...newJob,
+                      importantSkills: e.target.value
+                        .split(",")
+                        .map((s) => s.trim()),
+                    })
+                  }
+                  placeholder="Enter skills separated by commas"
+                />
+                {formErrors.importantSkills && (
+                  <div className="invalid-feedback d-block">
+                    {formErrors.importantSkills}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Due Date */}
+            <div className="row align-items-center mb-3">
+              <div className="col-12 col-md-4 fw-semibold">Due On *</div>
+              <div className="col-12 col-md-8">
+                <input
+                  type="date"
+                  className={`form-control ${formErrors.dueOn ? 'is-invalid' : ''}`}
+                  value={newJob.dueOn || ""}
+                  onChange={(e) =>
+                    setNewJob({ ...newJob, dueOn: e.target.value })
+                  }
+                />
+                {formErrors.dueOn && (
+                  <div className="invalid-feedback d-block">
+                    {formErrors.dueOn}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-sm custom-outline-btn "
+                style={{ minWidth: 90 }}
+                onClick={() => {
+                  setShowAddJob(false);
+                  setEditJobId(null);
+                }}
+              >
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-sm custom-outline-btn" style={{ minWidth: 90 }}>
+                {editJobId ? "Save Changes" : "Save"}
+              </button>
+            </div>
+          </form>
         </div>
-      )}
+      </div>
+    </div>
+  </div>
+)}
 
 
 

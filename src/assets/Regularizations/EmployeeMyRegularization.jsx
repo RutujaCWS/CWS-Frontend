@@ -499,15 +499,11 @@ function EmployeeMyRegularization({ employeeId, refreshKey }) {
               </label>
               <input
                 id="dateFromFilter"
-                type="text"
+                type="date"
                 className="form-control"
-                placeholder="dd-mm-yyyy"
-                onFocus={(e) => (e.target.type = "date")}
-                onBlur={(e) => {
-                  if (!e.target.value) e.target.type = "text";
-                }}
                 value={dateFromFilter}
                 onChange={(e) => setDateFromFilter(e.target.value)}
+                max={dateToFilter}
                 style={{ minWidth: "140px" }}
               />
             </div>
@@ -527,15 +523,11 @@ function EmployeeMyRegularization({ employeeId, refreshKey }) {
               </label>
               <input
                 id="dateToFilter"
-                type="text"
+                type="date"
                 className="form-control"
-                placeholder="dd-mm-yyyy"
-                onFocus={(e) => (e.target.type = "date")}
-                onBlur={(e) => {
-                  if (!e.target.value) e.target.type = "text";
-                }}
                 value={dateToFilter}
                 onChange={(e) => setDateToFilter(e.target.value)}
+                min={dateFromFilter}
                 style={{ minWidth: "140px" }}
               />
             </div>

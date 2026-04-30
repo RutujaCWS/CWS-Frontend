@@ -1043,15 +1043,12 @@ useEffect(() => {
       <button
         className="btn btn-sm custom-outline-btn"
         style={{ minWidth: 90 }}
-        onClick={() =>
-          navigate(
-            `/dashboard/${role}/${username}/${id}/hr-core-dashboard`
-          )
-        }
+        onClick={() => navigate(-1)}
       >
         Back
       </button>
       </div>
+
     </div>
   );
 }

@@ -642,32 +642,49 @@ const [tl, setTl] = useState("");
         {/* mahesh code header change font size */}
       </div>
 
-        <div className="d-flex flex-wrap gap-2 justify-content-center">
+      <div className="d-flex flex-wrap gap-2 justify-content-center mb-3">
+  {isAdminRole && (
+    <>
+      <button
+        type="button"
+        className="btn btn-sm"
+        style={{
+          backgroundColor:
+            activeView === "all" ? "#3A5FBE" : "transparent",
+          border: "1px solid #3A5FBE",
+          color:
+            activeView === "all" ? "#fff" : "#3A5FBE",
+          minWidth: "120px",
+        }}
+        onClick={() => setActiveView("all")}
+      >
+        All Requests
+      </button>
 
-          {/* Admin Only: View Toggle Buttons */}
-          {isAdminRole && (
-            <>
-              <button
-                className={`btn btn-sm custom-outline-btn ${activeView === "all" ? "btn-primary" : ""}`}
-                onClick={() => setActiveView("all")}
-              >
-                All Requests
-              </button>
+      <button
+        type="button"
+        className="btn btn-sm"
+        style={{
+          backgroundColor:
+            activeView === "pending" ? "#3A5FBE" : "transparent",
+          border: "1px solid #3A5FBE",
+          color:
+            activeView === "pending" ? "#fff" : "#3A5FBE",
+          minWidth: "120px",
+        }}
+        onClick={() => {
+          setActiveView("pending");
 
-              <button
-                className={`btn btn-sm custom-outline-btn ${activeView === "pending" ? "active" : ""}`}
-                onClick={() => {
-                  setActiveView("pending");
-                  if (pendingRequests.length === 0) {
-                    fetchPendingRequests();
-                  }
-                }}
-              >
-                Manager Requests
-              </button>
-            </>
-          )}
-        </div>
+          if (pendingRequests.length === 0) {
+            fetchPendingRequests();
+          }
+        }}
+      >
+        Manager Requests
+      </button>
+    </>
+  )}
+</div>
      
 
       {/* FILTER BAR (only for "All Requests" view) */}
@@ -778,11 +795,9 @@ const [tl, setTl] = useState("");
             ref={createModalRef}  
             tabIndex="-1" 
           >
-            <div className="modal-dialog "
+            <div className= "modal-dialog modal-lg modal-dialog-centered"
           style={{
-            maxWidth: "650px",
-            width: "95%",
-            marginTop: "80px" ,
+            maxWidth: "600px", width: "95%"
           }}>
               <div className="modal-content">
                 <div
@@ -1491,66 +1506,80 @@ const [tl, setTl] = useState("");
               </div>
 
               <div className="modal-body" style={{ maxHeight: "60vh" }}>
-                {[
-                  ["Request ID", selectedPerformance.requestId],
-                  ["Employee Name", selectedPerformance.employeeName],
-                  ["Employee ID", selectedPerformance.employeeId],
-                  ["Manager", selectedPerformance.manager],
-                  ["Department", selectedPerformance.department],
-                  [
-                    "Duration",
-                    `${selectedPerformance.durationType} - ${
-                      selectedPerformance.durationType === "Monthly"
-                        ? new Date(
-                            selectedPerformance.durationDate,
-                          ).toLocaleString("default", {
-                            month: "long",
-                            year: "numeric",
-                          })
-                        : new Date(
-                            selectedPerformance.durationDate,
-                          ).toLocaleDateString()
-                    }`,
-                  ],
-                  ["Rating", selectedPerformance.rating ?? "-"],
-                  ["Status", selectedPerformance.status],
-                  ["Recommendation", selectedPerformance.recommendation || "-"],
-                  [
-                    "Admin Status",
-                    selectedPerformance.adminStatus || "pending",
-                  ],
-                ].map(([label, value]) => (
-                  <div className="row mb-2" key={label}>
-                    <div className="col-4 fw-semibold">{label}</div>
-                    <div className="col-8">{value}</div>
-                  </div>
-                ))}
+
+
+{[
+  ["Request ID", selectedPerformance.requestId],
+  ["Employee Name", selectedPerformance.employeeName],
+  ["Employee ID", selectedPerformance.employeeId],
+  ["Manager", selectedPerformance.manager],
+  ["Department", selectedPerformance.department],
+  [
+    "Duration",
+    `${selectedPerformance.durationType} - ${
+      selectedPerformance.durationType === "Monthly"
+        ? new Date(
+            selectedPerformance.durationDate
+          ).toLocaleString("default", {
+            month: "long",
+            year: "numeric",
+          })
+        : new Date(
+            selectedPerformance.durationDate
+          ).toLocaleDateString()
+    }`,
+  ],
+  ["Rating", selectedPerformance.rating ?? "-"],
+  ["Status", selectedPerformance.status],
+  ["Recommendation", selectedPerformance.recommendation || "-"],
+  ["Admin Status", selectedPerformance.adminStatus || "pending"],
+].map(([label, value]) => (
+  <div
+    className="row"
+    key={label}
+    style={{
+      marginBottom: "12px",
+      alignItems: "flex-start",
+    }}
+  >
+    <div className="col-5 col-sm-4 fw-semibold">
+      {label}
+    </div>
+
+    <div
+      className="col-7 col-sm-8"
+      style={{
+        wordBreak: "break-word",
+        paddingLeft: "10px",
+      }}
+    >
+      {value}
+    </div>
+  </div>
+))}
 
                 {selectedPerformance.adminStatus === "approved" &&
                   selectedPerformance.approvedBy && (
-                    <div className="row mb-2">
-                      <div className="col-4 fw-semibold">Approved By</div>
-                      <div className="col-8">
-                        <span className="fw-semibold">
-                          {selectedPerformance.approvedBy.name || "N/A"}
-                        </span>
-                        {selectedPerformance.approvedAt && (
-                          <span className="text-muted ms-2">
-                            on{" "}
-                            {new Date(
-                              selectedPerformance.approvedAt,
-                            ).toLocaleDateString()}
-                          </span>
-                        )}
-                      </div>
-                    </div>
+                  <div className="row mb-2">
+  <div className="col-5 col-sm-4 fw-semibold">Approved By</div>
+  <div className="col-7 col-sm-8" style={{ paddingLeft: "10px" }}>
+    <span className="fw-semibold">
+      {selectedPerformance.approvedBy.name || "N/A"}
+    </span>
+    {selectedPerformance.approvedAt && (
+      <span className="text-muted ms-2">
+        on {new Date(selectedPerformance.approvedAt).toLocaleDateString()}
+      </span>
+    )}
+  </div>
+</div>
                   )}
 
                 {selectedPerformance.adminStatus === "rejected" &&
                   selectedPerformance.rejectedBy && (
                     <div className="row mb-2">
-                      <div className="col-4 fw-semibold">Rejected By</div>
-                      <div className="col-8">
+                      <div className="col-5 col-sm-4 fw-semibold">Rejected By</div>
+                      <div className="col-7 col-sm-8"style={{ paddingLeft: "10px" }}>
                         <span className="fw-semibold">
                           {selectedPerformance.rejectedBy.name || "N/A"}
                         </span>
@@ -1573,12 +1602,12 @@ const [tl, setTl] = useState("");
                     <div
                       className="p-2 border rounded bg-light"
                      tabIndex={-1}
-                     style={{ 
-                      whiteSpace: "pre-wrap",
-                      maxHeight: "60px",        
-                      overflowY: "auto",
-                      wordBreak: "break-word"
-                    }}
+                  style={{
+  whiteSpace: "pre-wrap",
+  maxHeight: "120px",
+  overflowY: "auto",
+  wordBreak: "break-word",
+}}
                     >
                       {selectedPerformance.description}
                     </div>

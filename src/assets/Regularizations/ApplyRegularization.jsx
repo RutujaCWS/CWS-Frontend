@@ -752,7 +752,7 @@ function ApplyRegularization({ user, selectedRecord }) {
 
                 <form onSubmit={handleSubmit}>
                   <div className="mb-2">
-                    <label className="form-label">Date</label>
+                    <label className="form-label">Date<span style={{ color: "red" }}>  *</span></label>
                     <input
                       type="date"
                       className="form-control"
@@ -801,7 +801,7 @@ function ApplyRegularization({ user, selectedRecord }) {
                   {/* ✅ Requested Check-In Time */}
                   <div className="mb-2">
                     <label className="form-label">
-                      Requested Check-In Time
+                      Requested Check-In Time<span style={{ color: "red" }}>  *</span>
                     </label>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <TimePicker
@@ -838,7 +838,7 @@ function ApplyRegularization({ user, selectedRecord }) {
                   {/* ✅ Requested Check-Out Time */}
                   <div className="mb-2">
                     <label className="form-label">
-                      Requested Check-Out Time
+                      Requested Check-Out Time<span style={{ color: "red" }}>  *</span>
                     </label>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <TimePicker
@@ -886,7 +886,7 @@ function ApplyRegularization({ user, selectedRecord }) {
                   </div>
 
                   <div className="mb-2">
-                    <label className="form-label">Reason </label>
+                    <label className="form-label">Reason<span style={{ color: "red" }}>  *</span> </label>
                     <textarea
                       className="form-control"
                       placeholder="Enter reason (Max 300 characters)"

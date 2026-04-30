@@ -532,6 +532,7 @@ useEffect(() => {
                       <input
                         className="form-control mb-2"
                         placeholder="Title"
+                        maxLength="40"
                         value={item.title}
                         onChange={(e) =>
                           handleChange(index, "title", e.target.value)
@@ -720,134 +721,131 @@ useEffect(() => {
             </thead>
 
             <tbody>
-              {galleryItems.length === 0 ? (
+              {filteredItems.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan="5"
-                    className="text-center py-4"
-                    style={{ color: "#6c757d" }}
-                  >
-                    No records found
+                  <td colSpan="5" className="text-center py-4" style={{ color: "#6c757d", fontWeight: "400" }}>
+                    No record found
                   </td>
                 </tr>
               ) : (
-                filteredItems
-                  .slice(indexOfFirstItem, indexOfLastItem)
-                  .map((item) => (
-                    <tr
-                      key={item._id}
-                      className="align-middle"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => handleRowClick(item)}
+                filteredItems.slice(indexOfFirstItem, indexOfLastItem).map((item) => (
+                  <tr
+                    key={item._id}
+                    className="align-middle"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => handleRowClick(item)}
+                  >
+                    <td
+                      style={{
+                        padding: "12px",
+                        fontSize: "14px",
+                        borderBottom: "1px solid #dee2e6",
+                        whiteSpace: "nowrap",
+                      }}
                     >
-                      <td
-                        style={{
-                          padding: "12px",
-                          fontSize: "14px",
-                          borderBottom: "1px solid #dee2e6",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {item.title}
-                      </td>
+                      {item.title}
+                    </td>
+                  <td
+  style={{
+    padding: "12px",
+    fontSize: "14px",
+    borderBottom: "1px solid #dee2e6",
+    maxWidth: "100px",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  }}
+  title={item.description}
+>
+  {item.description || "-"}
+</td>
 
-                      <td
-                        style={{
-                          padding: "12px",
-                          fontSize: "14px",
-                          borderBottom: "1px solid #dee2e6",
-                        }}
-                      >
-                        {item.description}
-                      </td>
+                    <td
+                      style={{
+                        padding: "12px",
+                        fontSize: "14px",
+                        borderBottom: "1px solid #dee2e6",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {item.category}
+                    </td>
 
-                      <td
-                        style={{
-                          padding: "12px",
-                          fontSize: "14px",
-                          borderBottom: "1px solid #dee2e6",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {item.category}
-                      </td>
-
-                      <td
-                        style={{
-                          padding: "12px",
-                          fontSize: "14px",
-                          borderBottom: "1px solid #dee2e6",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {item.type === "image" && (
-                          <img
-                            src={item.url}
-                            style={{
-                              width: "100px",
-                              height: "50px",
-                              objectFit: "cover",
-                              borderRadius: "6px",
+                    <td
+                      style={{
+                        padding: "12px",
+                        fontSize: "14px",
+                        borderBottom: "1px solid #dee2e6",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {item.type === "image" && (
+                        <img
+                          src={item.url}
+                          style={{
+                            width: "100px",
+                            height: "50px",
+                            objectFit: "cover",
+                            borderRadius: "6px",
+                          }}
+                          className="rounded"
+                        />
+                      )}
+                      {item.type === "video" && <span>🎥 Video</span>}
+                      {item.type === "pdf" && (
+                        <div className="d-flex align-items-center gap-2">
+                          <span style={{ fontSize: "20px" }}>📄</span>
+                          <span 
+                            style={{ 
+                              fontSize: "13px",
+                              color: "#3A5FBE",
+                              textDecoration: "underline",
+                              cursor: "pointer"
                             }}
-                            className="rounded"
-                          />
-                        )}
-                        {item.type === "video" && <span>🎥 Video</span>}
-                        {/* rutuja code start */}
-                        {item.type === "pdf" && (
-                          <div className="d-flex align-items-center gap-2">
-                            <span style={{ fontSize: "20px" }}>📄</span>
-                            <span 
-                              style={{ 
-                                fontSize: "13px",
-                                color: "#3A5FBE",
-                                textDecoration: "underline",
-                                cursor: "pointer"
-                              }}
-                              title={item.title || getFileNameFromUrl(item.url)}
-                            >
-                              {item.title || getFileNameFromUrl(item.url)}
-                            </span>
-                          </div>
-                        )}
-                      </td>
-
-                      <td
-                        style={{
-                          padding: "12px",
-                          fontSize: "14px",
-                          borderBottom: "1px solid #dee2e6",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        <div className="d-flex gap-2 justify-content-center">
-                          <button
-                            className="btn btn-sm custom-outline-btn"
-                            style={{ minWidth: 90 }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEdit(item);
-                            }}
+                            title={item.title || getFileNameFromUrl(item.url)}
                           >
-                            Edit
-                          </button>
-
-                          <button
-                            className="btn btn-sm btn-outline-danger"
-                            style={{ minWidth: 90 }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(item._id);
-                            }}
-                          >
-                            Delete
-                          </button>
+                            {item.title || getFileNameFromUrl(item.url)}
+                          </span>
                         </div>
-                      </td>
-                    </tr>
-                  ))
+                      )}
+                    </td>
+
+                    <td
+                      style={{
+                        padding: "12px",
+                        fontSize: "14px",
+                        borderBottom: "1px solid #dee2e6",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      <div className="d-flex gap-2 justify-content-center">
+                        <button
+                          className="btn btn-sm custom-outline-btn"
+                          style={{ minWidth: 90 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(item);
+                          }}
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          className="btn btn-sm btn-outline-danger"
+                          style={{ minWidth: 90 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(item._id);
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
               )}
-            </tbody>
+            </tbody>          
           </table>
         </div>
       </div>
@@ -1027,7 +1025,17 @@ useEffect(() => {
 
                 <div className="row mb-2">
                   <div className="col-4 fw-semibold">Description</div>
-                  <div className="col-8">{viewItem.description || "-"}</div>
+                 <div
+  className="col-8"
+  style={{
+    maxHeight: "120px",
+    overflowY: "auto",
+    whiteSpace: "pre-wrap",
+    wordBreak: "break-word",
+  }}
+>
+  {viewItem.description || "-"}
+</div>
                 </div>
 
                 <div className="row mb-2">
@@ -1142,7 +1150,7 @@ useEffect(() => {
                     <input
                       className="form-control"
                       value={editData.title}
-                      maxLength="50"
+                      maxLength="40"
                       onChange={(e) =>
                         setEditData((p) => ({ ...p, title: e.target.value }))
                       }

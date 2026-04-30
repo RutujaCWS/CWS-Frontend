@@ -503,6 +503,7 @@ function AdminDashboardTMS() {
                               className={`badge ${
                                 isDelayed ? "bg-danger" : "bg-success"
                               }`}
+                              style={{ minWidth: "70px", display: "inline-block", textAlign: "center" }}
                             >
                               {isDelayed ? "Delayed" : "On Track"}
                             </span>

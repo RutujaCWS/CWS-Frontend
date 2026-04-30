@@ -160,6 +160,8 @@ function AdminAddLeaveBalance({fetchNotifications}) {
 
   // 🔹 Fetch all leaves Added by Rutuja
   useEffect(() => {
+    if (!user) return;
+     setLoadingLeaves(true);
     axios
       .get("https://cws-backend-roan.vercel.app/leaves")
       .then((res) => {
@@ -499,7 +501,36 @@ fetchNotifications();
     };
   }, [selectedLeave]);
   // dip code changes 11-02-2026
+  if (loadingLeaves) {
+    return (
+      <div
+        style={{
+          height: "100vh",
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          
+        }}
+      >
+        <div className="text-center">
+          <div
+            className="spinner-grow"
+            role="status"
+            style={{ width: "4rem", height: "4rem", color: "#3A5FBE" }}
+          >
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-3 fw-semibold" style={{ color: "#3A5FBE" }}>
+            Loading, please wait...
+          </p>
+        </div>
+      </div>
+    );
+  }
+  
   return (
+
     <div className="container-fluid">
       <h3 className="mb-4 " style={{ color: "#3A5FBE", fontSize: "25px" }}>
         Leaves
@@ -921,7 +952,7 @@ fetchNotifications();
 
       {/* Leave Applications Table */}
       <>
-        {loadingLeaves ? (
+        {/* {loadingLeaves ? (
           // <h5>Loading leave applications...</h5>
           <div
             className="d-flex flex-column justify-content-center align-items-center"
@@ -938,7 +969,9 @@ fetchNotifications();
               Loading ...
             </p>
           </div>
-        ) : leaves.length === 0 ? (
+        ) : */}
+        {
+         leaves.length === 0 ? (
           <p>No leave applications found.</p>
         ) : (
           <div className="card shadow-sm border-0 mt-5">

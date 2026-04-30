@@ -34,10 +34,11 @@ function ChangePassword() {
     }
 
     // 🔹 Confirm password match
-    if (newPassword !== confirmPassword) {
-      setPasswordError("New password and confirm password do not match.");
+    if (newPassword.length < 6 || newPassword.length > 20) {
+      setPasswordError("Password must be between 8 and 20 characters long.");
       return;
     }
+    
 
     // 🔹 Strength validation (min 6 chars + upper + lower + digit + special)
     const passwordRegex =
@@ -165,6 +166,7 @@ function ChangePassword() {
                 onChange={handlePasswordInputChange}
                 className="form-control bg-light pe-5"
                 placeholder="Enter new password"
+                maxLength="20"
               />
               <i
                 className={`bi ${
@@ -198,6 +200,7 @@ function ChangePassword() {
                 onChange={handlePasswordInputChange}
                 className="form-control bg-light pe-5"
                 placeholder="Re-enter new password"
+                maxLength="20"
               />
               <i
                 className={`bi ${

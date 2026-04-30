@@ -1499,7 +1499,7 @@ const handleStartBreak = async () => {
                   <div className="card shadow-sm border-0 mb-2">
                     <div className="card-body d-flex justify-content-between align-items-center">
                       {/* Left Content */}
-                      <div style={{ color: "#3A5FBE", fontSize: "25px" }}
+                      <div style={{ color: "#3A5FBE", fontSize: "25px", cursor: "pointer" }}
                       onClick={() =>
                         navigate(`/dashboard/${role}/${username}/${id}/leavebalance`)
                       }>

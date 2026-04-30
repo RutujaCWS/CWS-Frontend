@@ -269,16 +269,25 @@ function HrPolicy() {
       alert("Title and Description required");
       return;
     }
-
+  
+    if (newPolicy.pdf && !newPolicy.pdf.type.includes("pdf") && !newPolicy.pdf.name.endsWith(".pdf")) {
+      alert("Only PDF files are allowed");
+      return;
+    }
+    if (newPolicy.pdf && newPolicy.pdf.size > 5 * 1024 * 1024) {
+      alert("File size should not exceed 5MB");
+      return;
+    }
+  
     try {
       const formData = new FormData();
       formData.append("title", newPolicy.title);
       formData.append("description", newPolicy.description);
-
+  
       if (newPolicy.pdf) {
         formData.append("pdf", newPolicy.pdf);
       }
-
+  
       const res = await axios.post(
         `${API_BASE}/policy/create`,
         formData,
@@ -288,7 +297,7 @@ function HrPolicy() {
           },
         }
       );
-
+  
       if (res.data.success) {
         alert(res.data.message);
         setShowAddModal(false);
@@ -300,7 +309,7 @@ function HrPolicy() {
       alert("Failed to create policy");
     }
   };
-
+  
 
   const fetchPolicies = async () => {
     try {
@@ -368,16 +377,24 @@ function HrPolicy() {
   //update by shivani
   const handleSave = async () => {
     if (!selectedPolicy) return;
-
+  
+    if (editFile && !editFile.type.includes("pdf") && !editFile.name.endsWith(".pdf")) {
+      alert("Only PDF files are allowed");
+      return;
+    }
+    if (editFile && editFile.size > 5 * 1024 * 1024) {
+      alert("File size should not exceed 5MB");
+      return;
+    }
+  
     try {
       const formData = new FormData();
       formData.append("title", policyForm.title);
       formData.append("description", policyForm.description);
-
+  
       if (editFile) {
-        formData.append("pdf", editFile); // ✅ only if new file selected
+        formData.append("pdf", editFile);
       }
-
       const res = await axios.put(
         `${API_BASE}/policy/update/${selectedPolicy._id}`,
         formData,
@@ -387,7 +404,7 @@ function HrPolicy() {
           },
         }
       );
-
+  
       if (res.data.success) {
         alert(res.data.message);
         fetchPolicies();
@@ -401,6 +418,7 @@ function HrPolicy() {
       alert("Failed to update policy");
     }
   };
+
 
   const deletePolicy = async (pid) => {
     if (!window.confirm("Delete this policy?")) return;
@@ -619,204 +637,164 @@ function HrPolicy() {
             </thead>
 
             <tbody>
-              {currentPolicies.map((policy) => (
-              <tr
-                key={policy._id}
-                style={{
-                  cursor: "pointer",
-                  backgroundColor: "transparent",
-                  transition: "background-color 0.2s"
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#e9ecef";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                }}
-                onClick={() => handleRowClick(policy)}
-              >
-                  {/* ✅ TITLE + BADGES */}
-                  <td style={{      padding: "10px",
-                        verticalAlign: "middle",
-                        fontSize: "14px",
-                        borderBottom: "1px solid #dee2e6",
-                        whiteSpace: "nowrap", }}>
-                    {policy.title}
-
-                    {/* 🆕 NEW */}
-                    {isNewPolicy(policy.createdAt) && (
-                      <span
-                        style={{
-                          marginLeft: "8px",
-                          fontSize: "11px",
-                          background: "#dcfce7",
-                          color: "#166534",
-                          padding: "2px 6px",
-                          borderRadius: "6px",
-                          fontWeight: 600,
-                        }}
-                      >
-                        NEW
-                      </span>
-                    )}
-
-                    {/* ✏️ UPDATED */}
-                    {isUpdatedPolicy(policy) && (
-                      <span
-                        style={{
-                          marginLeft: "6px",
-                          fontSize: "11px",
-                          background: "#e0f2fe",
-                          color: "#075985",
-                          padding: "2px 6px",
-                          borderRadius: "6px",
-                          fontWeight: 600,
-                        }}
-                      >
-                        UPDATED
-                      </span>
-                    )}
-                  </td>
-
-                        <td
-                    style={{
-                      padding: "10px",
-                        verticalAlign: "middle",
-                        fontSize: "14px",
-                        borderBottom: "1px solid #dee2e6",
-                        whiteSpace: "nowrap",
-                    }}
-                    title={policy.description}
-                  >
-                    {policy.description}
-                  </td>
-
-                 <td   style={{
-                        padding: "10px",
-                        verticalAlign: "middle",
-                        fontSize: "14px",
-                        borderBottom: "1px solid #dee2e6",
-                        whiteSpace: "nowrap",
-                      }}>
-                    {policy.image ? (
-                      <a
-                        href={policy.image}//rutuja 03-04-26  
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()} // prevent row click
-                        style={{
-                          color: "#3A5FBE",
-                          fontWeight: 500,
-                          textDecoration: "none",
-                        }}
-                      >
-                        📄 View File
-                      </a>
-                    ) : (
-                      <span style={{ color: "#9ca3af" }}></span>
-                    )}
-                  </td>
-
-                  {/* //remove by harshada */}
-                  {/* <td style={tdStyle}>
-                    {(() => {
-                      const acks = getAllAcksForPolicy(policy._id);
-
-                      if (acks.length === 0) return "-";
-
-                      const latest = acks
-                        .map((a) => new Date(a.acknowledgedAt))
-                        .sort((a, b) => b - a)[0];
-
-                      return latest.toLocaleString();
-                    })()}
-                  </td> */}
-
-                  {/* //Added by Shivani */}
-
-                
-                    <td   style={{
-                        padding: "10px",
-                        verticalAlign: "middle",
-                        fontSize: "14px",
-                        borderBottom: "1px solid #dee2e6",
-                        whiteSpace: "nowrap",
-                      }}>
-                    <button
-                      className="btn btn-sm custom-outline-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setStatusPolicy(policy);
-                        setShowStatusModal(true);
-                      }}
-                    >
-                      View Status
-                    </button>
-                  </td>
-                  <td   style={{
-                        padding: "10px",
-                        verticalAlign: "middle",
-                        fontSize: "14px",
-                        borderBottom: "1px solid #dee2e6",
-                        whiteSpace: "nowrap",
-                      }}>
-                    <div style={{ display: "flex", gap: "8px" }}>
-                      {canEdit ? (
-                        <>
-                          <button
-                            className="btn btn-sm custom-outline-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEditClick(policy);
-                            }}
-                          >
-                            Edit
-                          </button>
-
-                         <button
-                          type="button"
-                          tabIndex="0"
-                          className="btn btn-sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deletePolicy(policy._id);
-                          }}
-                          onMouseEnter={(e) => {
-                            e.target.style.backgroundColor = "#dc3545";
-                            e.target.style.color = "#ffffff";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.backgroundColor = "transparent";
-                            e.target.style.color = "#dc3545";
-                          }}
-                          onFocus={(e) => {
-                            e.target.style.boxShadow = "0 0 0 2px rgba(58,95,190,0.4)";
-                          }}
-                          onBlur={(e) => {
-                            e.target.style.boxShadow = "none";
-                          }}
-                          style={{
-                            border: "1px solid #dc3545",
-                            color: "#dc3545",
-                            background: "transparent",
-                            outline: "none"
-                          }}
-                        >
-                          Delete
-                        </button>
-                        </>
-                      ) : (
-                        <button
-                          className="btn btn-sm custom-outline-btn"
-                          onClick={() => handleViewClick(policy)}
-                        >
-                          View
-                        </button>
-                      )}
-                    </div>
+              {currentPolicies.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="text-center py-4" style={{ color: "#6c757d", fontWeight: "300" }}>
+                    No record found
                   </td>
                 </tr>
-              ))}
+              ) : (
+                currentPolicies.map((policy) => (
+                  <tr
+                    key={policy._id}
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: "transparent",
+                      transition: "background-color 0.2s"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "#e9ecef";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                    onClick={() => handleRowClick(policy)}
+                  >
+                    {/* ✅ TITLE + BADGES */}
+                    <td style={{ padding: "10px", verticalAlign: "middle", fontSize: "14px", borderBottom: "1px solid #dee2e6", whiteSpace: "nowrap" }}>
+                      {policy.title}
+
+                      {/* 🆕 NEW */}
+                      {isNewPolicy(policy.createdAt) && (
+                        <span
+                          style={{
+                            marginLeft: "8px",
+                            fontSize: "11px",
+                            background: "#dcfce7",
+                            color: "#166534",
+                            padding: "2px 6px",
+                            borderRadius: "6px",
+                            fontWeight: 600,
+                          }}
+                        >
+                          NEW
+                        </span>
+                      )}
+
+                      {/* ✏️ UPDATED */}
+                      {isUpdatedPolicy(policy) && (
+                        <span
+                          style={{
+                            marginLeft: "6px",
+                            fontSize: "11px",
+                            background: "#e0f2fe",
+                            color: "#075985",
+                            padding: "2px 6px",
+                            borderRadius: "6px",
+                            fontWeight: 600,
+                          }}
+                        >
+                          UPDATED
+                        </span>
+                      )}
+                    </td>
+
+                    <td style={{ padding: "10px", verticalAlign: "middle", fontSize: "14px", borderBottom: "1px solid #dee2e6", whiteSpace: "nowrap" }} title={policy.description}>
+                      {policy.description}
+                    </td>
+
+                    <td style={{ padding: "10px", verticalAlign: "middle", fontSize: "14px", borderBottom: "1px solid #dee2e6", whiteSpace: "nowrap" }}>
+                      {policy.image ? (
+                        <a
+                          href={policy.image}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          style={{
+                            color: "#3A5FBE",
+                            fontWeight: 500,
+                            textDecoration: "none",
+                          }}
+                        >
+                          📄 View File
+                        </a>
+                      ) : (
+                        <span style={{ color: "#9ca3af" }}></span>
+                      )}
+                    </td>
+
+                    <td style={{ padding: "10px", verticalAlign: "middle", fontSize: "14px", borderBottom: "1px solid #dee2e6", whiteSpace: "nowrap" }}>
+                      <button
+                        className="btn btn-sm custom-outline-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setStatusPolicy(policy);
+                          setShowStatusModal(true);
+                        }}
+                      >
+                        View Status
+                      </button>
+                    </td>
+
+                    <td style={{ padding: "10px", verticalAlign: "middle", fontSize: "14px", borderBottom: "1px solid #dee2e6", whiteSpace: "nowrap" }}>
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        {canEdit ? (
+                          <>
+                            <button
+                              className="btn btn-sm custom-outline-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditClick(policy);
+                              }}
+                            >
+                              Edit
+                            </button>
+
+                            <button
+                              type="button"
+                              tabIndex="0"
+                              className="btn btn-sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deletePolicy(policy._id);
+                              }}
+                              onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = "#dc3545";
+                                e.target.style.color = "#ffffff";
+                              }}
+                              onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = "transparent";
+                                e.target.style.color = "#dc3545";
+                              }}
+                              onFocus={(e) => {
+                                e.target.style.boxShadow = "0 0 0 2px rgba(58,95,190,0.4)";
+                              }}
+                              onBlur={(e) => {
+                                e.target.style.boxShadow = "none";
+                              }}
+                              style={{
+                                border: "1px solid #dc3545",
+                                color: "#dc3545",
+                                background: "transparent",
+                                outline: "none"
+                              }}
+                            >
+                              Delete
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            className="btn btn-sm custom-outline-btn"
+                            onClick={() => handleViewClick(policy)}
+                          >
+                            View
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -941,6 +919,7 @@ function HrPolicy() {
                 <label className="fw-semibold mb-1">Policy Title</label>
                 <input
                   className="form-control mb-3"
+                  maxLength={50}
                   value={policyForm.title}
                   onChange={(e) =>
                     setPolicyForm({ ...policyForm, title: e.target.value })
@@ -975,10 +954,22 @@ function HrPolicy() {
                 <label className="fw-semibold mb-1 mt-2">Upload Policy PDF</label>
                 <input
                   type="file"
-                  accept="application/pdf"
+                  accept=".pdf,application/pdf"
                   className="form-control"
-                  onChange={(e) => setEditFile(e.target.files[0])}
-
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file && !file.type.includes("pdf") && !file.name.endsWith(".pdf")) {
+                      alert("Only PDF files are allowed. Please select a PDF file.");
+                      e.target.value = "";
+                      return;
+                    }
+                    if (file && file.size > 5 * 1024 * 1024) {
+                      alert("File size should not exceed 5MB");
+                      e.target.value = "";
+                      return;
+                    }
+                    setEditFile(file);
+                  }}
                 />
 
                 {/*  */}
@@ -1053,6 +1044,7 @@ function HrPolicy() {
                     <input
                       className="form-control"
                       placeholder="Enter policy title"
+                      maxLength={50}
                       value={newPolicy.title}
                       onChange={(e) =>
                         setNewPolicy({ ...newPolicy, title: e.target.value })
@@ -1098,9 +1090,20 @@ function HrPolicy() {
                       type="file"
                       accept="application/pdf"
                       className="form-control"
-                      onChange={(e) =>
-                        setNewPolicy({ ...newPolicy, pdf: e.target.files[0] })
-                      }
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file && !file.type.includes("pdf") && !file.name.endsWith(".pdf")) {
+                          alert("Only PDF files are allowed");
+                          e.target.value = "";
+                          return;
+                        }
+                        if (file && file.size > 5 * 1024 * 1024) {
+                          alert("File size should not exceed 5MB");
+                          e.target.value = "";
+                          return;
+                        }
+                        setNewPolicy({ ...newPolicy, pdf: file });
+                      }}
                     />
                   </div>
                 </div>
@@ -1170,35 +1173,29 @@ function HrPolicy() {
             {startIndex + 1}-{endIndex} of {totalItems}
           </span>
 
-          {/* Prev */}
-          <button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => p - 1)}
-            style={{
-              border: "none",
-              background: "transparent",
-              fontSize: "18px",
-              cursor: currentPage === 1 ? "not-allowed" : "pointer",
-              color: currentPage === 1 ? "#cbd5e1" : "#334155",
-            }}
-          >
-            ‹
-          </button>
+          <div
+                className="d-flex align-items-center"
+                style={{ marginLeft: "16px" }}
+              >
+              <button
+              className="btn btn-sm focus-ring"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => p - 1)}
+              style={{ fontSize: "18px", padding: "2px 8px" }}
+              >
+                ‹
+              </button>
 
-          {/* Next */}
-          <button
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((p) => p + 1)}
-            style={{
-              border: "none",
-              background: "transparent",
-              fontSize: "18px",
-              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-              color: currentPage === totalPages ? "#cbd5e1" : "#334155",
-            }}
-          >
-            ›
-          </button>
+              {/* Next */}
+              <button
+                disabled={currentPage === totalPages}
+                className="btn btn-sm focus-ring"
+                onClick={() => setCurrentPage((p) => p + 1)}
+              style={{ fontSize: "18px", padding: "2px 8px" }}
+              >
+                ›
+              </button>
+           </div>
         </div>
       )}
 

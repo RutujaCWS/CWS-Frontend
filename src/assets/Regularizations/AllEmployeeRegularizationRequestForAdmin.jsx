@@ -448,17 +448,17 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                 }}
               >
                 {/* Status Filter */}
-                <div className="col-12 col-md-auto d-flex align-items-center gap-2 mb-1 ms-2">
+                <div className="col-12 col-md-auto d-flex align-items-center gap-1 mb-1">
                   <label
                     htmlFor="statusFilter"
                     className="fw-bold mb-0 text-start text-md-end" //mahesh code
                     style={{
                       // mahesh code style change
-                      width: "55px",
+                      // width: "55px",
                       minWidth: "55px",
                       fontSize: "16px",
                       color: "#3A5FBE",
-                      marginRight: "4px", // mahesh
+                      // marginRight: "4px", // mahesh
                     }}
                   >
                     Status
@@ -477,17 +477,17 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                   </select>
                 </div>
                 {/* Name Filter */}
-                <div className="col-12 col-md-auto d-flex align-items-center gap-2 mb-1 ms-2">
+                <div className="col-12 col-md-auto d-flex align-items-center gap-1 mb-1">
                   <label
                     htmlFor="employeeNameFilter"
                     className="fw-bold mb-0 text-start text-md-end" //mahesh code
                     style={{
                       // mahesh code style change
-                      width: "55px",
+                      // width: "55px",
                       minWidth: "55px",
                       fontSize: "16px",
                       color: "#3A5FBE",
-                      marginRight: "4px", // mahesh
+                      // marginRight: "4px", // mahesh
                     }}
                   >
                     Name
@@ -503,17 +503,17 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                   />
                 </div>
                 {/* From Date Filter */}
-                <div className="col-12 col-md-auto d-flex align-items-center gap-2 mb-1 ms-2">
+                <div className="col-12 col-md-auto d-flex align-items-center gap-1 mb-1">
                   <label
                     htmlFor="dateFromFilter"
                     className="fw-bold mb-0 text-start text-md-end" //mahesh code
                     style={{
                       // mahesh code style change
-                      width: "55px",
+                      // width: "55px",
                       minWidth: "55px",
                       fontSize: "16px",
                       color: "#3A5FBE",
-                      marginRight: "4px", // mahesh
+                      // marginRight: "4px", // mahesh
                     }}
                   >
                     From
@@ -522,6 +522,7 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                     type="date"
                     id="dateFromFilter"
                     className="form-control"
+                    max={dateToFilter}
                     style={{ flex: 1, minWidth: "140px" }}
                     value={dateFromFilter}
                     onChange={(e) => setDateFromFilter(e.target.value)}
@@ -529,17 +530,17 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                 </div>
                 {/* To Date Filter */}
                 <>
-                  <div className="col-12 col-md-auto d-flex align-items-center gap-2 mb-1 ms-2">
+                  <div className="col-12 col-md-auto d-flex align-items-center gap-1 mb-1">
                     <label
                       htmlFor="dateToFilter"
                       className="fw-bold mb-0 text-start text-md-end" //mahesh code
                       style={{
                         // mahesh code style change
-                        width: "55px",
+                        // width: "55px",
                         minWidth: "55px",
                         fontSize: "16px",
                         color: "#3A5FBE",
-                        marginRight: "4px", // mahesh
+                        // marginRight: "4px", // mahesh
                       }}
                     >
                       To
@@ -548,6 +549,7 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                       type="date"
                       id="dateToFilter"
                       className="form-control "
+                      min={dateFromFilter}
                       style={{ flex: 1, minWidth: "140px" }}
                       value={dateToFilter}
                       onChange={(e) => setDateToFilter(e.target.value)}

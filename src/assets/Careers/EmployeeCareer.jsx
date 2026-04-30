@@ -2165,12 +2165,12 @@ const [referralErrors, setReferralErrors] = useState({});
                       type="button"
                       className="btn btn-sm custom-outline-btn"
                       style={{
-                        backgroundColor: activeViewTab === "DESC" ? "#3A5FBE" : "",
+                        backgroundColor: activeReferralTab === "DESC" ? "#3A5FBE" : "#fff",
                         borderColor: "#3A5FBE",
-                        color: activeViewTab === "DESC" ? "#fff" : "",
+                        color: activeReferralTab === "DESC" ? "#fff" : "#3A5FBE",
                         marginBottom:"10px"
                       }}
-                      onClick={() => setActiveViewTab("DESC")}
+                     onClick={() => setActiveReferralTab("DESC")}
                     >
                       Job Description
                     </button>
@@ -2180,13 +2180,13 @@ const [referralErrors, setReferralErrors] = useState({});
                         type="button"
                         className="btn btn-sm custom-outline-btn"
                         style={{
-                          backgroundColor: activeViewTab === "APPLY" ? "#3A5FBE" : "",
-                          borderColor: "#3A5FBE",
-                          color: activeViewTab === "APPLY" ? "#fff" : "",
+                          backgroundColor: activeReferralTab === "APPLY" ? "#3A5FBE" : "#fff",
+                            borderColor: "#3A5FBE",
+                            color: activeReferralTab === "APPLY" ? "#fff" : "#3A5FBE",
                           marginBottom:"10px"
 
                         }}
-                        onClick={() => setActiveViewTab("APPLY")}
+                        onClick={() => setActiveReferralTab("APPLY")}           //shivani code
                       >
                         Application Form
                       </button>

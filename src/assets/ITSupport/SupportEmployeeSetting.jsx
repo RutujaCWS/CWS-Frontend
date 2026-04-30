@@ -338,6 +338,49 @@ useEffect(() => {
       console.error("Comment error:", err);
     }
   };
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+  
+    const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+    const ALLOWED_TYPES = [
+      "image/jpeg",
+      "image/jpg",
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/vnd.ms-excel",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ];
+  
+    let validFiles = [];
+  
+    for (let file of files) {
+      if (file.size > MAX_SIZE) {
+        alert(`❌ "${file.name}" exceeds 5 MB limit`);
+        e.target.value = ""; 
+        setFormData((prev) => ({ ...prev, attachment: [] }));
+        return;
+      }
+  
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        alert(`❌ "${file.name}" is not supported. Use JPG, PDF, Word, Excel`);
+        e.target.value = ""; 
+        setFormData((prev) => ({ ...prev, attachment: [] }));
+        return;
+      }
+  
+      validFiles.push(file);
+    }
+  
+    //  Only set if all files are valid
+    setFormData((prev) => ({
+      ...prev,
+      attachment: validFiles,
+    }));
+  };
+
+
 const applyFilter = () => {
   const today = new Date();
   today.setHours(23, 59, 59, 999);
@@ -551,15 +594,15 @@ const resetFilter = () => {
               >
                 From
               </label>
-            <input
-  id="fromDate"
-  type="date"
-  className="form-control"
-  style={{ minWidth: 120 }}
-  value={fromDate}
-  max={new Date().toISOString().split("T")[0]}
-  onChange={(e) => setFromDate(e.target.value)}
-/>
+              <input
+                id="fromDate"
+                type="date"
+                className="form-control"
+                style={{ minWidth: 120 }}
+                value={fromDate}
+                max={toDate || new Date().toISOString().split("T")[0]}
+                onChange={(e) => setFromDate(e.target.value)}
+              />
             </div>
 
             <div className="col-12 col-md-auto d-flex align-items-center mb-1 gap-4">
@@ -574,15 +617,16 @@ const resetFilter = () => {
               >
                 To
               </label>
-           <input
-  id="toDate"
-  type="date"
-  className="form-control"
-  style={{ minWidth: 140 }}
-  value={toDate}
-  max={new Date().toISOString().split("T")[0]}
-  onChange={(e) => setToDate(e.target.value)}
-/>
+              <input
+                id="toDate"
+                type="date"
+                className="form-control"
+                style={{ minWidth: 140 }}
+                value={toDate}
+                min={fromDate}
+                max={new Date().toISOString().split("T")[0]}
+                onChange={(e) => setToDate(e.target.value)}
+              />
             </div>
 
             <div className="col-auto ms-auto d-flex gap-2">
@@ -713,13 +757,9 @@ const resetFilter = () => {
                     <input
                       type="file"
                       multiple
-                      className="form-control form-control-sm mb-1"
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          attachment: [...e.target.files],
-                        })
-                      }
+                      className="form-control mb-1"
+                      style={{ padding: "6px" }}
+                      onChange={handleFileChange}
                     />
                   </div>
                 </div>
@@ -895,171 +935,175 @@ const resetFilter = () => {
             </thead>
 
             <tbody>
-              {paginatedTickets.map((t) => (
-                <tr
-                  key={t._id}
-                  style={{ cursor: "pointer" }}
-                  onClick={() => setViewTicket(t)}
-                >
-                  <td
-                    style={{
-                      padding: "12px",
-                      verticalAlign: "middle",
-                      fontSize: "14px",
-                      borderBottom: "1px solid #dee2e6",
-                      whiteSpace: "nowrap",
-                      color: "#212529",
-                    }}
-                  >
-                    {t.ticketId}
-                  </td>
-                  <td
-                    style={{
-                      padding: "12px",
-                      verticalAlign: "middle",
-                      fontSize: "14px",
-                      borderBottom: "1px solid #dee2e6",
-                      whiteSpace: "nowrap",
-                      color: "#212529",
-                    }}
-                  >
-                    {t.category}
-                  </td>
-                  <td
-                    style={{
-                      padding: "12px",
-                      verticalAlign: "middle",
-                      fontSize: "14px",
-                      borderBottom: "1px solid #dee2e6",
-                      whiteSpace: "nowrap",
-                      color: "#212529",
-                    }}
-                  >
-                    {t.priority}
-                  </td>
-                  <td
-                    style={{
-                      padding: "12px",
-                      verticalAlign: "middle",
-                      fontSize: "14px",
-                      borderBottom: "1px solid #dee2e6",
-                      whiteSpace: "nowrap",
-                      color: "#212529",
-                    }}
-                  >
-                    {shortDescription(t.description)}
-                  </td>
-               <td
-                    style={{
-                      padding: "12px",
-                      verticalAlign: "middle",
-                      fontSize: "14px",
-                      borderBottom: "1px solid #dee2e6",
-                      whiteSpace: "nowrap",
-                      color: "#212529",
-                    }}
-                  >
-                    {/* Rushikesh */}
-                   {Array.isArray(t.attachment) && t.attachment.length > 0
-                    ? t.attachment.map((file, i) => {
-                        const name = file.split("/").pop();
-                        const shortName =
-                          name.length > 15 ? name.substring(0, 15) + "..." : name;
-
-                        return <div key={i}>{shortName}</div>;
-                      })
-                    : "-"}
-                      {/* Rushikesh */}
-                  </td>
-                  <td
-                    style={{
-                      padding: "12px",
-                      verticalAlign: "middle",
-                      fontSize: "14px",
-                      borderBottom: "1px solid #dee2e6",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    <span style={statusBadge(t.status)}>{t.status}</span>
-                  </td>
-                  <td
-                    style={{
-                      padding: "12px",
-                      verticalAlign: "middle",
-                      fontSize: "14px",
-                      borderBottom: "1px solid #dee2e6",
-                      whiteSpace: "nowrap",
-                      color: "#212529",
-                    }}
-                  >
-                    {t.assignedTo || "-"}
-                  </td>
-                  <td
-                    style={{
-                      padding: "12px",
-                      verticalAlign: "middle",
-                      fontSize: "14px",
-                      borderBottom: "1px solid #dee2e6",
-                      whiteSpace: "nowrap",
-                      color: "#212529",
-                    }}
-                  >
-                    {formatDateOnly(t.raisedDate)}
-                  </td>
-                  <td
-                    style={{
-                      padding: "12px",
-                      verticalAlign: "middle",
-                      fontSize: "14px",
-                      borderBottom: "1px solid #dee2e6",
-                      whiteSpace: "nowrap",
-                      color: "#212529",
-                    }}
-                  >
-                    {formatDateOnly(t.closedDate)}
-                  </td>
-                  <td
-                    style={{
-                      padding: "12px",
-                      verticalAlign: "middle",
-                      fontSize: "14px",
-                      borderBottom: "1px solid #dee2e6",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    <div className="d-flex gap-2 justify-content-center">
-                      <button
-                        className="btn btn-sm custom-outline-btn"
-                        style={{ minWidth: 90 }}
-                        disabled={t.status === "Closed"}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (t.status !== "Closed") {
-                            setSelectedTicket(t);
-                            setEditData({ ...t });
-                          }
-                        }}
-                      >
-                        Edit
-                      </button>
-
-                      <button
-                        className="btn btn-sm custom-outline-btn"
-                        style={{ minWidth: 90 }}
-                        disabled={t.status === "Closed"}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (t.status !== "Closed") {
-                            deleteTicket(t._id);
-                          }
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </div>
+              {paginatedTickets.length === 0 ? (
+                <tr>
+                  <td colSpan="10" className="text-center py-4" style={{ color: "#6c757d", fontWeight: "300" }}>
+                    No record found
                   </td>
                 </tr>
-              ))}
+              ) : (
+                paginatedTickets.map((t) => (
+                  <tr
+                    key={t._id}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setViewTicket(t)}
+                  >
+                    <td
+                      style={{
+                        padding: "12px",
+                        verticalAlign: "middle",
+                        fontSize: "14px",
+                        borderBottom: "1px solid #dee2e6",
+                        whiteSpace: "nowrap",
+                        color: "#212529",
+                      }}
+                    >
+                      {t.ticketId}
+                    </td>
+                    <td
+                      style={{
+                        padding: "12px",
+                        verticalAlign: "middle",
+                        fontSize: "14px",
+                        borderBottom: "1px solid #dee2e6",
+                        whiteSpace: "nowrap",
+                        color: "#212529",
+                      }}
+                    >
+                      {t.category}
+                    </td>
+                    <td
+                      style={{
+                        padding: "12px",
+                        verticalAlign: "middle",
+                        fontSize: "14px",
+                        borderBottom: "1px solid #dee2e6",
+                        whiteSpace: "nowrap",
+                        color: "#212529",
+                      }}
+                    >
+                      {t.priority}
+                    </td>
+                    <td
+                      style={{
+                        padding: "12px",
+                        verticalAlign: "middle",
+                        fontSize: "14px",
+                        borderBottom: "1px solid #dee2e6",
+                        whiteSpace: "nowrap",
+                        color: "#212529",
+                      }}
+                    >
+                      {shortDescription(t.description)}
+                    </td>
+                    <td
+                      style={{
+                        padding: "12px",
+                        verticalAlign: "middle",
+                        fontSize: "14px",
+                        borderBottom: "1px solid #dee2e6",
+                        whiteSpace: "nowrap",
+                        color: "#212529",
+                      }}
+                    >
+                      {Array.isArray(t.attachment) && t.attachment.length > 0
+                        ? t.attachment.map((file, i) => {
+                            const name = file.split("/").pop();
+                            const shortName = name.length > 15 ? name.substring(0, 15) + "..." : name;
+                            return <div key={i}>{shortName}</div>;
+                          })
+                        : "-"}
+                    </td>
+                    <td
+                      style={{
+                        padding: "12px",
+                        verticalAlign: "middle",
+                        fontSize: "14px",
+                        borderBottom: "1px solid #dee2e6",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      <span style={statusBadge(t.status)}>{t.status}</span>
+                    </td>
+                    <td
+                      style={{
+                        padding: "12px",
+                        verticalAlign: "middle",
+                        fontSize: "14px",
+                        borderBottom: "1px solid #dee2e6",
+                        whiteSpace: "nowrap",
+                        color: "#212529",
+                      }}
+                    >
+                      {t.assignedTo || "-"}
+                    </td>
+                    <td
+                      style={{
+                        padding: "12px",
+                        verticalAlign: "middle",
+                        fontSize: "14px",
+                        borderBottom: "1px solid #dee2e6",
+                        whiteSpace: "nowrap",
+                        color: "#212529",
+                      }}
+                    >
+                      {formatDateOnly(t.raisedDate)}
+                    </td>
+                    <td
+                      style={{
+                        padding: "12px",
+                        verticalAlign: "middle",
+                        fontSize: "14px",
+                        borderBottom: "1px solid #dee2e6",
+                        whiteSpace: "nowrap",
+                        color: "#212529",
+                      }}
+                    >
+                      {formatDateOnly(t.closedDate)}
+                    </td>
+                    <td
+                      style={{
+                        padding: "12px",
+                        verticalAlign: "middle",
+                        fontSize: "14px",
+                        borderBottom: "1px solid #dee2e6",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      <div className="d-flex gap-2 justify-content-center">
+                        <button
+                          className="btn btn-sm custom-outline-btn"
+                          style={{ minWidth: 90 }}
+                          disabled={t.status === "Closed"}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (t.status !== "Closed") {
+                              setSelectedTicket(t);
+                              setEditData({ ...t });
+                            }
+                          }}
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          className="btn btn-sm custom-outline-btn"
+                          style={{ minWidth: 90 }}
+                          disabled={t.status === "Closed"}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (t.status !== "Closed") {
+                              deleteTicket(t._id);
+                            }
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

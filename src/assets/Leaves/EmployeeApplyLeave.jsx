@@ -11,6 +11,7 @@ function EmployeeApplyLeave({ user, onLeaveApplied }) {
   });
   const [message, setMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [availableLeaveTypes, setAvailableLeaveTypes] = useState([]);
   const [teamLeaders, setTeamLeaders] = useState([]);
   const [manager, setManager] = useState(null);
@@ -230,6 +231,9 @@ function EmployeeApplyLeave({ user, onLeaveApplied }) {
   const maxDate = futureDate.toISOString().split("T")[0];
 
   const handleSubmit = async (e) => {
+    if (isSubmitting) return; 
+    setIsSubmitting(true);
+
     e.preventDefault();
     const dateFromParsed = parseDate(form.dateFrom);
     const dateToParsed = parseDate(form.dateTo);
@@ -306,6 +310,9 @@ function EmployeeApplyLeave({ user, onLeaveApplied }) {
     } catch (err) {
       setMessage(err.response?.data?.error || "Error applying leave");
       alert(err.response?.data?.error || "Error applying leave");
+    }
+    finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -832,9 +839,9 @@ style={{
                       type="submit"
                       className="btn btn-sm custom-outline-btn"
                       style={{ minWidth: 90 }}
-
+                      disabled={isSubmitting}
                     >
-                      Apply
+                      {isSubmitting ? "Applying..." : "Apply"}
                     </button>
                   </div>
                 </form>

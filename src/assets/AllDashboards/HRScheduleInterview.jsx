@@ -599,7 +599,7 @@ if (
   return (
     <div className="container-fluid px-3 mt-3">
       <div className="d-flex justify-content-between align-items-center mb-4">
-     <h5 className="mb-3 fw-semibold" style={{ color: "#3A5FBE" }}>
+     <h5 className="mb-3 fw-semibold" style={{ color: "#3A5FBE",fontSize: "25px", marginLeft: "15px" }}>
         {user.role==="hr"? "HR - Schedule Interview":"Scheduled Interviews"}
       </h5>
 
@@ -1308,7 +1308,7 @@ if (
                 style={{ marginLeft: "16px" }}
               >
                 <button
-                  className="btn btn-sm border-0"
+                  className="btn btn-sm focus-ring"
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
                   style={{ fontSize: "18px", padding: "2px 8px" }}
@@ -1316,7 +1316,7 @@ if (
                   ‹
                 </button>
                 <button
-                  className="btn btn-sm border-0"
+                  className="btn btn-sm focus-ring"
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
                   style={{ fontSize: "18px", padding: "2px 8px" }}
@@ -1348,7 +1348,7 @@ if (
         >
      <div
             className="modal-dialog modal-lg modal-dialog-centered"
-            style={{ width: "650px",marginLeft:500 }}
+            style={{ maxWidth: "600px", width: "95%"}}
           >
             <div className="modal-content">
               <div

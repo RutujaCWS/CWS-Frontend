@@ -228,7 +228,13 @@
     color:#3a5fbe
 
 }
-
+.custom-modal-title {
+  display: block;
+  max-width: 90%;
+  white-space: normal;      
+  word-wrap: break-word;    
+  overflow-wrap: break-word; 
+}
 
 /* ================= RESPONSIVE ================= */
 @media (max-width: 900px) {
