@@ -2493,11 +2493,22 @@ const [referralErrors, setReferralErrors] = useState({});
       </div>
 
       {/* //Added by Mahesh */}
-      <div className="text-end mt-3">
+      {/* Back Button */}
+      <div className="d-flex justify-content-end mt-3">
         <button
           className="btn btn-sm custom-outline-btn"
           style={{ minWidth: 90 }}
-          onClick={() => window.history.go(-1)}
+          onClick={() => {
+            if (activeTab === "Jobs") {
+              window.history.back();
+            } else if (activeTab === "Applied") {
+              setActiveTab("Jobs");
+              setJobsPage(0);
+            } else if (activeTab === "My Referral") {
+              setActiveTab("Jobs");
+              setJobsPage(0);
+            }
+          }}
         >
           Back
         </button>

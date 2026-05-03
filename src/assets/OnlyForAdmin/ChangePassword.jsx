@@ -119,7 +119,7 @@ function ChangePassword() {
 
           <div className="mb-3">
             <label className="form-label " style={{ color: "#3A5FBE" }}>
-              Current Password
+              Current Password<span style={{ color: "red" }}>  *</span>
             </label>
             <div style={{ position: "relative" }}>
               <input
@@ -156,7 +156,7 @@ function ChangePassword() {
           {/* New Password Field */}
           <div className="mb-3">
             <label className="form-label " style={{ color: "#3A5FBE" }}>
-              New Password
+              New Password<span style={{ color: "red" }}>  *</span>
             </label>
             <div style={{ position: "relative" }}>
               <input
@@ -190,7 +190,7 @@ function ChangePassword() {
 
           <div className="mb-3">
             <label className="form-label" style={{ color: "#3A5FBE" }}>
-              Confirm Password
+              Confirm Password<span style={{ color: "red" }}>  *</span>
             </label>
             <div style={{ position: "relative" }}>
               <input

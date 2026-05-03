@@ -776,7 +776,7 @@ const resetFilter = () => {
                   onChange={handleChange}
                   placeholder="Describe your issue"
                 />
-                <div className="text-end">
+                <div className="text-end" style={{marginBottom: "8px"}}>
                   <small>
                   {formData.description.trim()
                     ? formData.description.trim().split(/\s+/).filter(Boolean).length
@@ -785,7 +785,6 @@ const resetFilter = () => {
                 </small>
                 </div>
 
-                <br />
                 {errors.description && (
                   <small className="text-danger">{errors.description}</small>
                 )}

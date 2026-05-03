@@ -121,17 +121,47 @@ const AdminTeamsTMS = () => {
   console.log("all teams from use effect", allTeams);
 
   const applyFilters = () => {
-    const query = searchQuery.toLowerCase().trim();
-    const temp = allTeams.filter(
-      (team) =>
-        (team.name || "").toLowerCase().includes(query) ||
-        (team.teamLead || "").toLowerCase().includes(query) ||
-        (team.department || "").toLowerCase().includes(query) ||
-        (team.assignToProject?.length || 0).toString().includes(query)||
-        (team.project?.name || "").toLowerCase().includes(query)
-    );
+    const query = String(searchQuery).toLowerCase().trim();
+  
+    if (!query) {
+      setFilteredTeams(allTeams);
+      return;
+    }
+  
+    const temp = allTeams.filter((team) => {
+      const name = String(team?.name || "").toLowerCase();
+      const teamLead = String(
+        typeof team?.teamLead === "object"
+          ? team?.teamLead?.name
+          : team?.teamLead || ""
+      ).toLowerCase();
+  
+      const department = String(team?.department || "").toLowerCase();
+      const project = String(team?.project?.name || "").toLowerCase();
+      const members = String(team?.assignToProject?.length || 0);
+  
+      return (
+        name.includes(query) ||
+        teamLead.includes(query) ||
+        department.includes(query) ||
+        project.includes(query) ||
+        members.includes(query)
+      );
+    });
+  
     setFilteredTeams(temp);
+    setCurrentPage(1);
   };
+
+
+  useEffect(() => {
+    fetchTeams();
+    fetchDashboardStats();
+   
+  }, []);
+  useEffect(() => {
+    setFilteredTeams(allTeams);
+  }, [allTeams]);
 
   //   const updateStats = (teams) => {
   //     const departments = [...new Set(teams.map(team => team.department))];

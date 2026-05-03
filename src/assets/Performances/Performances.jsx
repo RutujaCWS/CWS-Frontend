@@ -1467,15 +1467,22 @@ const [tl, setTl] = useState("");
         </>
       )}
 
-      <div className="text-end mt-3">
-        <button
-          style={{ minWidth: 90 }}
-          className="btn btn-sm custom-outline-btn"
-          onClick={() => window.history.go(-1)}
-        >
-          Back
-        </button>
-      </div>
+    <div className="text-end mt-3">
+      <button
+        style={{ minWidth: 90 }}
+        className="btn btn-sm custom-outline-btn"
+        onClick={() => {
+          if (activeView === "pending") {
+            setActiveView("all");
+            setCurrentPage(1);
+          } else {
+            window.history.back();
+          }
+        }}
+      >
+        Back
+      </button>
+    </div>
 
       {/* DETAIL MODAL (when clicking on a row from either table) */}
       {selectedPerformance && (

@@ -1806,11 +1806,18 @@ setFilteredRequests(sorted);
       {/*end------------------------------------------------------------------ */}
 
       {/* //Added by Mahesh */}
-      <div className="text-end mt-3">
+      <div className="d-flex justify-content-end mt-3">
         <button
           className="btn btn-sm custom-outline-btn"
           style={{ minWidth: 90 }}
-          onClick={() => window.history.go(-1)}
+          onClick={() => {
+            if (activeTab === "team") {
+              setActiveTab("my");
+              setMyCurrentPage(1);
+            } else {
+              window.history.back();
+            }
+          }}
         >
           Back
         </button>

@@ -1554,7 +1554,12 @@ const handleStartBreak = async () => {
                       <p className="mb-0" style={{ color: "#3A5FBE", fontSize: "18px", fontWeight: 500 }}>{pendingRegularization} Regularization</p>
                     </div> */}
 
-                        <div style={{ color: "#3A5FBE", fontSize: "25px" }}>
+                        <div style={{ color: "#3A5FBE", fontSize: "25px", cursor: "pointer" }}
+                        onClick={() =>
+                          navigate(
+                            `/dashboard/${role}/${username}/${id}/leavebalance`,
+                          )
+                        }>
                           <h6
                             className="mb-2 ms-2"
                             style={{ color: "#3A5FBE", fontSize: "25px" }}
@@ -1571,11 +1576,6 @@ const handleStartBreak = async () => {
                               fontWeight: 500,
                               cursor: "pointer",
                             }}
-                            onClick={() =>
-                              navigate(
-                                `/dashboard/${role}/${username}/${id}/leavebalance`,
-                              )
-                            }
                           >
                             {pendingCount} : Leave
                           </p>

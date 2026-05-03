@@ -1021,6 +1021,7 @@ if (
                     style={{ minWidth: "140px" }}
                     value={dateFromFilter}
                     onChange={(e) => setDateFromFilter(e.target.value)}
+                    max={dateToFilter}
                   />
                 </div>
 
@@ -1042,6 +1043,7 @@ if (
                     style={{ minWidth: "140px" }}
                     value={dateToFilter}
                     onChange={(e) => setDateToFilter(e.target.value)}
+                    min={dateFromFilter}
                   />
                 </div>
 

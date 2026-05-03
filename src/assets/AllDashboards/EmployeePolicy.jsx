@@ -479,7 +479,7 @@ function EmployeePolicy({ user }) {
       {/* 📋 Policy List */}
    {currentPolicies.length === 0 && (
     <tr>
-      <td colSpan="6" style={{ padding: "20px", textAlign: "center", color: "#6b7280" }}>
+      <td colSpan="8" className="text-center text-muted">
         No policies available
       </td>
     </tr>
@@ -567,10 +567,7 @@ function EmployeePolicy({ user }) {
             <tbody>
               {currentPolicies.length === 0 && (
                 <tr>
-                  <td
-                    colSpan="4"
-                    style={{ padding: "16px", textAlign: "center" }}
-                  >
+                  <td colSpan="8" className="text-center text-muted" style={{                         padding: "20px" }}>
                     No policies available
                   </td>
                 </tr>

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import RichTextEditor from "./RichTextEditor";
 import "./AdminCareer.css";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams,useLocation  } from "react-router-dom";
 
 
 function AdminCareer({ user }) {
@@ -11,6 +11,7 @@ function AdminCareer({ user }) {
   
 
   const [jobs, setJobs] = useState([]);
+  const location = useLocation();
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [activeTab, setActiveTab] = useState("inhouse");
   const modalRef = useRef(null);
@@ -146,7 +147,7 @@ function AdminCareer({ user }) {
     }
   
     // Description
-    const plainText = newJob.jobDescription.replace(/<[^>]+>/g, "").trim();
+    const plainText = (newJob.jobDescription || "").replace(/<[^>]+>/g, "").trim();
     if (!plainText) {
       errors.jobDescription = "Job Description is required";
     } else if (plainText.length > 300) {
@@ -396,55 +397,57 @@ function AdminCareer({ user }) {
   //   setCurrentPage(1);
   // };
   const applyFilters = () => {
-      let temp = [...jobs];
-    
-      // :white_check_mark: Tab filter always apply
-      temp = temp.filter(
-        (job) => job.jobType === activeTab || job.jobType === "both"
-      );
-    
-      // :exclamation: Check if ANY filter is applied
-      const isSearchEmpty = searchTerm.trim() === "";
-      const isStatusDefault = statusFilter === "All";
-      const isDateEmpty = !assignDateFromFilter && !assignDateToFilter;
-    
-      // :white_check_mark: If ALL filters empty → return only tab data (no filtering)
-      if (isSearchEmpty && isStatusDefault && isDateEmpty) {
-        setFilteredJobs(temp);
-        return;
-      }
-    
-      // :white_check_mark: SEARCH
-      if (!isSearchEmpty) {
-        const lowerSearch = searchTerm.toLowerCase();
-        temp = temp.filter((job) =>
-          job.jobTitle?.toLowerCase().includes(lowerSearch) ||
-          job.department?.toLowerCase().includes(lowerSearch) ||
-          job.location?.toLowerCase().includes(lowerSearch)
-        );
-      }
-    
-      // :white_check_mark: STATUS
-      if (!isStatusDefault) {
-        temp = temp.filter((job) => job.status === statusFilter);
-      }
-    
-      // :white_check_mark: DATE FROM
-      if (assignDateFromFilter) {
-        const fromDate = new Date(assignDateFromFilter);
-        temp = temp.filter((job) => new Date(job.createdAt) >= fromDate);
-      }
-    
-      // :white_check_mark: DATE TO
-      if (assignDateToFilter) {
-        const toDate = new Date(assignDateToFilter);
-        temp = temp.filter((job) => new Date(job.dueOn) <= toDate);
-      }
-    
-      setFilteredJobs(temp);
-      setCurrentPage(1);
-    };
-
+    let temp = [...jobs];
+  
+   
+    temp = temp.filter(
+      (job) => job.jobType === activeTab || job.jobType === "both"
+    );
+  
+    const isSearchEmpty = searchTerm.trim() === "";
+    const isStatusDefault = statusFilter === "All";
+    const isDateEmpty = !assignDateFromFilter && !assignDateToFilter;
+  
+   
+    if (isSearchEmpty && isStatusDefault && isDateEmpty) {
+      setFilteredJobs(temp);
+      return;
+    }
+  
+   
+    if (!isSearchEmpty) {
+      const lowerSearch = searchTerm.toLowerCase();
+  
+      temp = temp.filter((job) => {
+        const searchMatch =
+          job.jobTitle?.toLowerCase().includes(lowerSearch);
+  
+        const notExpired = !isExpired(job.dueOn); // 🔥 important
+  
+        return searchMatch && notExpired; // 🔥 MUST RETURN
+      });
+    }
+  
+   
+    if (!isStatusDefault) {
+      temp = temp.filter((job) => job.status === statusFilter);
+    }
+  
+  
+    if (assignDateFromFilter) {
+      const fromDate = new Date(assignDateFromFilter);
+      temp = temp.filter((job) => new Date(job.createdAt) >= fromDate);
+    }
+  
+  
+    if (assignDateToFilter) {
+      const toDate = new Date(assignDateToFilter);
+      temp = temp.filter((job) => new Date(job.dueOn) <= toDate);
+    }
+  
+    setFilteredJobs(temp);
+    setCurrentPage(1);
+  };
 
   const getApplicantsInfo = async (jobId) => {
     try {
@@ -555,6 +558,7 @@ function AdminCareer({ user }) {
 
   //Added by Tanvi
   // tanvi
+  
   const isAnyPopupOpen = !!showViewPopup || viewJob || showAddJob;
   useEffect(() => {
     if (isAnyPopupOpen) {
@@ -618,7 +622,6 @@ function AdminCareer({ user }) {
     };
 
     modal.addEventListener("keydown", handleKeyDown);
-
     return () => {
       modal.removeEventListener("keydown", handleKeyDown);
     };
@@ -743,7 +746,7 @@ const handleRowClick = (job) => {
                 className="form-control"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search by any feild"
+                placeholder="Search by any field"
               />
             </div>
 
@@ -1106,7 +1109,7 @@ const handleRowClick = (job) => {
                               style={{ minWidth: 120 }}
                               onClick={(e) => {
                                 e.stopPropagation();
-                                navigate(`/dashboard/${role}/${username}/${id}/job-candidates/${job._id}`);
+navigate(`/dashboard/${role}/${username}/${id}/job-candidates/${job._id}`);
                               }}
                             >
                               View Candidates
@@ -1225,13 +1228,13 @@ const handleRowClick = (job) => {
         <button
           className="btn btn-sm custom-outline-btn"
           style={{ minWidth: 90 }}
-          onClick={() => {
-            if (activeTab === "referral") {
-              setActiveTab("inhouse");
-            } else {
-              window.history.go(-1);
-            }
-          }}
+onClick={() => {
+  if (activeTab === "referral") {
+    setActiveTab("inhouse");
+  } else {
+    navigate(`/dashboard/${role}/${username}/${id}`); // 🔥 direct dashboard
+  }
+}}
         >
           Back
         </button>
@@ -1429,11 +1432,15 @@ const handleRowClick = (job) => {
               <div className="col-12 col-md-8">
                 <RichTextEditor
                   value={newJob.jobDescription}
-                  onChange={(value) =>
-                    setNewJob((prev) => ({
-                      ...prev,
-                      jobDescription: value,
-                    }))
+                  onChange={(value) =>{
+                    const plainText= value.replace(/<[^>]+>/g, "");
+                    if (plainText.length<=300){
+                      setNewJob((prev) => ({
+                        ...prev,
+                        jobDescription: value,
+                      }))
+                    }
+                  }
                   }
                 />
                 {formErrors.jobDescription && (

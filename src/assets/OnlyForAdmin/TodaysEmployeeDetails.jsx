@@ -696,7 +696,7 @@ function TodaysEmployeeDetails() {
               0 /* NEW: Show message when no results */ ? (
               <tr>
                 <td
-                  colSpan="6"
+                  colSpan="8"
                   className="text-center py-4"
                   style={{ color: "#6c757d" }}
                 >

@@ -637,7 +637,16 @@ function TeamLeaderDashboard({ user }) {
       {/* filter code end*/}
 
       {leaves.length === 0 ? (
-        <p>No leaves assigned to you.</p>
+        <tr>
+        <td
+          colSpan="10"
+          className="text-center py-4"
+          style={{ color: "#6c757d" }}
+        >
+          No leaves assigned to you.
+        </td>
+      </tr>
+        
       ) : (
         <>
           <div

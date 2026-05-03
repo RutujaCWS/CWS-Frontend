@@ -1451,13 +1451,12 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
           className="btn btn-sm custom-outline-btn"
           style={{ minWidth: 90 }}
           onClick={() => {
-            if (location.state?.from === "old") {
-              navigate(`/dashboard/${role}/${username}/${id}/allemployeedetails`, {
-                state: { openOldEmployees: true }
-              });
-            } else {
-              navigate(`/dashboard/${role}/${username}/${id}/allemployeedetails`);
-            }
+           navigate(
+              `/dashboard/${role}/${username}/${id}/allemployeedetails`,
+              {
+                state: { openOldEmployees: true, fromProfile: true },
+              }
+            );
           }}
         >
           Back

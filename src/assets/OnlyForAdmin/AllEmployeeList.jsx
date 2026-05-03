@@ -33,14 +33,22 @@ const [showMdModal, setShowMdModal] = useState(false);
   const [mdList, setMdList] = useState([]);
   const [mdMessage, setMdMessage] = useState("");
   const [filterDate, setFilterDate] = useState("");
+  // const location = useLocation();
+  const [cameFromProfile, setCameFromProfile] = useState(false);
+  const [wentToActive, setWentToActive] = useState(false);
   const location = useLocation();
 
-useEffect(() => {
-  if (location.state?.openOldEmployees) {
-    setShowOldEmployees(true);
-    setFilteredEmployees(oldEmployees);
-  }
-}, [location.state, oldEmployees]);
+  useEffect(() => {
+    if (location.state?.openOldEmployees) {
+      setShowOldEmployees(true);
+      setFilteredEmployees(oldEmployees);
+    }
+  
+    if (location.state?.fromProfile) {
+      setCameFromProfile(true);
+    }
+  }, [location.state, oldEmployees]);
+
 
 const handleSearch = () => {
   const value = searchName.toLowerCase().trim();
@@ -1043,7 +1051,19 @@ useEffect(() => {
       <button
         className="btn btn-sm custom-outline-btn"
         style={{ minWidth: 90 }}
-        onClick={() => navigate(-1)}
+        onClick={() => {
+          if (cameFromProfile && showOldEmployees) {
+            setShowOldEmployees(false);
+            setFilteredEmployees(employees);
+            setWentToActive(true);
+            return;
+          }
+          if (wentToActive && !showOldEmployees) {
+            navigate(`/dashboard/${role}/${username}/${id}`);
+            return;
+          }
+          navigate(-1);
+        }}
       >
         Back
       </button>

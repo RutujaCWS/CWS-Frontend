@@ -5,8 +5,7 @@ function EmployeeTeams({ user }) {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [searchInput, setSearchInput] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchText, setSearchText] = useState(""); // Changed from searchInput
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
@@ -80,13 +79,72 @@ function EmployeeTeams({ user }) {
     ? employees 
     : teamMembers;
 
-  /* ===== Pagination logic ===== */
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  // Set filteredEmployees when displayData changes
+  useEffect(() => {
+    setFilteredEmployees(displayData);
+  }, [displayData]);
 
-  const currentItems = filteredEmployees.length > 0 
-    ? filteredEmployees.slice(indexOfFirstItem, indexOfLastItem)
-    : displayData.slice(indexOfFirstItem, indexOfLastItem);
+  /* ===== Search Functions (exactly like TLAllEmployee) ===== */
+  const handleSearch = () => {
+    const value = searchText.toLowerCase().trim();
+
+    if (!value) {
+      setFilteredEmployees(displayData);
+      setCurrentPage(1);
+      return;
+    }
+
+    const filtered = displayData.filter((emp) => {
+      const employeeId = emp.employeeId?.toString().toLowerCase() || "";
+      const name = emp.name?.toLowerCase() || "";
+      const department = emp.department?.toLowerCase() || "";
+      const designation = emp.designation?.toLowerCase() || "";
+      const email = emp.email?.toLowerCase() || "";
+      const contact = emp.contact?.toLowerCase() || "";
+
+      return (
+        employeeId.includes(value) ||
+        name.includes(value) ||
+        department.includes(value) ||
+        designation.includes(value) ||
+        email.includes(value) ||
+        contact.includes(value)
+      );
+    });
+
+    setFilteredEmployees(filtered);
+    setCurrentPage(1);
+  };
+
+  const handleResetSearch = () => {
+    setSearchText("");
+    setFilteredEmployees(displayData);
+    setCurrentPage(1);
+  };
+
+  /* ===== Pagination logic (exactly like TLAllEmployee) ===== */
+  const totalItems = filteredEmployees.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = filteredEmployees.slice(startIndex, endIndex);
+
+  // Reset to page 1 when itemsPerPage changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [itemsPerPage]);
+
+  // Auto-reset page if currentPage > totalPages
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [itemsPerPage, filteredEmployees.length]);
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber < 1 || pageNumber > totalPages) return;
+    setCurrentPage(pageNumber);
+  };
   
   const modalRef = useRef(null);
 
@@ -148,40 +206,7 @@ function EmployeeTeams({ user }) {
       document.body.style.height = 'auto';
       document.body.style.position = 'static';
     };
-  }, [selectedEmployee]); 
-
-  useEffect(() => {
-    let temp = [...displayData];
-
-    if (searchQuery.trim() !== "") {
-      const query = searchQuery.toLowerCase();
-
-      temp = temp.filter((emp) =>
-        [
-          emp.employeeId,
-          emp.name,
-          emp.department,
-          emp.designation,
-          emp.email,
-          emp.contact,
-        ]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase()
-          .includes(query),
-      );
-    }
-
-    setFilteredEmployees(temp);
-    setCurrentPage(1);
-  }, [displayData, searchQuery]);
-
-  const resetFilters = () => {
-    setSearchInput("");
-    setSearchQuery("");
-    setFilteredEmployees([]);
-    setCurrentPage(1);
-  };
+  }, [selectedEmployee]);
 
   /* ===== LOADING ===== */
   if (loading) {
@@ -243,47 +268,41 @@ function EmployeeTeams({ user }) {
         My Team Members
       </h2>
       
-      <div className="card mb-4 shadow-sm border-0">
-        <div className="card-body">
-          <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
-            {/* Search Input */}
-            <div
-              className="d-flex align-items-center gap-2 flex-grow-1 flex-md-grow-0 w-md-100"
-              style={{ maxWidth: "400px" }}
-            >
+      {/* Filter section - exactly like TLAllEmployee */}
+      <div className="card shadow-sm border-0 mb-3">
+        <div className="card-body p-3">
+          <div className="d-flex align-items-center gap-3 flex-wrap">
+            <div className="d-flex align-items-center gap-2 flex-grow-1 flex-md-grow-0 w-md-100">
               <label
-                className="fw-bold mb-0"
-                style={{ fontSize: "16px", color: "#3A5FBE" }}
+                className="mb-0 fw-bold"
+                style={{ fontSize: 16, color: "#3A5FBE", whiteSpace: "nowrap" }}
               >
-                Search.
+                Search
               </label>
+
               <input
                 type="text"
-                className="form-control"
-                placeholder="Search team members..."
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                placeholder="Search By Any Field..."
+                className="form-control form-control-sm"
+                style={{ flex: 1 }}
               />
             </div>
 
-            {/* Filter and Reset Buttons */}
             <div className="d-flex gap-2 ms-auto">
               <button
-                type="button"
-                style={{ minWidth: 90 }}
                 className="btn btn-sm custom-outline-btn"
-                onClick={() => {
-                  setSearchQuery(searchInput.trim());
-                  setCurrentPage(1);
-                }}
+                style={{ minWidth: 90 }}
+                onClick={handleSearch}
               >
                 Filter
               </button>
+
               <button
-                type="button"
-                style={{ minWidth: 90 }}
                 className="btn btn-sm custom-outline-btn"
-                onClick={resetFilters}
+                style={{ minWidth: 90 }}
+                onClick={handleResetSearch}
               >
                 Reset
               </button>
@@ -292,17 +311,10 @@ function EmployeeTeams({ user }) {
         </div>
       </div>
       
-      <div className="card-body">
-        {/* ===== Table ===== */}
-        <div
-          className="table-responsive"
-          style={{
-            boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-            borderRadius: "8px",
-            background: "#fff",
-          }}
-        >
-          <table className="table table-hover align-middle mb-0 bg-white">
+      {/* Table */}
+      <div className="card shadow-sm border-0">
+        <div className="table-responsive bg-white">
+          <table className="table table-hover mb-0">
             <thead style={{ backgroundColor: "#ffffffff" }}>
               <tr>
                 {[
@@ -321,11 +333,11 @@ function EmployeeTeams({ user }) {
             </thead>
 
             <tbody>
-              {currentItems.length === 0 ? (
+              {filteredEmployees.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-4 text-muted">
+                  <td colSpan="6" className="text-center text-muted py-4" >
                     {user?.role === "employee" 
-                      ? "You are not assigned to any team yet." 
+                      ? "No data found." 
                       : "No team members found."}
                   </td>
                 </tr>
@@ -348,17 +360,19 @@ function EmployeeTeams({ user }) {
             </tbody>
           </table>
         </div>
+      </div>
 
-        {/* ===== Pagination ===== */}
-        <nav className="d-flex justify-content-end align-items-center mt-3 text-muted">
+      {/* Pagination - exactly like TLAllEmployee */}
+      {filteredEmployees.length > 0 && (
+        <nav className="d-flex align-items-center justify-content-end mt-3 text-muted">
           <div className="d-flex align-items-center gap-3">
             <div className="d-flex align-items-center">
-              <span style={{ fontSize: "14px", marginRight: "8px" }}>
+              <span style={{ fontSize: "14px", marginRight: "8px", color: "#212529" }}>
                 Rows per page:
               </span>
               <select
                 className="form-select form-select-sm"
-                style={{ width: "auto" }}
+                style={{ width: "auto", fontSize: "14px" }}
                 value={itemsPerPage}
                 onChange={(e) => {
                   setItemsPerPage(Number(e.target.value));
@@ -371,85 +385,162 @@ function EmployeeTeams({ user }) {
               </select>
             </div>
 
-            <span style={{ fontSize: "14px" }}>
-              {displayData.length === 0
+            <span style={{ fontSize: "14px", marginLeft: "16px", color: "#212529" }}>
+              {filteredEmployees.length === 0
                 ? "0–0 of 0"
-                : `${indexOfFirstItem + 1}-${Math.min(
-                    indexOfLastItem,
-                    displayData.length,
-                  )} of ${displayData.length}`}
+                : `${startIndex + 1}-${Math.min(endIndex, totalItems)} of ${totalItems}`}
             </span>
 
-            <div>
+            <div className="d-flex align-items-center" style={{ marginLeft: "16px" }}>
               <button
-                className="btn btn-sm focus-ring"
+                className="btn btn-sm border-0"
+                onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                onClick={() => setCurrentPage(currentPage - 1)}
+                style={{ fontSize: "18px", padding: "2px 8px", color: "#212529" }}
               >
                 ‹
               </button>
               <button
-                className="btn btn-sm focus-ring"
-                disabled={indexOfLastItem >= displayData.length}
-                onClick={() => setCurrentPage(currentPage + 1)}
+                className="btn btn-sm border-0"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage >= totalPages}
+                style={{ fontSize: "18px", padding: "2px 8px", color: "#212529" }}
               >
                 ›
               </button>
             </div>
           </div>
         </nav>
-      </div>
+      )}
 
-      {/* ===== Modal ===== */}
+      {/* Modal - exactly like TLAllEmployee style */}
       {selectedEmployee && (
         <div
           className="modal fade show d-block"
           tabIndex="-1"
           style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
         >
-          <div className="modal-dialog modal-dialog-centered">
-            <div
-              className="modal-content shadow-lg"
-              ref={modalRef}
-              tabIndex="-1"
-            >
+          <div
+            className="modal-dialog"
+            ref={modalRef}
+            style={{ maxWidth: "650px", width: "95%", marginTop: "120px" }}
+          >
+            <div className="modal-content">
               <div
                 className="modal-header text-white"
                 style={{ backgroundColor: "#3A5FBE" }}
               >
-                <h5 className="modal-title">Team Member Details</h5>
+                <h5 className="modal-title mb-0">Team Member Details</h5>
                 <button
+                  type="button"
                   className="btn-close btn-close-white"
                   onClick={() => setSelectedEmployee(null)}
                 />
               </div>
 
-              <div className="modal-body">
-                <Detail
-                  label="Employee ID"
-                  value={selectedEmployee.employeeId}
-                />
-                <Detail label="Name" value={selectedEmployee.name} />
-                <Detail
-                  label="Department"
-                  value={selectedEmployee.department}
-                />
-                <Detail
-                  label="Designation"
-                  value={selectedEmployee.designation}
-                />
-                <Detail label="Email" value={selectedEmployee.email} />
-                <Detail label="Contact" value={selectedEmployee.contact} />
-                <Detail
-                  label="Role"
-                  value={selectedEmployee.role || "N/A"}
-                />
+              <div className="modal-body py-2">
+                <div className="container-fluid">
+                  <div className="row mb-2">
+                    <div className="col-5 col-sm-3 fw-semibold" style={{ color: "#212529" }}>
+                      Employee ID
+                    </div>
+                    <div className="col-7 col-sm-9" style={{ color: "#212529" }}>
+                      {selectedEmployee?.employeeId || ""}
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div className="modal-footer border-0">
+              <div className="modal-body py-2">
+                <div className="container-fluid">
+                  <div className="row mb-2">
+                    <div className="col-5 col-sm-3 fw-semibold" style={{ color: "#212529" }}>
+                      Name
+                    </div>
+                    <div className="col-7 col-sm-9" style={{ color: "#212529" }}>
+                      {selectedEmployee?.name || ""}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-body py-2">
+                <div className="container-fluid">
+                  <div className="row mb-2">
+                    <div className="col-5 col-sm-3 fw-semibold" style={{ color: "#212529" }}>
+                      Department
+                    </div>
+                    <div className="col-7 col-sm-9" style={{ color: "#212529" }}>
+                      {selectedEmployee?.department || ""}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-body py-2">
+                <div className="container-fluid">
+                  <div className="row mb-2">
+                    <div className="col-5 col-sm-3 fw-semibold" style={{ color: "#212529" }}>
+                      Designation
+                    </div>
+                    <div className="col-7 col-sm-9" style={{ color: "#212529" }}>
+                      {selectedEmployee?.designation || ""}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-body py-2">
+                <div className="container-fluid">
+                  <div className="row mb-2">
+                    <div className="col-5 col-sm-3 fw-semibold" style={{ color: "#212529" }}>
+                      Email
+                    </div>
+                    <div
+                      className="col-7 col-sm-9"
+                      style={{
+                        color: "#212529",
+                        wordBreak: "break-all",
+                        overflowWrap: "anywhere",
+                        minWidth: 0,
+                      }}
+                    >
+                      {selectedEmployee?.email || ""}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-body py-2">
+                <div className="container-fluid">
+                  <div className="row mb-2">
+                    <div className="col-5 col-sm-3 fw-semibold" style={{ color: "#212529" }}>
+                      Contact
+                    </div>
+                    <div className="col-7 col-sm-9" style={{ color: "#212529" }}>
+                      {selectedEmployee?.contact || ""}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-body py-2">
+                <div className="container-fluid">
+                  <div className="row mb-2">
+                    <div className="col-5 col-sm-3 fw-semibold" style={{ color: "#212529" }}>
+                      Role
+                    </div>
+                    <div className="col-7 col-sm-9" style={{ color: "#212529" }}>
+                      {selectedEmployee?.role || "N/A"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer border-0 pt-0">
                 <button
-                  className="btn custom-outline-btn btn-sm"
-                  style={{ width: 90 }}
+                  className="btn btn-sm custom-outline-btn"
+                  style={{ minWidth: "90px" }}
                   onClick={() => setSelectedEmployee(null)}
                 >
                   Close
@@ -488,14 +579,7 @@ const tdStyle = {
   verticalAlign: "middle",
   fontSize: "14px",
   borderBottom: "1px solid #dee2e6",
-  whiteSpace: "nowrap",
+  color: "#212529",
 };
-
-const Detail = ({ label, value }) => (
-  <div className="row mb-2">
-    <div className="col-5 col-sm-3 fw-semibold">{label}</div>
-    <div className="col-sm-9 col-7">{value || "-"}</div>
-  </div>
-);
 
 export default EmployeeTeams;

@@ -791,17 +791,20 @@ const getStatusColor = (status) => {
     </div>
   </div>
 </nav>
- <div className="text-end mt-3">
-<button
-  className="btn btn-sm custom-outline-btn"
-  style={{minWidth:90}}
-  onClick={() =>
-    navigate(`/dashboard/${role}/${username}/${id}/careers`)
-  }
->
-  Back
-</button>
-</div>
+      <div className="text-end mt-3">
+      <button
+        className="btn btn-sm custom-outline-btn"
+        style={{minWidth:90}}
+        onClick={() =>
+      navigate(`/dashboard/${role}/${username}/${id}/careers`, {
+        state: { from: location.pathname }
+      })
+
+        }
+      >
+        Back
+      </button>
+      </div>
     </div>
     
     
