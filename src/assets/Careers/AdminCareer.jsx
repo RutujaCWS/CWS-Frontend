@@ -6,7 +6,7 @@ import { useNavigate, useParams,useLocation  } from "react-router-dom";
 
 
 function AdminCareer({ user }) {
-  const [formErrors, setFormErrors] = useState({}); //Added by Rutuja
+  const [formErrors, setFormErrors] = useState({}); 
   const userRole = user.role || localStorage.getItem("role");
   
 
@@ -98,7 +98,6 @@ function AdminCareer({ user }) {
       year: "numeric",
     }).format(new Date(dateString));
 
-  //Addeed by Rutuja
   const validateForm = () => {
     const errors = {};
   
@@ -362,14 +361,14 @@ function AdminCareer({ user }) {
   };
 
   async function handleDelete(id, e) {
-    if (e) e.stopPropagation(); //Added by Rutuja
+    if (e) e.stopPropagation(); 
     if (!window.confirm("Are you sure you want to delete this job?")) return;
     try {
       await axios.delete(`https://cws-backend-roan.vercel.app/api/jobs/${id}`);
       setJobs((prev) => prev.filter((t) => t._id !== id));
       setFilteredJobs((prev) => prev.filter((t) => t._id !== id));
 
-      alert("Job deleted Successfully!!"); //Added by Rutuja
+      alert("Job deleted Successfully!!"); 
     } catch (error) {
       alert("Failed to delete job");
       console.log("error", error.message);
@@ -559,8 +558,9 @@ function AdminCareer({ user }) {
   //Added by Tanvi
   // tanvi
   
-  const isAnyPopupOpen = !!showViewPopup || viewJob || showAddJob;
-  useEffect(() => {
+  const isAnyPopupOpen = showViewPopup || showAddJob; //rutuja
+
+    useEffect(() => {
     if (isAnyPopupOpen) {
       document.body.style.overflow = "hidden";
       document.documentElement.style.overflow = "hidden"; // 🔑 important
@@ -575,7 +575,7 @@ function AdminCareer({ user }) {
     };
   }, [isAnyPopupOpen]);
 
-  const isAnyModalOpen = showViewPopup || viewJob || showAddJob;
+  const isAnyModalOpen = showViewPopup || showAddJob; //rutuja
 
   useEffect(() => {
 
@@ -601,7 +601,7 @@ function AdminCareer({ user }) {
       if (e.key === "Escape") {
         e.preventDefault();
         setShowViewPopup(false);
-        setViewJob(false);
+        setViewJob(null); //rutuja
       }
 
       // TAB key → focus trap
@@ -1253,8 +1253,8 @@ onClick={() => {
       style={{ width: "600px" }}
     >
       <div className="modal-content shadow-lg"
-        ref={modalRef}
-        tabIndex="-1" 
+        // ref={modalRef}
+        // tabIndex="-1"  rutuja
       >
         <div className="modal-header-custom">
           {editJobId ? "Edit Job" : "Add Job"}
@@ -1755,10 +1755,14 @@ onClick={() => {
 
              {/* // snehal code              */}
               <div className="modal-footer">
-
+              
   <button
     className="btn btn-sm custom-outline-btn"
-    onClick={() => setShowViewPopup(false)}
+    onClick={() => {
+      setShowViewPopup(false);
+      setViewJob(null); //rutuja
+    }}
+    
   >
     Close
   </button>

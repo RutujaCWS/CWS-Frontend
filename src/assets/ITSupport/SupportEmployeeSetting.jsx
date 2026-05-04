@@ -231,7 +231,6 @@ useEffect(() => {
       data.append("category", formData.category);
       data.append("priority", formData.priority);
       data.append("description", formData.description);
-
       if (Array.isArray(formData.attachment)) {
         formData.attachment.forEach((file) => {
           data.append("attachment", file);
@@ -1084,7 +1083,6 @@ const resetFilter = () => {
                         >
                           Edit
                         </button>
-
                         <button
                           className="btn btn-sm custom-outline-btn"
                           style={{ minWidth: 90 }}

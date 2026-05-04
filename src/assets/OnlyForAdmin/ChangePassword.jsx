@@ -54,7 +54,6 @@ function ChangePassword() {
     try {
       setPasswordLoading(true);
       const accessToken = localStorage.getItem("accessToken"); // from your login response
-
       const res = await axios.post(
         "https://cws-backend-roan.vercel.app/change-password",
         {
