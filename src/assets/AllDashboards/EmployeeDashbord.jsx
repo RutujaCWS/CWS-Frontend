@@ -100,6 +100,21 @@ function EmployeeDashboard({ user }) {
     }
   };
 
+  const fetchTodayHolidayDirect = async () => {
+    try {
+      const res = await authAxios.get("/getHolidays");
+      const holidays = res.data;
+      const todayStr = new Date().toISOString().split("T")[0];
+      return holidays.some(holiday => {
+        const holidayDate = new Date(holiday.date).toISOString().split("T")[0];
+        return holidayDate === todayStr;
+      });
+    } catch (err) {
+      console.error("Failed to fetch holidays", err);
+      return false;
+    }
+  };
+
   //attendance record
   const fetchAttendance = async () => {
     try {
@@ -140,6 +155,12 @@ function EmployeeDashboard({ user }) {
     const today = toLocalDate(new Date());
     console.log(today, "today");
     // 🔍 Step 1: Check if user applied leave today
+
+    const isHoliday = await fetchTodayHolidayDirect();
+  if (isHoliday) {
+    return alert("❌ Check-in not allowed on holidays");
+  }
+  
     const todayLeaveData = await fetchTodayLeaveDirect();
     console.log("todayLeaveData", todayLeaveData);
     if (todayLeaveData) {

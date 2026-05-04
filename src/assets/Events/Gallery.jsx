@@ -43,6 +43,7 @@ function Gallery() {
 
   const [searchInput, setSearchInput] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
 
@@ -50,6 +51,7 @@ function Gallery() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
 const modalRef = useRef(null);
+const MAX_TITLE_LENGTH = 40;
   // Slice galleryItems for current page
 
   /* ================= FETCH ================= */
@@ -231,6 +233,8 @@ useEffect(() => {
   //   }
   // };
   const handleUpload = async () => {
+    if (isUploading) return;
+
     if (!selectedFiles.length) {
       alert("Please select files");
       return;
@@ -242,6 +246,8 @@ useEffect(() => {
         return;
       }
     }
+
+    setIsUploading(true); 
 
     try {
       const formData = new FormData();
@@ -532,12 +538,15 @@ useEffect(() => {
                       <input
                         className="form-control mb-2"
                         placeholder="Title"
-                        maxLength="40"
+                        maxLength={MAX_TITLE_LENGTH}
                         value={item.title}
                         onChange={(e) =>
                           handleChange(index, "title", e.target.value)
                         }
                       />
+                    <div className="text-end">
+                      <small>{item.title.length}/{MAX_TITLE_LENGTH}</small>
+                    </div>
                     </div>
 
                     <label className="form-label fw-bold">Description</label>
@@ -586,6 +595,7 @@ useEffect(() => {
                   <button
                     className="btn btn-sm custom-outline-btn"
                     onClick={editId ? handleUpdate : handleUpload}
+                    disabled={isUploading}
                   >
                     {editId ? "Update" : "Upload"}
                   </button>

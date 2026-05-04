@@ -23,7 +23,7 @@ function Performances({ user }) {
   const [dateToFilter, setDateToFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
-
+  const [submitting, setSubmitting] = useState(false);
   // New states for pending requests and active view
   const [pendingRequests, setPendingRequests] = useState([]);
   const [allPendingRequests, setAllPendingRequests] = useState([]);//rutuja
@@ -427,6 +427,7 @@ const [tl, setTl] = useState("");
 
   // Submit request
   const submitRequest = async () => {
+    if (submitting) return;
     let newErrors = {};
 
     // Validation
@@ -465,6 +466,7 @@ const [tl, setTl] = useState("");
     }
 
     setErrors({});
+    setSubmitting(true);
 
     // Payload
     const payload = {
@@ -512,6 +514,9 @@ const [tl, setTl] = useState("");
     } catch (error) {
       console.error("Submit error:", error);
       alert("Something went wrong while submitting the request");
+    }
+    finally {
+      setSubmitting(false); 
     }
   };
 
@@ -964,10 +969,11 @@ const [tl, setTl] = useState("");
                   <button
                     type="button"
                     className="btn btn-sm custom-outline-btn"
-                    style={{ minWidth: 90 }} 
+                      style={{ minWidth: 90 }}
                     onClick={submitRequest}
+                    disabled={submitting}
                   >
-                    Submit
+                    {submitting ? "Submit" : "Submit"}
                   </button>
                 </div>
               </div>
@@ -1152,6 +1158,7 @@ const [tl, setTl] = useState("");
                               <button
                                 type="button"
                                 className="btn btn-sm btn-outline-success"
+                                style={{minWidth :"90px"}}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleApproveRequest(emp._id);
@@ -1163,6 +1170,7 @@ const [tl, setTl] = useState("");
                               <button
                                 type="button"
                                 className="btn btn-sm btn-outline-danger"
+                                style={{minWidth :"90px"}}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleRejectRequest(emp._id);
@@ -1629,6 +1637,7 @@ const [tl, setTl] = useState("");
                     <>
                       <button
                         className="btn btn-sm btn-outline-success"
+                        style={{minWidth :"90px"}}
                         onClick={() => {
                           handleApproveRequest(selectedPerformance._id);
                           setSelectedPerformance(null);
@@ -1639,6 +1648,8 @@ const [tl, setTl] = useState("");
                       </button>
                       <button
                         className="btn btn-sm btn-outline-danger"
+                        style={{ width: 90 }}
+
                         onClick={() => {
                           handleRejectRequest(selectedPerformance._id);
                           setSelectedPerformance(null);

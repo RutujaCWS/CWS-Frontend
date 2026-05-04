@@ -676,197 +676,204 @@ useEffect(() => {
           </thead>
 
           <tbody>
-            {currentEmployees.map((emp) => (
-              <tr key={emp._id}>
-                <td
-                  style={{
-                    padding: "12px",
-                    verticalAlign: "middle",
-                    fontSize: "14px",
-                    borderBottom: "1px solid #dee2e6",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {emp.employeeId?.slice(0, 9)}
-                </td>
-                <td
-                  style={{
-                    padding: "12px",
-                    verticalAlign: "middle",
-                    fontSize: "14px",
-                    borderBottom: "1px solid #dee2e6",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {emp.name}
-                </td>
-                <td
-                  style={{
-                    padding: "12px",
-                    verticalAlign: "middle",
-                    fontSize: "14px",
-                    borderBottom: "1px solid #dee2e6",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {emp.email}
-                </td>
-                <td
-                  style={{
-                    padding: "12px",
-                    verticalAlign: "middle",
-                    fontSize: "14px",
-                    borderBottom: "1px solid #dee2e6",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {emp.department || "N/A"}
-                </td>
-                <td
-                  style={{
-                    padding: "12px",
-                    verticalAlign: "middle",
-                    fontSize: "14px",
-                    borderBottom: "1px solid #dee2e6",
-                    whiteSpace: "nowrap",
-                  }}
-                  className="text-uppercase"
-                >
-                  {emp.role}
-                </td>
-                <td //added jayu
-                  style={{
-                    padding: "12px",
-                    verticalAlign: "middle",
-                    fontSize: "14px",
-                    borderBottom: "1px solid #dee2e6",
-                    whiteSpace: "nowrap",
-                  }}
-                  //className="text-uppercase"
-                >
-                  {emp.reportingManager
-                    ? emp.reportingManager.name
-                    : "Not Assigned"}
-                </td>
-                <td
-                  style={{
-                    padding: "12px",
-                    verticalAlign: "middle",
-                    fontSize: "14px",
-                    borderBottom: "1px solid #dee2e6",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {new Date(emp.doj || emp.createdAt).toLocaleDateString(
-                    "en-GB",
-                    {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    },
-                  )}
-                </td>
-
-                <td style={{ display: "flex", gap: "5px" }}>
-                  <NavLink
-  to={`/dashboard/${role}/${username}/${id}/employeeprofile/${emp._id}`}
-  state={{ fromOldEmployees: showOldEmployees }}
-  className="btn btn-sm custom-outline-btn"
->
-  View
-</NavLink>
-
-                  {/* {!showOldEmployees && userRole === "admin" && (
-                    <button
-                      className="btn btn-sm btn-outline-success me-2"
-                      disabled={restrictedRoles.includes(
-                        emp.role?.trim().toLowerCase(),
-                      )} //added jayu
-                      style={{
-                        whiteSpace: "nowrap",
-                        height: "31px", // Same as Bootstrap btn-sm default
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        //  backgroundColor: "#3A5FBE", color: "#fff"
-                      }}
-                      onClick={() => handleAssignManagerClick(emp)}
-                    >
-                      Assign Manager
-                    </button>
-                  )} */}
-{!showOldEmployees && userRole === "admin" && (
-                    <>
-                      {emp.role === "manager" ? (
-                       <button
-                          className="btn btn-sm btn-outline-success me-2"
-                          disabled={restrictedRoles.includes(
-                            emp.role?.trim().toLowerCase(),
-                          )}
-                            style={{
-                            width: "117px",
-                            height: "31px",
-                            whiteSpace: "nowrap",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                          onClick={() => handleAssignMdClick(emp)}
-                        >
-                          Assign MD
-                        </button>
-                      ) : (
-                        emp.role?.trim().toLowerCase() !== "ceo" && (
-                          <button
-                            className="btn btn-sm btn-outline-success me-2"
-                            disabled={restrictedRoles.includes(
-                              emp.role?.trim().toLowerCase()
-                            )}
-                            style={{
-                              whiteSpace: "nowrap",
-                              height: "31px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                            onClick={() => handleAssignManagerClick(emp)}
-                          >
-                            Assign Manager
-                          </button>
-                        )
-                      )}
-                    </>
-                  )}
-                  
-                  {/* Hide delete buttons on Old Employee view */}
-                  {!showOldEmployees && userRole === "admin" && (
-                    <button
-                      className="btn btn-sm btn-outline-danger"
-                      style={{
-                        whiteSpace: "nowrap",
-                        height: "31px", // Same as Bootstrap btn-sm default
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                      onClick={() => handleDeleteEmployee(emp._id)}
-                    >
-                      Move To Bin
-                    </button>
-                  )}
-
-                  {showOldEmployees && userRole === "admin" && (
-                    <button
-                      className="btn btn-sm btn-outline-danger"
-                      onClick={() => handleDeleteEmployeepermanent(emp._id)}
-                    >
-                      Delete
-                    </button>
-                  )}
+          {currentEmployees.length === 0 ? (
+              <tr>
+                <td colSpan="8" style={{ textAlign: "center", padding: "20px" }}>
+                  No data available
                 </td>
               </tr>
-            ))}
-            
+            ) : (
+              currentEmployees.map((emp) => (
+                        <tr key={emp._id}>
+                          <td
+                            style={{
+                              padding: "12px",
+                              verticalAlign: "middle",
+                              fontSize: "14px",
+                              borderBottom: "1px solid #dee2e6",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {emp.employeeId?.slice(0, 9)}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px",
+                              verticalAlign: "middle",
+                              fontSize: "14px",
+                              borderBottom: "1px solid #dee2e6",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {emp.name}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px",
+                              verticalAlign: "middle",
+                              fontSize: "14px",
+                              borderBottom: "1px solid #dee2e6",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {emp.email}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px",
+                              verticalAlign: "middle",
+                              fontSize: "14px",
+                              borderBottom: "1px solid #dee2e6",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {emp.department || "N/A"}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px",
+                              verticalAlign: "middle",
+                              fontSize: "14px",
+                              borderBottom: "1px solid #dee2e6",
+                              whiteSpace: "nowrap",
+                            }}
+                            className="text-uppercase"
+                          >
+                            {emp.role}
+                          </td>
+                          <td //added jayu
+                            style={{
+                              padding: "12px",
+                              verticalAlign: "middle",
+                              fontSize: "14px",
+                              borderBottom: "1px solid #dee2e6",
+                              whiteSpace: "nowrap",
+                            }}
+                            //className="text-uppercase"
+                          >
+                            {emp.reportingManager
+                              ? emp.reportingManager.name
+                              : "Not Assigned"}
+                          </td>
+                          <td
+                            style={{
+                              padding: "12px",
+                              verticalAlign: "middle",
+                              fontSize: "14px",
+                              borderBottom: "1px solid #dee2e6",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {new Date(emp.doj || emp.createdAt).toLocaleDateString(
+                              "en-GB",
+                              {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              },
+                            )}
+                          </td>
+
+                          <td style={{ display: "flex", gap: "5px" }}>
+                            <NavLink
+            to={`/dashboard/${role}/${username}/${id}/employeeprofile/${emp._id}`}
+            state={{ fromOldEmployees: showOldEmployees }}
+            className="btn btn-sm custom-outline-btn"
+          >
+            View
+          </NavLink>
+
+                            {/* {!showOldEmployees && userRole === "admin" && (
+                              <button
+                                className="btn btn-sm btn-outline-success me-2"
+                                disabled={restrictedRoles.includes(
+                                  emp.role?.trim().toLowerCase(),
+                                )} //added jayu
+                                style={{
+                                  whiteSpace: "nowrap",
+                                  height: "31px", // Same as Bootstrap btn-sm default
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  //  backgroundColor: "#3A5FBE", color: "#fff"
+                                }}
+                                onClick={() => handleAssignManagerClick(emp)}
+                              >
+                                Assign Manager
+                              </button>
+                            )} */}
+          {!showOldEmployees && userRole === "admin" && (
+                              <>
+                                {emp.role === "manager" ? (
+                                <button
+                                    className="btn btn-sm btn-outline-success me-2"
+                                    disabled={restrictedRoles.includes(
+                                      emp.role?.trim().toLowerCase(),
+                                    )}
+                                      style={{
+                                      width: "117px",
+                                      height: "31px",
+                                      whiteSpace: "nowrap",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                    }}
+                                    onClick={() => handleAssignMdClick(emp)}
+                                  >
+                                    Assign MD
+                                  </button>
+                                ) : (
+                                  emp.role?.trim().toLowerCase() !== "ceo" && (
+                                    <button
+                                      className="btn btn-sm btn-outline-success me-2"
+                                      disabled={restrictedRoles.includes(
+                                        emp.role?.trim().toLowerCase()
+                                      )}
+                                      style={{
+                                        whiteSpace: "nowrap",
+                                        height: "31px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                      }}
+                                      onClick={() => handleAssignManagerClick(emp)}
+                                    >
+                                      Assign Manager
+                                    </button>
+                                  )
+                                )}
+                              </>
+                            )}
+                            
+                            {/* Hide delete buttons on Old Employee view */}
+                            {!showOldEmployees && userRole === "admin" && (
+                              <button
+                                className="btn btn-sm btn-outline-danger"
+                                style={{
+                                  whiteSpace: "nowrap",
+                                  height: "31px", // Same as Bootstrap btn-sm default
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                                onClick={() => handleDeleteEmployee(emp._id)}
+                              >
+                                Move To Bin
+                              </button>
+                            )}
+
+                            {showOldEmployees && userRole === "admin" && (
+                              <button
+                                className="btn btn-sm btn-outline-danger"
+                                onClick={() => handleDeleteEmployeepermanent(emp._id)}
+                              >
+                                Delete
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+            )} 
           </tbody>
         </table>
       </div>

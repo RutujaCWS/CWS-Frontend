@@ -1190,8 +1190,8 @@ const calculateTaskStatus = () => {
          // onClick={() => setSelectedTask(null)}   //comment by harshada
         >
           <div
-            className="modal-dialog "
-            style={{ maxWidth: "650px", width: "95%", marginTop: "120px" }}
+            className="modal-dialog modal-lg modal-dialog-centered"
+            style={{ width: "600px" }}
           >
             <div className="modal-content">
               <div

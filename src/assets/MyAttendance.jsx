@@ -737,6 +737,21 @@ function MyAttendance({ employeeId }) {
     }
   };
 
+  const fetchTodayHolidayDirect = async () => {
+    try {
+      const res = await authAxios.get("/getHolidays");
+      const holidays = res.data;
+      const todayStr = new Date().toISOString().split("T")[0];
+      return holidays.some(holiday => {
+        const holidayDate = new Date(holiday.date).toISOString().split("T")[0];
+        return holidayDate === todayStr;
+      });
+    } catch (err) {
+      console.error("Failed to fetch holidays", err);
+      return false;
+    }
+  };
+
   const handleCheckIn = async () => {
     if (!employeeId) return alert("User ID is missing!");
 
@@ -753,6 +768,12 @@ function MyAttendance({ employeeId }) {
         hour12: true,
       });
       return alert(`Already checked in today at ${time}`);
+    }
+
+    //check holiday
+    const isHoliday = await fetchTodayHolidayDirect();
+    if (isHoliday) {
+      return alert("❌ Check-in not allowed on holidays");
     }
 
     // Check Leave

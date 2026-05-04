@@ -232,7 +232,6 @@ function EmployeeApplyLeave({ user, onLeaveApplied }) {
 
   const handleSubmit = async (e) => {
     if (isSubmitting) return; 
-    setIsSubmitting(true);
 
     e.preventDefault();
     const dateFromParsed = parseDate(form.dateFrom);
@@ -274,6 +273,8 @@ function EmployeeApplyLeave({ user, onLeaveApplied }) {
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
       const existingLeavesRes = await axios.get(`https://cws-backend-roan.vercel.app/leave/my/${user._id}`);
       const existingLeaves = existingLeavesRes.data || [];
@@ -286,9 +287,11 @@ function EmployeeApplyLeave({ user, onLeaveApplied }) {
         toDate.setHours(23, 59, 59, 999);
         return fromDate <= leaveTo && toDate >= leaveFrom && leave.status !== "rejected";
       });
+      
       if (isOverlapping) {
         setMessage("⚠️ You already applied for leave on one or more of these dates.");
         alert("⚠️ You already applied for leave on one or more of these dates.");
+        setIsSubmitting(true);
         return;
       }
 
@@ -448,11 +451,11 @@ style={{
   inset: 0,
   zIndex: 1050,
   overflow: "hidden",
-  paddingTop: "100px"   
+  // paddingTop: "100px"   
 }}
         >
    <div
-  className="modal-dialog modal-lg"
+  className="modal-dialog modal-lg modal-dialog-centered"
   style={{
     maxWidth: "650px",
     width: "95%",
@@ -841,7 +844,7 @@ style={{
                       style={{ minWidth: 90 }}
                       disabled={isSubmitting}
                     >
-                      {isSubmitting ? "Applying..." : "Apply"}
+                      {isSubmitting ? "Apply" : "Apply"}
                     </button>
                   </div>
                 </form>

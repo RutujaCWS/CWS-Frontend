@@ -21,7 +21,6 @@ function HrPolicy() {
     title: "",
     description: "",
   });
-
   const [policies, setPolicies] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [editFile, setEditFile] = useState(null);//added by shivani
@@ -236,38 +235,14 @@ function HrPolicy() {
     }
   };
 
-  // const handleAddPolicy = async () => {
-  //   if (!newPolicy.title || !newPolicy.description) {
-  //     alert("Title and Description required");
-  //     return;
-  //   }
-
-  //   try {
-  //     const res = await axios.post(`${API_BASE}/policy/create`, {
-  //       title: newPolicy.title,
-  //       description: newPolicy.description,
-  //       image: newPolicy.pdf ? newPolicy.pdf.name : null,
-  //     });
-
-  //     if (res.data.success) {
-  //       alert(res.data.message);
-  //       setShowAddModal(false);
-  //       setNewPolicy({ title: "", description: "", pdf: null });
-
-  //       // 🔄 Refresh table
-  //       fetchPolicies();
-  //     }
-  //   } catch (error) {
-  //     console.error("Failed to add policy", error);
-  //     alert("Failed to create policy");
-  //   }
-  // };
-
-  //update by shivani
   const handleAddPolicy = async () => {
-    if (!newPolicy.title || !newPolicy.description) {
-      alert("Title and Description required");
+    if (!newPolicy.title ) {
+      alert("Title is required");
       return;
+    }
+    if(!newPolicy.description){
+      alert("Description is required");
+
     }
   
     if (newPolicy.pdf && !newPolicy.pdf.type.includes("pdf") && !newPolicy.pdf.name.endsWith(".pdf")) {
@@ -1040,7 +1015,7 @@ function HrPolicy() {
               >
                 <div className="row g-3">
                   <div className="col-12">
-                    <label className="form-label">Policy Title</label>
+                    <label className="form-label">Policy Title<span style={{ color: "red" }}>  *</span></label>
                     <input
                       className="form-control"
                       placeholder="Enter policy title"
@@ -1050,10 +1025,22 @@ function HrPolicy() {
                         setNewPolicy({ ...newPolicy, title: e.target.value })
                       }
                     />
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        marginTop: "4px",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {newPolicy.title.length}/50
+                    </div>
                   </div>
 
                   <div className="col-12">
-                    <label className="form-label">Policy Description</label>
+                    <label className="form-label">Policy Description<span style={{ color: "red" }}>  *</span></label>
 
                     <textarea
                       rows="3"
@@ -1166,7 +1153,7 @@ function HrPolicy() {
           >
             <option value={5}>5</option>
             <option value={10}>10</option>
-            <option value={15}>15</option>
+            <option value={25}>25</option>
           </select>
 
           <span>

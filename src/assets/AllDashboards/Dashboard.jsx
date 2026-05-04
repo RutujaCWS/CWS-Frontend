@@ -197,24 +197,24 @@ const [notifications, setNotifications] = useState([]);
   }, []);
   //role, username, id, navigate
 
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      navigate("/");
-      return;
-    }
+  // useEffect(() => {
+  //   const token = localStorage.getItem("accessToken");
+  //   if (!token) {
+  //     navigate("/");
+  //     return;
+  //   }
 
-    axios
-      .get(`https://cws-backend-roan.vercel.app/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => setUser(res.data))
-      .catch(() => {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        navigate("/");
-      });
-  }, [navigate]);
+  //   axios
+  //     .get(`https://cws-backend-roan.vercel.app/me`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     })
+  //     .then((res) => setUser(res.data))
+  //     .catch(() => {
+  //       localStorage.removeItem("accessToken");
+  //       localStorage.removeItem("refreshToken");
+  //       navigate("/");
+  //     });
+  // }, [navigate]);
 
   // in Dashboard or Header where logout is triggered
   const handleLogout = async () => {
