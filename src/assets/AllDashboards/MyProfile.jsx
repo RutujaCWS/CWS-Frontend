@@ -120,6 +120,7 @@ function MyProfile({ user, setUser }) {
     }
   };
 
+
   const handleSave = async () => {
     if (!user?._id) return alert("Invalid user ID");
 
@@ -184,6 +185,55 @@ function MyProfile({ user, setUser }) {
       console.error(err);
       alert("Failed to update profile.");
     }
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    const file = files[0];
+  
+    let error = "";
+  
+    const imageFields = ["image"];
+    const allowedDocs = [
+      "application/pdf",
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+    ];
+  
+    const maxSize = 5 * 1024 * 1024; // 5MB
+  
+    if (!file) {
+      error = "Please select a file.";
+    } else {
+      // Profile image validation
+      if (imageFields.includes(name)) {
+        if (!file.type.startsWith("image/")) {
+          error = "Only image files (JPG, PNG, JPEG) are allowed.";
+        }
+      } else {
+        // Documents validation
+        if (!allowedDocs.includes(file.type)) {
+          error = "Only PDF, JPG, JPEG, PNG files are allowed.";
+        }
+      }
+  
+      // Size check
+      if (!error && file.size > maxSize) {
+        error = "File size must be less than 5 MB.";
+      }
+    }
+  
+    if (error) {
+      alert(error); // 👉 simple UI message
+      e.target.value = "";
+      return;
+    }
+  
+    setFormData((prev) => ({
+      ...prev,
+      [name]: file,
+    }));
   };
 
   const renderFileLink = (file) => {
@@ -368,7 +418,7 @@ function MyProfile({ user, setUser }) {
                     type="file"
                     name="image"
                     accept="image/*"
-                    onChange={handleChange}
+                    onChange={handleFileChange}
                     className="form-control form-control-sm bg-light border-0 mt-2"
                     style={{ maxWidth: "250px" }}
                   />
@@ -475,7 +525,7 @@ function MyProfile({ user, setUser }) {
                       type={field === "salary" ? "number" : "text"}
                       name={field}
                       value={formData[field] || ""}
-                      onChange={handleChange}
+                      onChange={handleFileChange}
                       className={`form-control border-0 ${
                         [
                           "employeeId",
@@ -534,7 +584,7 @@ function MyProfile({ user, setUser }) {
                     type="date"
                     name={field}
                     value={formData[field] ? formData[field].split("T")[0] : ""}
-                    onChange={handleChange}
+                    onChange={handleFileChange}
                     //className="form-control bg-light border-0"
                     className={`form-control border-0 ${
                       ["dob", "doj"].includes(field)
@@ -578,7 +628,7 @@ function MyProfile({ user, setUser }) {
                     type="text"
                     name={`currentAddress.${field}`}
                     value={formData.currentAddress?.[field] || ""}
-                    onChange={handleChange}
+                    onChange={handleFileChange}
                     className="form-control bg-light border-0"
                   />
                 ) : (
@@ -606,7 +656,7 @@ function MyProfile({ user, setUser }) {
                     type="text"
                     name={`permanentAddress.${field}`}
                     value={formData.permanentAddress?.[field] || ""}
-                    onChange={handleChange}
+                    onChange={handleFileChange}
                     // className="form-control bg-light border-0"
                     className={`form-control border-0 ${
                       ["street", "city", "state", "zip"].includes(field)
@@ -640,7 +690,7 @@ function MyProfile({ user, setUser }) {
                     type="text"
                     name={`bankDetails.${field}`}
                     value={formData.bankDetails?.[field] || ""}
-                    onChange={handleChange}
+                    onChange={handleFileChange}
                     //className="form-control bg-light border-0"
                     className="form-control bg-secondary-subtle text-muted border-0"
                     readOnly
@@ -667,7 +717,7 @@ function MyProfile({ user, setUser }) {
                   type="text"
                   name="uanNumber"
                   value={formData.uanNumber || ""}
-                  onChange={handleChange}
+                  onChange={handleFileChange}
                   className="form-control bg-secondary-subtle text-muted border-0"
                   readOnly
                 />
@@ -687,7 +737,7 @@ function MyProfile({ user, setUser }) {
                   type="text"
                   name="pfNumber"
                   value={formData.pfNumber || ""}
-                  onChange={handleChange}
+                  onChange={handleFileChange}
                   className="form-control bg-secondary-subtle text-muted border-0"
                   readOnly
                 />
@@ -725,7 +775,7 @@ function MyProfile({ user, setUser }) {
                       type="file"
                       name={field}
                       accept=".jpg,.jpeg,.png,application/pdf"
-                      onChange={handleChange}
+                      onChange={handleFileChange}
                     />
                   ) : !file ? (
                     "-"
@@ -761,7 +811,7 @@ function MyProfile({ user, setUser }) {
                   type="file"
                   name="passbookPdf"
                   accept=".jpg,.jpeg,.png,application/pdf"
-                  onChange={handleChange}
+                  onChange={handleFileChange}
                 />
               ) : profile.bankDetails?.passbookPdf ? (
                 (() => {
@@ -818,7 +868,7 @@ function MyProfile({ user, setUser }) {
                     type={field === "salary" ? "number" : "text"}
                     name={field}
                     value={formData[field] || ""}
-                    onChange={handleChange}
+                    onChange={handleFileChange}
                     // className="form-control bg-light border-0"
                     className={`form-control border-0 ${
                       [

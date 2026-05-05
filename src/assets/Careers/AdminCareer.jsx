@@ -28,7 +28,7 @@ function AdminCareer({ user }) {
   const [activeViewTab, setActiveViewTab] = useState("details");
   const [loadingApplicants, setLoadingApplicants] = useState(false);
   const [openStatusId, setOpenStatusId] = useState(null);
-
+  const [saving, setSaving] = useState(false);
   // Filters
   //added by rushikesh
   const navigate = useNavigate();
@@ -213,12 +213,13 @@ function AdminCareer({ user }) {
 
   async function handleSaveJob(e) {
     e.preventDefault();
-
+  if (saving) return;
     if (!validateForm()) {
       alert("Please fill all required fields correctly");
       return;
     }
     try {
+      setSaving(true); 
       let processedSkills = [];
       if (Array.isArray(newJob.importantSkills)) {
         processedSkills = newJob.importantSkills;
@@ -274,14 +275,14 @@ function AdminCareer({ user }) {
       let res;
       if (editJobId) {
         res = await axios.put(
-          `https://cws-backend-roan.vercel.app/api/jobs/${editJobId}`,
+          `http://localhost:8000/api/jobs/${editJobId}`,
           payload,
           { headers: { "Content-Type": "application/json" } },
         );
         await fetchJobs();
       } else {
         const res = await axios.post(
-          "https://cws-backend-roan.vercel.app/api/jobs/",
+          "http://localhost:8000/api/jobs/",
           payload,
           { headers: { "Content-Type": "application/json" } },
         );
@@ -323,7 +324,9 @@ function AdminCareer({ user }) {
       console.error("Submit failed:", error.response?.data || error.message);
       // alert("Operation failed");
       alert(error.response?.data?.error || "Operation failed"); //Added by Samiksha
-    }
+    }finally {
+    setSaving(false); 
+  }
   }
 
   const handleEdit = (job) => {
@@ -1625,9 +1628,16 @@ onClick={() => {
               >
                 Cancel
               </button>
-              <button type="submit" className="btn btn-sm custom-outline-btn" style={{ minWidth: 90 }}>
-                {editJobId ? "Save Changes" : "Save"}
-              </button>
+              <button
+              type="submit"
+              className="btn btn-sm custom-outline-btn"
+              style={{minWidth: "90px"}}
+              disabled={saving}
+            >
+              {saving ? "Saving..." : editJobId ? "Save Changes" : "Save"}
+            </button>
+
+             
             </div>
           </form>
         </div>

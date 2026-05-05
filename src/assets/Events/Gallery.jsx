@@ -241,6 +241,17 @@ useEffect(() => {
     }
 
     for (let item of selectedFiles) {
+
+      if (!item.title.trim()) {
+        alert("Title is required for all files");
+        return;
+      }
+    
+      if (!item.description.trim()) {
+        alert("Description is required for all files");
+        return;
+      }
+    
       if (!item.category) {
         alert("Please select category for all files");
         return;
@@ -751,24 +762,28 @@ useEffect(() => {
                         fontSize: "14px",
                         borderBottom: "1px solid #dee2e6",
                         whiteSpace: "nowrap",
+                        maxWidth: "100px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis"
                       }}
+                      title={item.title}
                     >
                       {item.title}
                     </td>
                   <td
-  style={{
-    padding: "12px",
-    fontSize: "14px",
-    borderBottom: "1px solid #dee2e6",
-    maxWidth: "100px",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-  }}
-  title={item.description}
->
-  {item.description || "-"}
-</td>
+                    style={{
+                      padding: "12px",
+                      fontSize: "14px",
+                      borderBottom: "1px solid #dee2e6",
+                      maxWidth: "100px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                    title={item.description}
+                  >
+                    {item.description || "-"}
+                  </td>
 
                     <td
                       style={{
@@ -1029,9 +1044,18 @@ useEffect(() => {
               {/* ===== BODY ===== */}
               <div className="modal-body px-4 py-3">
                 <div className="row mb-2">
-                  <div className="col-4 fw-semibold">Title</div>
-                  <div className="col-8">{viewItem.title || "-"}</div>
-                </div>
+                <div className="col-4 fw-semibold">Title</div>
+                 <div
+                  className="col-8"
+                  style={{
+                    whiteSpace: "normal",       
+                    wordBreak: "break-word",    
+                    overflowWrap: "break-word",  
+                  }}
+                >
+                  {viewItem.title || "-"}
+                </div>                
+              </div>
 
                 <div className="row mb-2">
                   <div className="col-4 fw-semibold">Description</div>

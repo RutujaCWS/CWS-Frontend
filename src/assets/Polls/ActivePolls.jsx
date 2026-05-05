@@ -31,23 +31,38 @@ const ActivePolls = ({ user }) => {
   const modalRef = useRef(null);
 
   useEffect(() => {
+    let isMounted = true;
+  
     const fetchActivePoll = async () => {
       try {
         const res = await axios.get("https://cws-backend-roan.vercel.app/api/polls/active");
-        if (res.data) {
-          setSavedPolls([res.data]);
-        }
+  
+        if (!isMounted) return;
+  
+        setSavedPolls(prev => {
+          const newData = res.data ? [res.data] : [];
+  
+          // ✅ prevent re-render if same data
+          if (JSON.stringify(prev) === JSON.stringify(newData)) {
+            return prev;
+          }
+  
+          return newData;
+        });
+  
       } catch (err) {
         console.error("Failed to load active polls");
       }
     };
-
+  
     fetchActivePoll();
-
-    const interval = setInterval(fetchActivePoll, 5000); // every 5 sec
-
-    return () => clearInterval(interval);
-
+  
+    const interval = setInterval(fetchActivePoll, 10000); // ✅ 10 sec
+  
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
@@ -262,16 +277,15 @@ const ActivePolls = ({ user }) => {
   };
 
   const [voting, setVoting] = useState(false);
-  const storedUser = (() => {
+  const storedUser = React.useMemo(() => {
     try {
       const employee = localStorage.getItem("employee");
       const userData = localStorage.getItem("user");
       return employee ? JSON.parse(employee) : userData ? JSON.parse(userData) : null;
     } catch (err) {
-      console.error("Error parsing localStorage user", err);
       return null;
     }
-  })();
+  }, []);
 
   const loggedInUserId = user?._id ?? storedUser?._id ?? null;
 

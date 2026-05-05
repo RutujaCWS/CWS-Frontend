@@ -237,7 +237,7 @@ function TodaysEmployeeDetails() {
           const workingHours = calculateWorkingHours(checkIn, checkOut);
           const status = getStatus(checkIn, checkOut, workingHours);
         
-          if (status === "Present") present++;
+          if (status === "Present" || status === "Working" || status === "Late Check-In") present++;
           else if (status === "Absent") absent++;
         
           // Late check-in logic same
@@ -350,19 +350,25 @@ function TodaysEmployeeDetails() {
         const checkOut = emp.checkOutTime;
         const workingHours = calculateWorkingHours(checkIn, checkOut);
         const status = getStatus(checkIn, checkOut, workingHours);
-          // Late check-in: Present AND after 10:00 am
-          if (statusFilter === "Late Check-In") {
-            if (checkIn) {
-              const dt = new Date(checkIn);
-              const hours = dt.getHours();
-              const minutes = dt.getMinutes();
-          
-              return hours > 10 || (hours === 10 && minutes > 0);
-            }
-            return false;
-        } else {
-          return status === statusFilter;
+
+        // ✅ Late Check-In
+        if (statusFilter === "Late Check-In") {
+          if (!checkIn) return false;
+
+          const dt = new Date(checkIn);
+          const hours = dt.getHours();
+          const minutes = dt.getMinutes();
+
+          return hours > 10 || (hours === 10 && minutes > 0);
         }
+
+        // ✅ Present should include Working
+        if (statusFilter === "Present") {
+          return status === "Present" || status === "Working";
+        }
+
+        // ✅ Default
+        return status === statusFilter;
       });
     }
     // Name filter

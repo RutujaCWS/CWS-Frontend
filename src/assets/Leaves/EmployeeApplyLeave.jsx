@@ -278,23 +278,32 @@ function EmployeeApplyLeave({ user, onLeaveApplied }) {
     try {
       const existingLeavesRes = await axios.get(`https://cws-backend-roan.vercel.app/leave/my/${user._id}`);
       const existingLeaves = existingLeavesRes.data || [];
-      const isOverlapping = existingLeaves.some((leave) => {
-        const leaveFrom = new Date(leave.dateFrom);
-        const leaveTo = new Date(leave.dateTo);
-        leaveFrom.setHours(0, 0, 0, 0);
-        leaveTo.setHours(23, 59, 59, 999);
-        fromDate.setHours(0, 0, 0, 0);
-        toDate.setHours(23, 59, 59, 999);
-        return fromDate <= leaveTo && toDate >= leaveFrom && leave.status !== "rejected";
-      });
       
-      if (isOverlapping) {
-        setMessage("⚠️ You already applied for leave on one or more of these dates.");
-        alert("⚠️ You already applied for leave on one or more of these dates.");
-        setIsSubmitting(true);
-        return;
+      let overlappingLeaveDetails = [];
+      for (let i = 0; i < existingLeaves.length; i++) {
+        const leave = existingLeaves[i];
+        if (leave.status !== "rejected") {
+          const leaveFrom = new Date(leave.dateFrom);
+          const leaveTo = new Date(leave.dateTo);
+          leaveFrom.setHours(0, 0, 0, 0);
+          leaveTo.setHours(23, 59, 59, 999);
+          fromDate.setHours(0, 0, 0, 0);
+          toDate.setHours(23, 59, 59, 999);
+          
+          if (fromDate <= leaveTo && toDate >= leaveFrom) {
+            const existingFromStr = leave.dateFrom;
+            const existingToStr = leave.dateTo;
+            overlappingLeaveDetails.push(`${existingFromStr} to ${existingToStr}`);
+          }
+        }
       }
+      
+      if (overlappingLeaveDetails.length > 0) {
+        const leaveDates = overlappingLeaveDetails.join(", ");
+        alert(`❌ You already have a leave application from ${form.dateFrom} to ${form.dateTo}.`);
+        return;
 
+      }
       await axios.post("https://cws-backend-roan.vercel.app/leave/apply", {
         employeeId: user._id,
         leaveType: form.leaveType,

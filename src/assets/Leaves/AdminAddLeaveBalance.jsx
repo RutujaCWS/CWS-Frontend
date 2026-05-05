@@ -838,7 +838,10 @@ fetchNotifications();
                 className="form-control"
                 value={employeeNameFilter}
                 onChange={(e) => {
-                  setEmployeeNameFilter(e.target.value);
+                  const value = e.target.value;
+                  const cleaned = value.replace(/[^A-Za-z\s]/g, "");
+
+                  setEmployeeNameFilter(cleaned);
                   setCurrentPage(1);
                 }}
                 placeholder="Employee name"

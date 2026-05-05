@@ -818,7 +818,7 @@ const [tl, setTl] = useState("");
                   ></button>
                 </div>
                 <div className="modal-body" style={{ maxHeight: "60vh" }}>
-                  <label className="form-label">Employee Name</label>
+                  <label className="form-label">Employee Name<span className="text-danger"> *</span></label>
                   <div style={{ position: "relative", zIndex: 1050 }}>
                     <Select
                       options={employeeOptions}
@@ -883,7 +883,7 @@ const [tl, setTl] = useState("");
                   <label className="form-label mt-3">Department</label>
                   <input className="form-control" value={department} disabled />
 
-                  <label className="form-label mt-3">Duration Type</label>
+                  <label className="form-label mt-3">Duration Type<span className="text-danger"> *</span></label>
                   <select
                     className={`form-control ${errors.employee ? "is-invalid" : ""}`}
                     value={durationType}
@@ -939,6 +939,7 @@ const [tl, setTl] = useState("");
                     className={`form-control ${errors.description ? "is-invalid" : ""}`}
                     rows="3"
                     value={userDescription}
+                    maxLength={250} 
                     placeholder="Type description (max 250 characters)"
                     onChange={(e) => {
                       setUserDescription(e.target.value);

@@ -23,80 +23,54 @@ function AdminDashboard({ user }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!user?._id) return;
+  
     const fetchData = async () => {
-      // ✅ Role check
-      if (
-        !user?.role ||
-        (role !== "admin" && role !== "ceo" && role !== "coo" && role !== "md")
-      ) {
-        setError("Access denied: Only admins can view employees.");
-        setLoading(false);
-        return;
-      }
-
       try {
         const token = localStorage.getItem("accessToken");
+  
         const authAxios = axios.create({
           baseURL: "https://cws-backend-roan.vercel.app",
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        // ✅ Parallel requests
+  
         const [empRes, attRes, leaveRegRes] = await Promise.allSettled([
           authAxios.get("/getAllEmployees"),
           authAxios.get("/attendance/today"),
           authAxios.get("/leaves-and-regularizations"),
         ]);
-
-        // ✅ Employees
-        if (empRes.status === "fulfilled") setEmployees(empRes.value.data);
-        else console.warn("Employees fetch failed:", empRes.reason);
-
-        // ✅ Attendance
-        if (attRes.status === "fulfilled") setAttendanceData(attRes.value.data);
-        else console.warn("Attendance fetch failed:", attRes.reason);
-
-        // ✅ Leaves + Regularizations
+  
+        if (empRes.status === "fulfilled") {
+          setEmployees(empRes.value.data);
+        }
+  
+        if (attRes.status === "fulfilled") {
+          setAttendanceData(attRes.value.data);
+        }
+  
         if (leaveRegRes.status === "fulfilled") {
           const leavesData = leaveRegRes.value.data.leaves || [];
           const regsData = leaveRegRes.value.data.regularizations || [];
-
-          console.log("Leaves fetched:", leavesData.length);
-          console.log("Regularizations fetched:", regsData.length);
-
+  
           setLeaves(leavesData);
           setRegularizations(regsData);
-
-          // ✅ Combine + tag type
+  
           const merged = [
-            ...leavesData.map((l) => ({ ...l, type: "Leave" })),
-            ...regsData.map((r) => ({ ...r, type: "Regularization" })),
-          ];
-
-          // ✅ Sort newest first
-          merged.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-          // ✅ Set to state
+            ...leavesData.map(l => ({ ...l, type: "Leave" })),
+            ...regsData.map(r => ({ ...r, type: "Regularization" })),
+          ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  
           setAllRequests(merged);
-
-          console.log("Merged Requests:", merged.length);
-        } else {
-          console.warn(
-            "Leave/Regularization fetch failed:",
-            leaveRegRes.reason,
-          );
         }
       } catch (err) {
-        console.error("Main fetch error:", err);
-        setError("Network error — please check connection or backend status.");
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchData();
-  }, [user, role]);
-
+  }, [user?._id]);
   console.log("all request", allRequests);
 
   // if (loading) return <p>Loading...</p>;

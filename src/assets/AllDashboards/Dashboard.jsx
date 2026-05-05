@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback} from "react";
 import {
   useNavigate,
   useParams,
@@ -167,7 +167,7 @@ const [notifications, setNotifications] = useState([]);
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        if (isMounted);
+        if (isMounted)
         {
           setUser(res.data);
 
@@ -217,82 +217,89 @@ const [notifications, setNotifications] = useState([]);
   // }, [navigate]);
 
   // in Dashboard or Header where logout is triggered
+
+  const fetchNotifications = useCallback(async () => {
+    if (!user?._id) return;
+
+    try {
+      const res = await axios.get(
+        `https://cws-backend-roan.vercel.app/notifications/${user._id}`
+      );
+
+      const fifteenDaysAgo = new Date();
+      fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+
+      const recentNotifications = res.data.filter((n) => {
+        const createdDate = new Date(n.createdAt);
+        return createdDate >= fifteenDaysAgo;
+      });
+
+      setNotifications(recentNotifications);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [user?._id]);
+
+  // 🔥 FIX 3 → dependency safe
+  useEffect(() => {
+    if (!user?._id) return;
+    fetchNotifications();
+  }, [user?._id, fetchNotifications]);
+
+
   const handleLogout = async () => {
     try {
       setIsLoggingOut(true);
       const refreshToken = localStorage.getItem("refreshToken");
-      // call backend to invalidate refresh token (optional)
-      await axios.post("https://cws-backend-roan.vercel.app/logout", { refreshToken });
 
-      // clear everything
-      // ❗ Clear active browser session
-      // sessionStorage.removeItem("activeUser");
-      // ❗ Clear localStorage tokens
-      // localStorage.removeItem("accessToken");
-      // localStorage.removeItem("refreshToken");
-      // localStorage.removeItem("role");
-      // localStorage.removeItem("username");
-      // localStorage.removeItem("id");
+      await axios.post(
+        "https://cws-backend-roan.vercel.app/logout",
+        { refreshToken }
+      );
 
-      //    // Notify all tabs
-      // const bc = new BroadcastChannel("auth");
-      // bc.postMessage({ type: "LOGOUT" });
-
-      // optionally clear other app state...
       localStorage.clear();
-      // update a top-level indicator if you use context or store
-      // (not required if App reads localStorage)
-      // navigate once after clearing
-      // Give time for spinner before redirect
+
       setTimeout(() => {
         navigate("/", { replace: true });
       }, 800);
     } catch (err) {
-      console.error("Logout error:", err);
-      // still clear local state and navigate
-      // localStorage.removeItem("accessToken");
-      // localStorage.removeItem("refreshToken");
-      // localStorage.removeItem("role");
-      // localStorage.removeItem("username");
-      // localStorage.removeItem("id");
       localStorage.clear();
-
       navigate("/", { replace: true });
     } finally {
-      // optional spinner stop (navigate will mount login)
       setIsLoggingOut(false);
     }
   };
-useEffect(() => {
-  if (!user?._id) return;
-  fetchNotifications();
-}, [user?._id]);
+// useEffect(() => {
+//   if (!user?._id) return;
+//   fetchNotifications();
+// }, [user?._id]);
 
-const fetchNotifications = async () => {
-  console.log("userId",user);
-  console.log("userId",user._id);
-  if (!user._id) return;
+// const fetchNotifications = async () => {
+//   console.log("userId",user);
+//   console.log("userId",user._id);
+//   if (!user._id) return;
   
-  console.log("hello ........")
+//   console.log("hello ........")
 
-  try {
-    const res = await axios.get(
-      `https://cws-backend-roan.vercel.app/notifications/${user._id}`
-    );
+//   try {
+//     const res = await axios.get(
+//       `https://cws-backend-roan.vercel.app/notifications/${user._id}`
+//     );
 
-    const fifteenDaysAgo = new Date();
-    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+//     const fifteenDaysAgo = new Date();
+//     fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
 
-    const recentNotifications = res.data.filter((n) => {
-      const createdDate = new Date(n.createdAt);
-      return createdDate >= fifteenDaysAgo;
-    });
+//     const recentNotifications = res.data.filter((n) => {
+//       const createdDate = new Date(n.createdAt);
+//       return createdDate >= fifteenDaysAgo;
+//     });
 
-    setNotifications(recentNotifications);
-  } catch (err) {
-    console.error(err);
-  }
-};
+//     setNotifications(recentNotifications);
+//   } catch (err) {
+//     console.error(err);
+//   }
+// };
+
   if (!user)
     return (
       <div

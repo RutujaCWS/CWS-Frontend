@@ -289,24 +289,22 @@ function EmployeeDashboard({ user }) {
           // Step 1: Calculate worked hours before sending checkout
           const start = new Date(attendance.checkIn);
           const now = new Date();
+const diffMs = now - start;
 
-          const diffMs = now - start;
-          const totalHours = diffMs / (1000 * 60 * 60); // decimal hours
+const hrs = Math.floor(diffMs / (1000 * 60 * 60));
+const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
-          let message = "";
-          if (totalHours < 4) {
-            message = `⚠️ You have completed only ${totalHours.toFixed(
-              2,
-            )} hrs.\nAbsent will be marked.\n\nDo you want to proceed?`;
-          } else if (totalHours >= 4 && totalHours < 8) {
-            message = `⚠️ You completed ${totalHours.toFixed(
-              2,
-            )} hrs.\nHalf Day will be considered.\n\nDo you want to proceed?`;
-          } else if (totalHours >= 8) {
-            message = `✅ Great! You completed ${totalHours.toFixed(
-              2,
-            )} hrs.\nFull Day will be considered.\n\nDo you want to proceed?`;
-          }
+const formattedTime = `${hrs}h ${mins}m`;
+
+let message = "";
+
+if (hrs < 4) {
+  message = `⚠️ You completed ${formattedTime}.\nAbsent will be marked.\n\nDo you want to proceed?`;
+} else if (hrs >= 4 && hrs < 8) {
+  message = `⚠️ You completed ${formattedTime}.\nHalf Day will be considered.\n\nDo you want to proceed?`;
+} else {
+  message = `✅ You completed ${formattedTime}.\nFull Day will be considered.\n\nDo you want to proceed?`;
+}
 
           // ❗ Show confirmation alert
           const confirmCheckout = window.confirm(message);
@@ -389,7 +387,7 @@ function EmployeeDashboard({ user }) {
         const [leaveRes, regRes] = await Promise.all([
           axios.get(`https://cws-backend-roan.vercel.app/leave/my/${user._id}`),
           axios.get(
-            `https://cws-backend-roan.vercel.appattendance/regularization/my/${user._id}`,
+            `https://cws-backend-roan.vercel.app/attendance/regularization/my/${user._id}`,
           ),
         ]);
 

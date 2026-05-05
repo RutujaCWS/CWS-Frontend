@@ -674,9 +674,10 @@ function HrPolicy() {
                       )}
                     </td>
 
-                    <td style={{ padding: "10px", verticalAlign: "middle", fontSize: "14px", borderBottom: "1px solid #dee2e6", whiteSpace: "nowrap" }} title={policy.description}>
+                    <td style={{ padding: "10px", verticalAlign: "middle", fontSize: "14px", borderBottom: "1px solid #dee2e6", whiteSpace: "nowrap" ,maxWidth: "250px", overflow: "hidden"}} title={policy.description}>
                       {policy.description}
                     </td>
+
 
                     <td style={{ padding: "10px", verticalAlign: "middle", fontSize: "14px", borderBottom: "1px solid #dee2e6", whiteSpace: "nowrap" }}>
                       {policy.image ? (
