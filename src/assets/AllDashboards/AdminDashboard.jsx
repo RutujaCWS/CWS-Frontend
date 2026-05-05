@@ -157,7 +157,7 @@ function AdminDashboard({ user }) {
   console.log("allRequests", allRequests);
 
   return (
-<div className="container-fluid pt-2 px-3" style={{ marginTop: "0px" }}>
+<div className="container-fluid pt-2 px-3" style={{ marginTop: "-15px" }}>
       {/* Top Row: Summary Cards */}
       <div className="row g-2  align-items-stretch">
         {/* Total Employees */}
