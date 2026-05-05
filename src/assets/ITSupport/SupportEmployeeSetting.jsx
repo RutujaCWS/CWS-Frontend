@@ -677,8 +677,11 @@ const resetFilter = () => {
           }}
         >
           <div
-            className="modal-dialog modal-dialog"
-            style={{ maxWidth: "650px", width: "95%" ,marginTop:"100px"}}
+            className="modal-dialog modal-lg modal-dialog-centered"
+            style={{
+              maxWidth: "650px",
+              width: "95%",
+            }}
           >
             <div className="modal-content">
               <div
@@ -706,7 +709,7 @@ const resetFilter = () => {
 
                 <div className="row g-2 mt-2">
                   {/* Category */}
-                  <div className="col-md-4">
+                  <div className="col-md-6">
                     <label className="form-label" style={{ color: "#3A5FBE" }}>
                       Select Category
                     </label>
@@ -728,7 +731,7 @@ const resetFilter = () => {
                   </div>
 
                   {/* Priority */}
-                  <div className="col-md-4">
+                  <div className="col-md-6">
                     <label className="form-label" style={{ color: "#3A5FBE" }}>
                       Select Priority
                     </label>
@@ -749,7 +752,7 @@ const resetFilter = () => {
                   </div>
 
                   {/* Attachment */}
-                  <div className="col-md-4">
+                  <div className="col-md-6">
                     <label className="form-label" style={{ color: "#3A5FBE" }}>
                       Select File
                     </label>
