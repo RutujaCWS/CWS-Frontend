@@ -497,16 +497,9 @@ style={{
                 {/* {message && <div className="alert alert-info">{message}</div>} */}
                 <form onSubmit={handleSubmit}>
                   {/* Leave Type */}
-                  <div className="mb-3  d-flex align-items-center">
+                  <div className="mb-2">
                     <label
-                      style={{
-                        fontWeight: "500",
-                        fontSize: "14px",
-                        color: "#495057",
-                        width: "90px",
-                        flexShrink: 0,
-                        minWidth: "fit-content",
-                      }}
+                      className="form-label"
                     >
                       Leave type:<span style={{ color: "red" }}>  *</span>
                     </label>
@@ -533,7 +526,7 @@ style={{
                           }}
                         />
                         <label
-                          className="form-check-label"
+                          className="form-check-label ms-2"
                           htmlFor="casual-radio"
                           style={{
                             fontSize: "14px",
@@ -566,7 +559,7 @@ style={{
                           }}
                         />
                         <label
-                          className="form-check-label"
+                          className="form-check-label ms-2"
                           htmlFor="sick-radio"
                           style={{
                             fontSize: "14px",
@@ -610,7 +603,7 @@ style={{
                     </div>
                   </div>
                   {/* Half Day */}
-                  <div className="mb-3 d-flex align-items-center">
+                  <div className="ms-2">
                     <label
                       style={{
                         fontWeight: "500",
@@ -646,25 +639,19 @@ style={{
                     </div>
                   </div>
                   {/* Dates */}
-                  <div className="mb-3  d-flex align-items-center">
+                  <div className="mb-2">
                     <label
-                      style={{
-                        fontWeight: "500",
-                        fontSize: "14px",
-                        color: "#495057",
-                        width: "90px",
-                        flexShrink: 0,
-                      }}
+                      className="form-label"
                     >
                       Select Date:<span style={{ color: "red" }}>  *</span>
                     </label>
                     <div className="row">
-                      <div className="col-md-4">
+                      <div className="col-md-4 mb-2 mb-md-0">
                         <label
+                        className="form-label"
                           style={{
                             fontSize: "12px",
                             color: "#6c757d",
-                            marginBottom: "6px",
                           }}
                         >
                           From<span style={{ color: "red" }}>  *</span>
@@ -678,20 +665,17 @@ style={{
                           required
                           style={{
                             fontSize: "14px",
-                            padding: "8px 12px",
-                            border: "1px solid #ced4da",
-                            borderRadius: "4px",
                           }}
                           min={minDate} // cannot select past date
                           max={maxDate} // cannot select beyond next 2 months
                         />
                       </div>
-                      <div className="col-md-4">
+                      <div className="col-md-4 mb-2 mb-md-0">
                         <label
+                        className="form-label"
                           style={{
                             fontSize: "12px",
                             color: "#6c757d",
-                            marginBottom: "6px",
                           }}
                         >
                           To<span style={{ color: "red" }}>  *</span>
@@ -705,9 +689,6 @@ style={{
                           required
                           style={{
                             fontSize: "14px",
-                            padding: "8px 12px",
-                            border: "1px solid #ced4da",
-                            borderRadius: "4px",
                           }}
                           min={form.dateFrom || minDate}
                           max={maxDate} // cannot select beyond next 2 months
@@ -717,6 +698,7 @@ style={{
                       {/* No of Days */}
                       <div className="col-md-4">
                         <label
+                        className="form-label"
                           style={{
                             fontSize: "12px",
                             color: "#6c757d",
@@ -745,15 +727,9 @@ style={{
                   </div>
 
                   {/* Apply to section */}
-                  <div className="mb-3  d-flex align-items-center">
+                  <div className="mb-2">
                     <label
-                      style={{
-                        fontWeight: "500",
-                        fontSize: "14px",
-                        color: "#495057",
-                        width: "90px",
-                        flexShrink: 0,
-                      }}
+                      className="form-label"
                     >
                       Apply to:
                     </label>
@@ -770,26 +746,16 @@ style={{
                       // }
                      style={{
   fontSize: "14px",
-  padding: "8px 12px",
-  border: "1px solid #ced4da",
-  borderRadius: "4px",
   backgroundColor: "#f8f9fa",
   textTransform: "capitalize",
-  width: "100%", 
 }}
                     />
                   </div>
 
                   {/* Reason */}
-                <div className="mb-3 d-flex align-items-center">
+                <div className="mb-2">
   <label
-    style={{
-      fontWeight: "500",
-      fontSize: "14px",
-      color: "#495057",
-      width: "90px",
-      flexShrink: 0,
-    }}
+    className="form-label"
   >
     Reason:<span style={{ color: "red" }}>  *</span>
   </label>
@@ -806,7 +772,6 @@ style={{
       maxLength={200}
       className="form-control"
       style={{
-        minHeight: "80px",
         resize: "vertical",
       }}
       required

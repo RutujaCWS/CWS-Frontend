@@ -498,7 +498,11 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                     className="form-control"
                     style={{ flex: 1, minWidth: "140px" }}
                     value={employeeNameFilter}
-                    onChange={(e) => setEmployeeNameFilter(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const cleaned = value.replace(/[^A-Za-z\s]/g, "");
+                      setEmployeeNameFilter(cleaned);
+                    }}
                     placeholder="Employee name"
                   />
                 </div>

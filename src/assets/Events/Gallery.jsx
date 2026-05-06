@@ -108,6 +108,7 @@ useEffect(() => {
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
 
+    setIsUploading(false);
     const mapped = files.map((file) => ({
       file,
       type: file.type.startsWith("image")
@@ -277,6 +278,7 @@ useEffect(() => {
       setCurrentPage(1); // go to first page
       setShowUploadModal(false);
       setSelectedFiles([]);
+      setIsUploading(false);
       alert("Upload successful ✅");
     } catch (err) {
       alert(err.response?.data?.message || "Upload failed ❌");
@@ -415,6 +417,7 @@ useEffect(() => {
   const closeViewModal = () => {
     setShowViewModal(false);
     setSelectedFiles([]);
+    setIsUploading(false);
     setEditId(null);
   };
   const closeModal = () => {

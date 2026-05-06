@@ -20,11 +20,14 @@ const [referralErrors, setReferralErrors] = useState({});
   const [departmentFilter, setDepartmentFilter] = useState("All");
   const [postedFilter, setPostedFilter] = useState("All");
   const [jobCategoryView, setJobCategoryView] = useState("ALL");
+  
 
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [activeViewTab, setActiveViewTab] = useState("DESC");
   const [appliedJobs, setAppliedJobs] = useState([]);
+  const [isSubmittingInhouse, setIsSubmittingInhouse] = useState(false);
+  const [isSubmittingReferral, setIsSubmittingReferral] = useState(false);
 
   const [showReferralModal, setShowReferralModal] = useState(false);
   const [referralSuccess, setReferralSuccess] = useState(false);
@@ -514,6 +517,35 @@ const [referralErrors, setReferralErrors] = useState({});
     return error;
   };
 
+  const highlightEmptyFields = (form) => {
+    const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'experience', 'city', 'resume'];
+    let hasError = false;
+    
+    requiredFields.forEach(fieldName => {
+      const field = form[fieldName];
+      let error = "";
+      
+      if (fieldName === 'resume') {
+        if (!field.files || !field.files[0]) {
+          error = "Resume is required";
+          hasError = true;
+        }
+      } else {
+        if (!field.value.trim()) {
+          error = `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required`;
+          hasError = true;
+        }
+      }
+      
+      setErrors(prev => ({
+        ...prev,
+        [fieldName]: error
+      }));
+    });
+    
+    return hasError;
+  };
+
   const paginatedJobs = filteredJobs.slice(
     jobsPage * rowsPerPage,
     jobsPage * rowsPerPage + rowsPerPage,
@@ -776,36 +808,37 @@ const [referralErrors, setReferralErrors] = useState({});
 
             {/* Category */}
             <div
-              className="d-flex flex-row justify-content-center align-items-center gap-2 mb-3 flex-wrap"
-              style={{ width: "100%", margin: "0 auto" }}
-            >
-              {[
-                { label: "All Jobs", value: "ALL" },
-                { label: "In-house Jobs", value: "INHOUSE" },
-                { label: "Referral Jobs", value: "REFERRAL" },
-              ].map((cat) => (
-                <button
-                  className="btn btn-sm custom-outline-btn"
-                  style={{ width: 110 }}
-                  key={cat.value}
-                  type="button"
-                  // className={`btn fw-semibold ${jobCategoryView === cat.value
-                  //   ? "btn-primary"
-                  //   : "btn-outline-secondary"
-                  //   }`}
-                  onClick={() => {
-                    setJobCategoryView(cat.value);
-                    setAppliedFilters((prev) => ({
-                      ...prev,
-                      category: cat.value,
-                    }));
-                    setJobsPage(0);
-                  }}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
+            className="d-flex flex-row justify-content-center align-items-center gap-2 mb-3 flex-wrap"
+            style={{ width: "100%", margin: "0 auto" }}
+          >
+            {[
+              { label: "All Jobs", value: "ALL" },
+              { label: "In-house Jobs", value: "INHOUSE" },
+              { label: "Referral Jobs", value: "REFERRAL" },
+            ].map((cat) => (
+              <button
+                type="button"
+                className={`btn btn-sm ${jobCategoryView === cat.value ? "active" : ""}`}
+                style={{ 
+                  width: 110,
+                  backgroundColor: jobCategoryView === cat.value ? "#3A5FBE" : "transparent",
+                  borderColor: "#3A5FBE",
+                  color: jobCategoryView === cat.value ? "#fff" : "#3A5FBE",
+                }}
+                key={cat.value}
+                onClick={() => {
+                  setJobCategoryView(cat.value);
+                  setAppliedFilters((prev) => ({
+                    ...prev,
+                    category: cat.value,
+                  }));
+                  setJobsPage(0);
+                }}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
 
             {/* Job Table */}
             <div className="card shadow-sm border-0">
@@ -893,12 +926,11 @@ const [referralErrors, setReferralErrors] = useState({});
                     {paginatedJobs.length === 0 ? (
                       <tr>
                         <td
-                          colSpan="9"
+                          colSpan="6"
+                          className="text-center text-muted"
                           style={{
-                            textAlign: "center",
                             padding: "20px",
-                            fontStyle: "italic",
-                            color: "#888",
+                            verticalAlign: "middle",
                           }}
                         >
                           No Job records available.
@@ -1172,7 +1204,12 @@ const [referralErrors, setReferralErrors] = useState({});
                   <tbody>
                     {paginatedApplied.length === 0 ? (
                       <tr>
-                        <td colSpan="4" className="text-center py-4">
+                        <td colSpan="6"
+                            className="text-center text-muted"
+                            style={{
+                              padding: "20px",
+                              verticalAlign: "middle",
+                            }}>
                           No jobs found.
                         </td>
                       </tr>
@@ -1643,7 +1680,6 @@ const [referralErrors, setReferralErrors] = useState({});
                             style={{
                               padding: "20px",
                               verticalAlign: "middle",
-                              fontWeight: "500",
                             }}
                           >
                             No referral data available
@@ -1960,7 +1996,30 @@ const [referralErrors, setReferralErrors] = useState({});
                     <form
                       onSubmit={async (e) => {
                         e.preventDefault();
+                        if (isSubmittingInhouse) return;
+                        
                         const form = e.target;
+                        setErrors({});
+  
+                        // Check and highlight empty fields
+                        const hasEmptyFields = highlightEmptyFields(form);
+                        
+                        if (hasEmptyFields) {
+                          alert("Please fill all required fields");
+                          return;
+                        }
+                        
+                        if (!form.firstName.value.trim() || 
+                            !form.lastName.value.trim() || 
+                            !form.email.value.trim() || 
+                            !form.phone.value.trim() || 
+                            !form.experience.value || 
+                            !form.city.value.trim() || 
+                            !form.resume.files[0]) {
+                          alert("Please fill all required fields");
+                          return;
+                        }
+                        setIsSubmittingInhouse(true); 
 
                         const formData = new FormData();
                         formData.append("job", selectedJob._id);
@@ -1986,6 +2045,9 @@ const [referralErrors, setReferralErrors] = useState({});
                             err.response?.data?.message || "Application failed",
                           );
                         }
+                        finally {
+                          setIsSubmittingInhouse(false); 
+                        }
                       }}
                     >
 
@@ -1994,8 +2056,10 @@ const [referralErrors, setReferralErrors] = useState({});
                         <div className="col-12 col-md-8">
                         <input
                           name="firstName"
+                          maxLength={50}
                           className={`form-control ${errors.firstName ? "is-invalid" : ""}`}
                           onChange={(e) => validateField("firstName", e.target.value)}
+                          
                         />
                         <div className="invalid-feedback">{errors.firstName}</div>
                         </div>
@@ -2007,6 +2071,7 @@ const [referralErrors, setReferralErrors] = useState({});
                         <div className="col-12 col-md-8">
                          <input
                           name="middleName"
+                          maxLength={50}
                           className={`form-control ${errors.middleName ? "is-invalid" : ""}`}
                           onChange={(e) => validateField("middleName", e.target.value)}
                         />
@@ -2020,6 +2085,7 @@ const [referralErrors, setReferralErrors] = useState({});
                         <div className="col-12 col-md-8">
                           <input
                             name="lastName"
+                            maxLength={50}
                           className={`form-control ${errors.lastName ? "is-invalid" : ""}`}
                           onChange={(e) => validateField("lastName", e.target.value)}
                         />
@@ -2106,6 +2172,7 @@ const [referralErrors, setReferralErrors] = useState({});
                           className="btn btn-sm custom-outline-btn me-2"
                           type="submit"
                           style={{ minWidth: 90 }}
+                          disabled={isSubmittingInhouse}
                         >
                           Apply Job
                         </button>
@@ -2288,7 +2355,29 @@ const [referralErrors, setReferralErrors] = useState({});
                     <form
                       onSubmit={async (e) => {
                         e.preventDefault();
+                        if (isSubmittingReferral) return;
                         const form = e.target;
+                        setErrors({});
+  
+                        // Check and highlight empty fields
+                        const hasEmptyFields = highlightEmptyFields(form);
+                        
+                        if (hasEmptyFields) {
+                          alert("Please fill all required fields");
+                          return;
+                        }
+                        setIsSubmittingReferral(true);
+                        
+                        if (!form.firstName.value.trim() || 
+                            !form.lastName.value.trim() || 
+                            !form.email.value.trim() || 
+                            !form.phone.value.trim() || 
+                            !form.experience.value || 
+                            !form.city.value.trim() || 
+                            !form.resume.files[0]) {
+                          alert("Please fill all required fields");
+                          return;
+                        }
 
                         const formData = new FormData();
                         formData.append("job", selectedJob._id);
@@ -2326,6 +2415,9 @@ const [referralErrors, setReferralErrors] = useState({});
                             err.response?.data?.message || "Application failed",
                           );
                         }
+                        finally {
+                          setIsSubmittingReferral(false);
+                        }
                       }}
                     >
 
@@ -2335,6 +2427,7 @@ const [referralErrors, setReferralErrors] = useState({});
                         <div className="col-12 col-md-8">
                         <input
                           name="firstName"
+                          maxLength={50}
                           className={`form-control ${errors.firstName ? "is-invalid" : ""}`}
                           onChange={(e) => validateField("firstName", e.target.value)}
                         />
@@ -2348,6 +2441,7 @@ const [referralErrors, setReferralErrors] = useState({});
                         <div className="col-12 col-md-8">
                          <input
                           name="middleName"
+                          maxLength={50}
                           className={`form-control ${errors.middleName ? "is-invalid" : ""}`}
                           onChange={(e) => validateField("middleName", e.target.value)}
                         />
@@ -2361,6 +2455,7 @@ const [referralErrors, setReferralErrors] = useState({});
                         <div className="col-12 col-md-8">
                           <input
                             name="lastName"
+                            maxLength={50}
                           className={`form-control ${errors.lastName ? "is-invalid" : ""}`}
                           onChange={(e) => validateField("lastName", e.target.value)}
                         />
@@ -2447,6 +2542,7 @@ const [referralErrors, setReferralErrors] = useState({});
                           className="btn btn-sm custom-outline-btn me-2"
                           type="submit"
                           style={{ minWidth: 90 }}
+                          disabled={isSubmittingReferral} 
                         >
                           Submit Referral
                         </button>

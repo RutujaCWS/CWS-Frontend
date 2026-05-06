@@ -610,8 +610,14 @@ const HRFeedback = () => {
             setActiveTab("received");
             setCurrentPageReceived(1);
           }}
-          className="btn btn-sm custom-outline-btn"
-          style={{ minWidth: 150 }}
+          className="btn btn-sm"
+          style={{
+            minWidth: 150,
+            backgroundColor: activeTab === "received" ? "#3A5FBE" : "transparent",
+            borderColor: "#3A5FBE",
+            color: activeTab === "received" ? "#fff" : "#3A5FBE",
+            transition: "all 0.2s ease"
+          }}
         >
           Received Feedback
         </button>
@@ -621,8 +627,14 @@ const HRFeedback = () => {
             setActiveTab("sent");
             setCurrentPageSent(1);
           }}
-          className="btn btn-sm custom-outline-btn"
-          style={{ minWidth: 150 }}
+          className="btn btn-sm"
+          style={{
+            minWidth: 150,
+            backgroundColor: activeTab === "sent" ? "#3A5FBE" : "transparent",
+            borderColor: "#3A5FBE",
+            color: activeTab === "sent" ? "#fff" : "#3A5FBE",
+            transition: "all 0.2s ease"
+          }}
         >
           Sent Feedback
         </button>
@@ -967,7 +979,10 @@ const HRFeedback = () => {
                         verticalAlign: "middle",
                         fontSize: "14px",
                         borderBottom: "1px solid #dee2e6",
-                        whiteSpace: "nowrap",
+                        maxWidth: "250px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
                       }}
                     >
                       {fb.title}
@@ -1106,7 +1121,7 @@ const HRFeedback = () => {
 
               <div className="modal-body">
                 <div className="mb-3">
-                  <label className="form-label fw-semibold">Title</label>
+                  <label className="form-label fw-semibold">Title<span style={{ color: "red" }}>  *</span></label>
                   <input
                     type="text"
                     className="form-control"
@@ -1124,7 +1139,7 @@ const HRFeedback = () => {
                 </div>
 
                 <div className="mb-3">
-                  <label className="form-label fw-semibold">Send To</label>
+                  <label className="form-label fw-semibold">Send To<span style={{ color: "red" }}>  *</span></label>
                   {editId ? (
                     <div className="form-control bg-light">
                       {employees.find((emp) => emp._id === formData.receiverId)
@@ -1157,7 +1172,7 @@ const HRFeedback = () => {
                 </div>
 
                 <div className="mb-3">
-                  <label className="form-label fw-semibold">Message</label>
+                  <label className="form-label fw-semibold">Message<span style={{ color: "red" }}>  *</span></label>
                   <textarea
                     className="form-control"
                     rows="4"
@@ -1169,21 +1184,25 @@ const HRFeedback = () => {
                     }}
                     placeholder="Enter feedback message"
                   />
-                  <div
-                    className="char-count"
-                    style={{
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      fontSize: "12px",
-                      color: "#6c757d",
-                      marginTop: "4px",
-                    }}
-                  >
-                    {formData.message.length}/300
-                  </div>
+                   {!errors.message && (
+                    <div
+                      className="char-count"
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        marginTop: "4px",
+                      }}
+                    >
+                      {formData.message.length}/300 characters
+                    </div>
+                  )}
 
                   {errors.message && (
-                    <small className="text-danger">{errors.message}</small>
+                    <div className="invalid-feedback d-block" style={{ marginTop: "4px" }}>
+                      {errors.message}
+                    </div>
                   )}
                 </div>
               </div>

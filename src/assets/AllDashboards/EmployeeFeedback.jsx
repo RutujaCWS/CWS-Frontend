@@ -16,6 +16,7 @@ const EmployeeFeedback = () => {
   const [activeTab, setActiveTab] = useState("received");
   // Form state
   const [showForm, setShowForm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [editId, setEditId] = useState(null);
   const [formData, setFormData] = useState({
     receiverId: "",
@@ -604,6 +605,8 @@ if (
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
+    if (isSubmitting) return;
+
     if (
       !formData.title ||
       !formData.message ||
@@ -615,6 +618,7 @@ if (
 
     try {
       setSending(true);
+      setIsSubmitting(true);
       const token = localStorage.getItem("accessToken");
 
       if (!token) {
@@ -680,6 +684,7 @@ if (
       );
     } finally {
       setSending(false);
+      setIsSubmitting(false); 
     }
   };
 
@@ -801,28 +806,40 @@ if (
 
       {/* TAB BUTTONS For switching tab dip 03-02-2026 */}
       <div className="d-flex gap-2 justify-content-center mt-3 mb-3">
-        <button
-          onClick={() => {
-            setActiveTab("received");
-            setCurrentPageReceived(1);
-          }}
-          className="btn btn-sm custom-outline-btn"
-          style={{ minWidth: 150 }}
-        >
-          Received Feedback
-        </button>
+  <button
+    onClick={() => {
+      setActiveTab("received");
+      setCurrentPageReceived(1);
+    }}
+    className="btn btn-sm"
+    style={{
+      minWidth: 150,
+      backgroundColor: activeTab === "received" ? "#3A5FBE" : "transparent",
+      borderColor: "#3A5FBE",
+      color: activeTab === "received" ? "#fff" : "#3A5FBE",
+      transition: "all 0.2s ease"
+    }}
+  >
+    Received Feedback
+  </button>
 
-        <button
-          onClick={() => {
-            setActiveTab("sent");
-            setCurrentPageSent(1);
-          }}
-          className="btn btn-sm custom-outline-btn"
-          style={{ minWidth: 150 }}
-        >
-          Sent Feedback
-        </button>
-      </div>
+  <button
+    onClick={() => {
+      setActiveTab("sent");
+      setCurrentPageSent(1);
+    }}
+    className="btn btn-sm"
+    style={{
+      minWidth: 150,
+      backgroundColor: activeTab === "sent" ? "#3A5FBE" : "transparent",
+      borderColor: "#3A5FBE",
+      color: activeTab === "sent" ? "#fff" : "#3A5FBE",
+      transition: "all 0.2s ease"
+    }}
+  >
+    Sent Feedback
+  </button>
+</div>
       {/* TAB BUTTONS For switching tab dip 03-02-2026 end */}
 
       {/* Filter section */}
@@ -1124,7 +1141,10 @@ if (
                         verticalAlign: "middle",
                         fontSize: "14px",
                         borderBottom: "1px solid #dee2e6",
+                        maxWidth: "300px",
                         whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
                       }}
                     >
                       {fb.title}
@@ -1228,8 +1248,8 @@ if (
           }}
         >
           <div
-            className="modal-dialog"
-            style={{ maxWidth: "600px", width: "95%", marginTop: "80px" }} 
+           className="modal-dialog modal-dialog-centered"
+           style={{ maxWidth: "600px", width: "95%"}}
           >
             <div className="modal-content">
               <div
@@ -1258,6 +1278,7 @@ if (
                     type="text"
                     className="form-control"
                     value={formData.title}
+                    maxLength={50}
                     onChange={(e) => {
                       setFormData({ ...formData, title: e.target.value });
                       setErrors({ ...errors, title: "" });
@@ -1267,6 +1288,15 @@ if (
                   {errors.title && (
                     <small className="text-danger">{errors.title}</small>
                   )}
+                  <div className="char-count" style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    fontSize: "12px",
+                    color: "#6c757d",
+                    marginTop: "4px"
+                  }}>
+                    {formData.title.length}/50
+                  </div>
                 </div>
 
                 {/* <div className="mb-3">
@@ -1429,6 +1459,7 @@ if (
                  className="btn custom-outline-btn btn-sm"
                  style={{ minWidth: "90px" }} //rutuja 
                   onClick={handleSubmit}
+                  disabled={isSubmitting}
                 >
                   {editId ? "Update" : "Submit Feedback"}
                 </button>

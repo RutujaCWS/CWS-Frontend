@@ -94,71 +94,106 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
 
   // ✅ UPDATED: Fetch leaves (unchanged, but ensure it runs after data loads)
   useEffect(() => {
-    if (loadingHolidays) return; // ✅ Wait for holidays to load before calculating durations
-
+    if (loadingHolidays) return;
+  
     const fetchLeaves = async () => {
       try {
-        const res = await axios.get(`https://cws-backend-roan.vercel.app/leave/my/${user._id}`);
+        const res = await axios.get(
+          `https://cws-backend-roan.vercel.app/leave/my/${user._id}`
+        );
+  
         const today = new Date();
         today.setHours(0, 0, 0, 0);
+  
         const threeMonthsAgo = new Date(today);
         threeMonthsAgo.setMonth(today.getMonth() - 3);
-
+  
         const filteredByDate = res.data.filter((l) => {
           const appliedDate = new Date(l.appliedAt || l.createdAt);
           appliedDate.setHours(0, 0, 0, 0);
           return appliedDate >= threeMonthsAgo && appliedDate <= today;
         });
-
+  
         const leavesData = filteredByDate.sort(
-          (a, b) => new Date(b.appliedAt || b.createdAt) - new Date(a.appliedAt || a.createdAt)
+          (a, b) =>
+            new Date(b.appliedAt || b.createdAt) -
+            new Date(a.appliedAt || a.createdAt)
         );
-
-        const nameCache = {};
-        const getName = async (id) => {
-          if (!id) return "N/A";
-          if (nameCache[id]) return nameCache[id];
-          try {
-            const r = await axios.get(`https://cws-backend-roan.vercel.app/users/${id}`);
-            nameCache[id] = r.data?.name || "N/A";
-            return nameCache[id];
-          } catch (e) {
-            return "N/A";
-          }
-        };
-
-        const leavesWithNames = await Promise.all(
-          leavesData.map(async (leave) => {
-            const reportingManagerId = leave.reportingManager || leave.reportingManagerId;
-            const approverId = leave.approver || leave.approvedBy || leave.approvedById;
-            const rejectedById = leave.rejectedBy || leave.rejectedById;
-
-            const reportingManagerName = await getName(reportingManagerId);
-            const approverName = await getName(approverId);
-            const rejectedByName = await getName(rejectedById);
-
-            let approverDisplay = "N/A";
-            const status = (leave.status || "").toLowerCase();
-            if (status === "pending") {
-              approverDisplay = reportingManagerName || "N/A";
-            } else if (status === "approved") {
-              approverDisplay = approverName !== "N/A" ? approverName : reportingManagerName || "N/A";
-            } else if (status === "rejected") {
-              approverDisplay = rejectedByName !== "N/A" ? rejectedByName : approverName !== "N/A" ? approverName : reportingManagerName || "N/A";
-            } else {
-              approverDisplay = approverName || reportingManagerName || "N/A";
+  
+        const allIds = [
+          ...new Set(
+            leavesData.flatMap((l) => [
+              l.reportingManager,
+              l.reportingManagerId,
+              l.approver,
+              l.approvedBy,
+              l.approvedById,
+              l.rejectedBy,
+              l.rejectedById,
+            ].filter(Boolean))
+          ),
+        ];
+  
+        const usersMap = {};
+  
+        await Promise.all(
+          allIds.map(async (id) => {
+            try {
+              const r = await axios.get(
+                `https://cws-backend-roan.vercel.app/users/${id}`
+              );
+              usersMap[id] = r.data?.name || "N/A";
+            } catch {
+              usersMap[id] = "N/A";
             }
-
-            return {
-              ...leave,
-              reportingManagerName,
-              approverName,
-              rejectedByName,
-              approverDisplay,
-            };
           })
         );
-
+  
+        // ✅ FINAL DATA PREP
+        const leavesWithNames = leavesData.map((leave) => {
+          const reportingManagerId =
+            leave.reportingManager || leave.reportingManagerId;
+          const approverId =
+            leave.approver || leave.approvedBy || leave.approvedById;
+          const rejectedById =
+            leave.rejectedBy || leave.rejectedById;
+  
+          const reportingManagerName =
+            usersMap[reportingManagerId] || "N/A";
+          const approverName = usersMap[approverId] || "N/A";
+          const rejectedByName = usersMap[rejectedById] || "N/A";
+  
+          let approverDisplay = "N/A";
+          const status = (leave.status || "").toLowerCase();
+  
+          if (status === "pending") {
+            approverDisplay = reportingManagerName;
+          } else if (status === "approved") {
+            approverDisplay =
+              approverName !== "N/A"
+                ? approverName
+                : reportingManagerName;
+          } else if (status === "rejected") {
+            approverDisplay =
+              rejectedByName !== "N/A"
+                ? rejectedByName
+                : approverName !== "N/A"
+                ? approverName
+                : reportingManagerName;
+          } else {
+            approverDisplay =
+              approverName || reportingManagerName || "N/A";
+          }
+  
+          return {
+            ...leave,
+            reportingManagerName,
+            approverName,
+            rejectedByName,
+            approverDisplay,
+          };
+        });
+  
         setLeaves(leavesWithNames);
       } catch (err) {
         console.error("Error fetching leaves:", err);
@@ -166,7 +201,7 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
         setLoading(false);
       }
     };
-
+  
     fetchLeaves();
   }, [user, refreshKey, loadingHolidays]); // ✅ Added loadingHolidays dependency
 

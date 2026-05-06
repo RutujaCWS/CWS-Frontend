@@ -18,68 +18,121 @@ function HRDashboard({ user }) {
   const { role, username, id } = useParams();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("accessToken");
-        const authAxios = axios.create({
-          baseURL: "https://cws-backend-roan.vercel.app",
-          headers: { Authorization: `Bearer ${token}` },
-        });
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const token = localStorage.getItem("accessToken");
+  //       const authAxios = axios.create({
+  //         baseURL: "https://cws-backend-roan.vercel.app",
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       });
 
-        const [empRes, attRes, leaveRegRes] = await Promise.all([
-          authAxios.get("/getAllEmployees"),
-          authAxios.get("/attendance/today"),
-          authAxios.get("/leaves-and-regularizations"),
-        ]);
+  //       const [empRes, attRes, leaveRegRes] = await Promise.all([
+  //         authAxios.get("/getAllEmployees"),
+  //         authAxios.get("/attendance/today"),
+  //         authAxios.get("/leaves-and-regularizations"),
+  //       ]);
 
-        setEmployees(empRes.data || []);
-        setAttendanceData(attRes.data || { employees: [] });
+  //       setEmployees(empRes.data || []);
+  //       setAttendanceData(attRes.data || { employees: [] });
 
-        const leavesData = leaveRegRes.data.leaves || [];
-        const regsData = leaveRegRes.data.regularizations || [];
-        setLeaves(leavesData);
-        setRegularizations(regsData);
+  //       const leavesData = leaveRegRes.data.leaves || [];
+  //       const regsData = leaveRegRes.data.regularizations || [];
+  //       setLeaves(leavesData);
+  //       setRegularizations(regsData);
 
-        const mergeAlternate = (leavesArr, regsArr) => {
-          const result = [];
-          const maxLength = Math.max(leavesArr.length, regsArr.length);
-          for (let i = 0; i < maxLength; i++) {
-            if (i < leavesArr.length)
-              result.push({ ...leavesArr[i], type: "Leave" });
-            if (i < regsArr.length)
-              result.push({ ...regsArr[i], type: "Regularization" });
-          }
-          return result;
-        };
-        setAllRequests(mergeAlternate(leavesData, regsData));
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load HR dashboard data.");
-      } finally {
-        setLoading(false);
+  //       const mergeAlternate = (leavesArr, regsArr) => {
+  //         const result = [];
+  //         const maxLength = Math.max(leavesArr.length, regsArr.length);
+  //         for (let i = 0; i < maxLength; i++) {
+  //           if (i < leavesArr.length)
+  //             result.push({ ...leavesArr[i], type: "Leave" });
+  //           if (i < regsArr.length)
+  //             result.push({ ...regsArr[i], type: "Regularization" });
+  //         }
+  //         return result;
+  //       };
+  //       setAllRequests(mergeAlternate(leavesData, regsData));
+  //     } catch (err) {
+  //       console.error(err);
+  //       setError("Failed to load HR dashboard data.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [user]);
+
+  const fetchData = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const authAxios = axios.create({
+        baseURL: "https://cws-backend-roan.vercel.app",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      // ✅ new
+      const [empRes, attRes, leaveRegRes] = await Promise.all([
+        authAxios.get("/getAllEmployees"),
+        authAxios.get("/attendance/today"),
+        authAxios.get("/leaves-and-regularizations"),
+      ]);
+      // ✅ employees first
+      // const empRes = await authAxios.get("/getAllEmployees");
+      setEmployees(empRes.data || []);
+  
+      // ✅ बाकी parallel
+      // const [attRes, leaveRegRes] = await Promise.all([
+      //   authAxios.get("/attendance/today"),
+      //   authAxios.get("/leaves-and-regularizations"),
+      // ]);
+  
+      setAttendanceData(attRes.data || { employees: [] });
+  
+      const leavesData = leaveRegRes.data.leaves || [];
+      const regsData = leaveRegRes.data.regularizations || [];
+  
+      setLeaves(leavesData);
+      setRegularizations(regsData);
+  
+      const result = [];
+      const maxLength = Math.max(leavesData.length, regsData.length);
+  
+      for (let i = 0; i < maxLength; i++) {
+        if (i < leavesData.length)
+          result.push({ ...leavesData[i], type: "Leave" });
+        if (i < regsData.length)
+          result.push({ ...regsData[i], type: "Regularization" });
       }
-    };
+  
+      setAllRequests(result);
+    } catch (err) {
+      setError("Failed to load HR dashboard data.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
-  }, [user]);
-
+  }, []);
   // if (loading) return <p>Loading...</p>;
-  <div
-    className="d-flex flex-column justify-content-center align-items-center"
-    style={{ minHeight: "100vh" }}
-  >
-    <div
-      className="spinner-grow"
-      role="status"
-      style={{ width: "4rem", height: "4rem", color: "#3A5FBE" }}
-    >
-      <span className="visually-hidden">Loading...</span>
-    </div>
-    <p className="mt-3 fw-semibold" style={{ color: "#3A5FBE" }}>
-      Loading ...
-    </p>
-  </div>;
+  // <div
+  //   className="d-flex flex-column justify-content-center align-items-center"
+  //   style={{ minHeight: "100vh" }}
+  // >
+  //   <div
+  //     className="spinner-grow"
+  //     role="status"
+  //     style={{ width: "4rem", height: "4rem", color: "#3A5FBE" }}
+  //   >
+  //     <span className="visually-hidden">Loading...</span>
+  //   </div>
+  //   <p className="mt-3 fw-semibold" style={{ color: "#3A5FBE" }}>
+  //     Loading ...
+  //   </p>
+  // </div>;
 
   if (loading) {
     return (
@@ -108,14 +161,19 @@ function HRDashboard({ user }) {
     (r) => r?.regularizationRequest?.status === "Pending",
   );
 
-  const mergedEmployees = employees.map((emp) => {
-    const att = attendanceData?.employees?.find((a) => a._id === emp._id);
-    return {
-      ...emp,
-      hasCheckedIn: att?.hasCheckedIn || false,
-      checkInTime: att?.checkInTime || null,
-    };
-  });
+  const mergedEmployees =
+  employees.length && attendanceData
+    ? employees.map((emp) => {
+        const att = attendanceData.employees?.find(
+          (a) => a._id === emp._id
+        );
+        return {
+          ...emp,
+          hasCheckedIn: att?.hasCheckedIn || false,
+          checkInTime: att?.checkInTime || null,
+        };
+      })
+    : [];
 
   const today = new Date();
   const upcomingEvents = employees

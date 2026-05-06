@@ -711,7 +711,7 @@ const resetFilter = () => {
                   {/* Category */}
                   <div className="col-md-6">
                     <label className="form-label" style={{ color: "#3A5FBE" }}>
-                      Select Category
+                      Select Category<span style={{ color: "red" }}>  *</span>
                     </label>
                     <select
                       className="form-select form-select-sm"
@@ -733,7 +733,7 @@ const resetFilter = () => {
                   {/* Priority */}
                   <div className="col-md-6">
                     <label className="form-label" style={{ color: "#3A5FBE" }}>
-                      Select Priority
+                      Select Priority<span style={{ color: "red" }}>  *</span>
                     </label>
                     <select
                       className="form-select form-select-sm"
@@ -768,7 +768,7 @@ const resetFilter = () => {
 
                 {/* Description */}
                 <label className="form-label mt-3" style={{ color: "#3A5FBE" }}>
-                  Enter Description (Max 200 words)
+                  Enter Description (Max 200 words)<span style={{ color: "red" }}>  *</span>
                 </label>
                 <textarea
                   className="form-control form-control-sm mb-1"
@@ -778,18 +778,22 @@ const resetFilter = () => {
                   onChange={handleChange}
                   placeholder="Describe your issue"
                 />
-                <div className="text-end" style={{marginBottom: "8px"}}>
-                  <small>
-                  {formData.description.trim()
-                    ? formData.description.trim().split(/\s+/).filter(Boolean).length
-                    : 0}
-                  /200 words
-                </small>
-                </div>
 
-                {errors.description && (
-                  <small className="text-danger">{errors.description}</small>
-                )}
+              {!errors.description && (
+                <div className="text-end" style={{ marginBottom: "8px" }}>
+                  <small>
+                    {formData.description.trim()
+                      ? formData.description.trim().split(/\s+/).filter(Boolean).length
+                      : 0}
+                    /200 words
+                  </small>
+                </div>
+              )}
+              {errors.description && (
+                <div className="invalid-feedback d-block" style={{ marginTop: "4px" }}>
+                  {errors.description}
+                </div>
+              )}
 
                 <div className="text-end">
                   <button

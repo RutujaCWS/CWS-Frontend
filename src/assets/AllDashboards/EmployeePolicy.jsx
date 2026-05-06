@@ -20,7 +20,7 @@ function EmployeePolicy({ user }) {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [isDownloading, setIsDownloading] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [searchText, setSearchText] = useState("");
   const [ackData, setAckData] = useState([]);
@@ -215,29 +215,38 @@ function EmployeePolicy({ user }) {
       alert("Policy copied to clipboard");
     });
   };
-  const handleDownloadPolicy = () => {
-    if (!selectedPolicy) return;
-  
-    if (selectedPolicy.image) {
-      const link = document.createElement('a');
-      link.href = selectedPolicy.image;
-      link.download = selectedPolicy.image.split('/').pop() || 'policy-file';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } else {
-      const content = `Policy Title: ${selectedPolicy.title}\n\n${selectedPolicy.description}`;
-      const blob = new Blob([content], { type: "text/plain;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${selectedPolicy.title}.txt`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }
-  };
+
+
+    const handleDownloadPolicy = async (policy) => {
+      if (!policy || isDownloading) return;
+
+      setIsDownloading(true);
+
+      try {
+        const response = await fetch(policy.image);
+        const blob = await response.blob();
+
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+
+        const fileName =
+          policy.image.split("/").pop().split("?")[0] || "file";
+
+        link.download = fileName;
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsDownloading(false);
+      }
+    };
 
   const uniqueTitles = [...new Set(policies.map((p) => p.title))];
   const thStyle = {
@@ -322,6 +331,12 @@ function EmployeePolicy({ user }) {
       (ack) => ack.policyId === policyId
     );
   };
+
+  useEffect(() => {
+    if (showModal) {
+      setIsDownloading(false);
+    }
+  }, [showModal]);
 
   return (
     <div className="container-fluid ">
@@ -644,26 +659,26 @@ function EmployeePolicy({ user }) {
 
                   <td style={tdStyle}>
                     {policy.image ? (
-                      <a
-                      href={policy.image}//rutuja 03-04-26
-                        download
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()} // 🚫 stop row click
+                      <span
+                        onClick={(e) => {
+                          e.stopPropagation();       
+                          handleDownloadPolicy(policy);
+                        }}
                         style={{
                           color: "#3A5FBE",
                           fontWeight: 500,
-                          textDecoration: "none",
                           cursor: "pointer",
                         }}
                       >
                         📄 Download
-                      </a>
+                      </span>
                     ) : (
-                      <span style={{ color: "#9ca3af" }}></span>
+                      <span style={{ color: "#9ca3af" }}>-</span>
                     )}
                   </td>
-                            <td style={tdStyle}>
+                            
+                
+                  <td style={tdStyle}>
                   {(() => {
                     const ack = getAckStatus(policy._id);
 
@@ -941,8 +956,9 @@ function EmployeePolicy({ user }) {
 
                       <button
                         className="btn btn-sm custom-outline-btn"
-                        onClick={handleDownloadPolicy}
+                        onClick={() => handleDownloadPolicy(selectedPolicy)} 
                         style={{ minWidth: 90 }}
+                        disabled={isDownloading}
                       >
                         Download
                       </button>

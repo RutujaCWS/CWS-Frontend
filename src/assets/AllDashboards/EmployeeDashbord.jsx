@@ -1417,13 +1417,21 @@ const handleStartBreak = async () => {
                         >
                           Reason :
                         </span>
-                        <input
-                          type="text"
+                        <textarea
                           className="form-control form-control-sm"
-                          style={{ maxWidth: "200px" }}
-                          placeholder="Enter reason"
+                          style={{ 
+                            maxWidth: "200px",
+                            minHeight: "40px",
+                            resize: "vertical",
+                            overflowX: "auto",
+                            overflowY: "hidden",
+                            whiteSpace: "nowrap"
+                          }}
+                          rows="1"
+                          placeholder="Enter reason (max 100 chars)"
                           value={otherReason}
                           disabled={onBreak}
+                          maxLength={100}
                           onChange={(e) => setOtherReason(e.target.value)}
                         />
                       </div>

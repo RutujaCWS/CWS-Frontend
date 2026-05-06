@@ -583,6 +583,7 @@ const statusBg = {
           className="form-control"
           style={{ minWidth: "140px" }}
           value={fromDate}
+          max={toDate}
           onChange={(e) => setFromDate(e.target.value)}
         />
       </div>
@@ -606,6 +607,7 @@ const statusBg = {
           className="form-control"
           style={{ minWidth: "140px" }}
           value={toDate}
+          min={fromDate}
           onChange={(e) => setToDate(e.target.value)}
         />
       </div>
