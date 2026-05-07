@@ -15,6 +15,9 @@ const ManagerInterviews = () => {
   const [statusFilter, setStatusFilter] = useState("All");
   const [dateFromFilter, setDateFromFilter] = useState("");
   const [dateToFilter, setDateToFilter] = useState("");
+  const [showResumeModal, setShowResumeModal] = useState(false);
+const [resumeUrl, setResumeUrl] = useState("");
+const [downloadUrl, setDownloadUrl] = useState("");
 
   // ===== PAGINATION STATES =====
   const [currentPage, setCurrentPage] = useState(1);
@@ -81,7 +84,7 @@ const ManagerInterviews = () => {
 
   // 🔹 Scrollbar Prevention Effect
   useEffect(() => {
-    const isModalOpen = !!selected;
+const isModalOpen = !!selected || showResumeModal;
 
     if (isModalOpen) {
       document.body.style.overflow = "hidden";
@@ -95,7 +98,7 @@ const ManagerInterviews = () => {
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
     };
-  }, [selected]);
+}, [selected, showResumeModal]);
 
 
   const formatTo12Hour = (time24) => {
@@ -480,14 +483,24 @@ const ManagerInterviews = () => {
                       <td style={tdStyle()}>{item.role}</td>
                       <td>
                         {item.resumeUrl ? (
-                          <a
-                            href={`${item.resumeUrl}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            View Resume
-                          </a>
+                        <button
+  type="button"
+  className="btn btn-link p-0"
+  onClick={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+setResumeUrl(
+  `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(item.resumeUrl)}`
+);
+setDownloadUrl(item.resumeUrl);
+    setShowResumeModal(true);
+
+    document.body.style.overflow = "hidden";
+  }}
+>
+  View Resume
+</button>
                         ) : (
                           "-"
                         )}
@@ -751,16 +764,25 @@ const ManagerInterviews = () => {
                   <div className="col-4 fw-semibold">Resume</div>
                   <div className="col-8">
                     {selected?.resumeUrl ? (
-                      <a
-                        href={`${selected.resumeUrl}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="btn custom-outline-btn btn-sm"
-                        style={{ width: 100 }} 
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        View Resume
-                      </a>
+                   <button
+  type="button"
+  className="btn custom-outline-btn btn-sm"
+  style={{ width: 100 }}
+  onClick={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+setResumeUrl(
+  `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(selected.resumeUrl)}`
+);
+
+setDownloadUrl(selected.resumeUrl);
+    setShowResumeModal(true);
+
+    document.body.style.overflow = "hidden";
+  }}
+>
+  View Resume
+</button>
                     ) : (
                       "-"
                     )}
@@ -862,7 +884,91 @@ const ManagerInterviews = () => {
           </div>
         </div>
       )}
+{showResumeModal && (
+  <div
+    className="modal fade show"
+    style={{
+      display: "block",
+      background: "rgba(0,0,0,0.5)",
+      zIndex: 1060,
+    }}
+  >
+    <div
+      className="modal-dialog modal-dialog-centered modal-xl"
+      style={{ width: "95%", maxWidth: "600px" }}
+    >
+      <div className="modal-content">
 
+        <div
+          className="modal-header text-white"
+          style={{ backgroundColor: "#3A5FBE" }}
+        >
+          <h5 className="modal-title">Resume Preview</h5>
+
+          <button
+            type="button"
+            className="btn-close btn-close-white"
+            onClick={() => {
+              setShowResumeModal(false);
+              setResumeUrl("");
+              document.body.style.overflow = "auto";
+            }}
+          />
+        </div>
+
+        <div className="modal-body p-0">
+          <iframe
+            src={resumeUrl}
+            title="Resume Preview"
+            width="100%"
+            height="600px"
+            style={{ border: "none" }}
+          />
+        </div>
+
+        <div className="modal-footer">
+       <button
+  type="button"
+  className="btn btn-sm custom-outline-btn"
+  style={{minWidth:90}}
+  onClick={async () => {
+  const response = await fetch(downloadUrl);
+  const blob = await response.blob();
+
+  const url = window.URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = downloadUrl.split("/").pop();
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  window.URL.revokeObjectURL(url);
+}}
+>
+  Download
+</button>
+
+          <button
+            type="button"
+            className="btn btn-sm custom-outline-btn"
+             style={{minWidth:90}}
+            onClick={() => {
+              setShowResumeModal(false);
+              setResumeUrl("");
+              document.body.style.overflow = "auto";
+            }}
+          >
+            Close
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+)}
       {/* ===== COMMON BUTTON STYLE ===== */}
       <style>{`
         .custom-outline-btn {

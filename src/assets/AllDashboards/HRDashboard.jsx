@@ -224,7 +224,7 @@ function HRDashboard({ user }) {
             {/* Total Employees */}
             <div className="col-md-6 mt-3">
               <div className="card shadow-sm h-100 border-0 "
-      style={{ borderRadius: "10px" }}>
+                style={{ borderRadius: "10px" }}>
                 <div className="card-body d-flex justify-content-between align-items-center">
                   <div
                     style={{

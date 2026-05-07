@@ -506,3 +506,13 @@ color: red !important;
 .react-calendar__tile.holiday-day:enabled:hover:not(.react-calendar__tile--active) {
   background-color: #ffcccc !important;
 }
+
+
+.react-calendar__tile {
+  position: relative;
+}
+
+.react-calendar__tile abbr {
+  position: relative;
+  z-index: 1;
+}

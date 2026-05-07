@@ -7,6 +7,8 @@ import "./MyAttendance.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquareCheck } from "@fortawesome/free-solid-svg-icons";
+import { Tooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
 
 function MyAttendance({ employeeId }) {
   const [attendance, setAttendance] = useState([]);
@@ -396,6 +398,96 @@ function MyAttendance({ employeeId }) {
   // };
 
   //new code
+
+  // Tooltip content function
+  const getTooltipContent = (date) => {
+    const key1 = date.toDateString();
+    const key2 = date.toISOString().slice(0, 10);
+    const rec = attendanceMap[key1] ?? attendanceMap[key2];
+  
+    if (isHoliday(date)) {
+      const holiday = getHoliday(date);
+      return ` Holiday: ${holiday?.name || "Holiday"}`;
+    }
+  
+    // Check for weekly off
+    if (isWeeklyOff(date)) {
+      if (date.getDay() === 0) return " Sunday (Weekly Off)";
+      return "Saturday (Weekly Off)";
+    }
+    
+    // If no record exists for this date
+    if (!rec) {
+      return "No record";
+    }
+  
+    // Handle leave records
+    if (rec.leaveRef) {
+      const leave = rec.leaveRef;
+      let statusIcon = "";
+      if (leave.status === "approved") statusIcon = "";
+      if (leave.status === "rejected") statusIcon = "";
+      if (leave.status === "pending") statusIcon = "";
+      return `${statusIcon} Leave: ${leave.leaveType} (${leave.status?.toUpperCase()})`;
+    }
+  
+    const ds = rec.dayStatus || "";
+    const reg = rec.regStatus || "";
+  
+    // Handle regularization status
+    if (reg === "Approved") {
+      if (ds.includes("Full")) return "Regularized (Full Day)";
+      if (ds.includes("Half")) return "Regularized (Half Day)";
+      return "Regularized";
+    }
+  
+    if (reg === "Pending") return "Pending Regularization";
+    if (reg === "Rejected") return "Regularization Rejected";
+  
+    // Handle attendance status
+    if (ds === "Working") return "Working (Not Checked Out)";
+    if (ds === "Full Day") return "Present (Full Day)";
+    if (ds === "Half Day") return "Half Day Present";
+    if (ds === "Absent") return "Absent";
+  
+    // Handle check-in/out issues
+    if (rec.checkIn && !rec.checkOut) return "Checked In (No Checkout)";
+    if (!rec.checkIn && rec.checkOut) return "Checked Out (No Checkin)";
+    if (!rec.checkIn && !rec.checkOut) return "No Check-in/out";
+  
+    return ds || "No record";
+  };
+
+  const tileContent = ({ date, view }) => {
+    if (view !== "month") return null;
+    
+    const isCurrentMonth =
+      date.getMonth() === activeStartDate.getMonth() &&
+      date.getFullYear() === activeStartDate.getFullYear();
+  
+    if (!isCurrentMonth) return null;
+  
+    const tooltipText = getTooltipContent(date);
+    
+
+    if (!tooltipText) return null;
+  
+    return (
+      <div
+        data-tooltip-id="attendance-tooltip"
+        data-tooltip-content={tooltipText}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          cursor: "pointer",
+          zIndex: 2,
+        }}
+      />
+    );
+  };
 
   const tileClassName = ({ date, view }) => {
     if (view !== "month") return "";
@@ -929,11 +1021,29 @@ function MyAttendance({ employeeId }) {
               <Calendar
                 onClickDay={handleDateClick}
                 tileClassName={tileClassName}
+                tileContent={tileContent}
                 activeStartDate={activeStartDate}
                 onActiveStartDateChange={({ activeStartDate }) =>
                   setActiveStartDate(activeStartDate)
                 }
               />
+              <Tooltip
+  id="attendance-tooltip"
+  place="top"
+  style={{
+    backgroundColor: "#1e293b",
+    color: "#fff",
+    padding: "8px 14px",
+    borderRadius: "8px",
+    fontSize: "13px",
+    fontWeight: "500",
+    maxWidth: "250px",
+    zIndex: 1000,
+    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+  }}
+  delayShow={300}
+  delayHide={100}
+/>
             </div>
 
             {/* <div className="d-flex mt-3 justify-content-around">

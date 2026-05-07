@@ -37,6 +37,9 @@ const HRScheduleInterview = ({user}) => {
   const [interviews, setInterviews] = useState([]);
   const [showTable, setShowTable] = useState(false);
   const [selected, setSelected] = useState(null);
+  const [showResumeModal, setShowResumeModal] = useState(false);
+const [resumeUrl, setResumeUrl] = useState("");
+const [downloadUrl, setDownloadUrl] = useState("");
 
 
   //jaicy
@@ -89,7 +92,7 @@ const HRScheduleInterview = ({user}) => {
   const modalRef = useRef(null);
 
   useEffect(() => {
-    const isAnyModalOpen = showForm || selected;
+    const isAnyModalOpen = showForm || selected||showResumeModal;
   
     if (isAnyModalOpen) {
       document.body.style.overflow = 'hidden';
@@ -109,11 +112,11 @@ const HRScheduleInterview = ({user}) => {
       document.body.style.position = 'static';
       document.body.style.width = 'auto';
     };
-  }, [showForm, selected]);
+  }, [showForm, selected,showResumeModal]);
 
 
   useEffect(() => {
-    const isAnyModalOpen = showForm || selected;
+    const isAnyModalOpen = showForm || selected ;
     if (!isAnyModalOpen || !modalRef.current) return;
   
     const modal = modalRef.current;
@@ -153,7 +156,7 @@ const HRScheduleInterview = ({user}) => {
   
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [showForm, selected]);  
+  }, [showForm, selected,]);  
   
 
   /* ---------------- FETCH EMPLOYEES ---------------- */
@@ -1130,14 +1133,22 @@ if (
                       <td style={tdStyle()}>{item.role}</td>
                       <td>
                         {item.resumeUrl ? (
-                          <a
-                            href={`${item.resumeUrl}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            View Resume
-                          </a>
+                       <button
+  type="button"
+  className="btn btn-link p-0"
+onClick={(e) => {
+  e.stopPropagation();
+setResumeUrl(
+  `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(item.resumeUrl)}`
+);
+
+setDownloadUrl(item.resumeUrl);
+
+setShowResumeModal(true);
+}}
+>
+  View Resume
+</button>
                         ) : (
                           "-"
                         )}
@@ -1429,14 +1440,23 @@ if (
                   <div className="col-4 fw-semibold">Resume</div>
                   <div className="col-8">
                     {selected?.resumeUrl ? (
-                          <a
-                            href={`${selected.resumeUrl}?fl_attachment=false`}
-                            target="_blank"
-                            rel="noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            View Resume
-                          </a>
+                       <button
+  type="button"
+  className="btn btn-link p-0"
+onClick={(e) => {
+  e.stopPropagation();
+
+  setResumeUrl(
+    `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(selected.resumeUrl)}`
+  );
+
+  setDownloadUrl(selected.resumeUrl);
+
+  setShowResumeModal(true);
+}}
+>
+  View Resume
+</button>
                     ) : (
                       "-"
                     )}
@@ -1503,7 +1523,88 @@ if (
           </div>
         </div>
       )}
+{showResumeModal && (
+  <div
+    className="modal fade show"
+    style={{
+      display: "block",
+      background: "rgba(0,0,0,0.5)",
+    }}
+  >
+    <div
+      className="modal-dialog modal-dialog-centered modal-xl"
+      style={{ width: "95%", maxWidth: "600px" }}
+    >
+      <div className="modal-content">
 
+        <div
+          className="modal-header text-white"
+          style={{ backgroundColor: "#3A5FBE" }}
+        >
+          <h5 className="modal-title">Resume Preview</h5>
+
+          <button
+            type="button"
+            className="btn-close btn-close-white"
+            onClick={() => {
+              setShowResumeModal(false);
+              setResumeUrl("");
+            }}
+          />
+        </div>
+
+        <div className="modal-body p-0">
+          <iframe
+            src={resumeUrl}
+            title="Resume Preview"
+            width="100%"
+            height="600px"
+            style={{ border: "none" }}
+          />
+        </div>
+
+        <div className="modal-footer">
+        <button
+  type="button"
+  className="btn btn-sm custom-outline-btn"
+   style={{minWidth:90}}
+onClick={async () => {
+  const response = await fetch(downloadUrl);
+  const blob = await response.blob();
+
+  const url = window.URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = downloadUrl.split("/").pop();
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  window.URL.revokeObjectURL(url);
+}}
+>
+  Download
+</button>
+
+          <button
+            type="button"
+            className="btn btn-sm custom-outline-btn"
+             style={{minWidth:90}}
+            onClick={() => {
+              setShowResumeModal(false);
+              setResumeUrl("");
+            }}
+          >
+            Close
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+)}
       {/* ===== COMMON BUTTON STYLE ===== */}
       <style>{`
         .custom-outline-btn {

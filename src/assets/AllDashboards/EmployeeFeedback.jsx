@@ -1273,7 +1273,7 @@ if (
 
               <div className="modal-body">
                 <div className="mb-3">
-                  <label className="form-label fw-semibold">Title</label>
+                  <label className="form-label fw-semibold">Title<span style={{ color: "red" }}>  *</span></label>
                   <input
                     type="text"
                     className="form-control"
@@ -1331,7 +1331,7 @@ if (
                   )}
                 </div> */}
                 <div className="mb-3">
-                  <label className="form-label fw-semibold">Send To</label>
+                  <label className="form-label fw-semibold">Send To<span style={{ color: "red" }}>  *</span></label>
                   {editId ? (
                     <div className="form-control bg-light">
                       {recipientUsers.find(
@@ -1424,7 +1424,7 @@ if (
                 {/*  */}
 
                 <div className="mb-3">
-                  <label className="form-label fw-semibold">Description</label>
+                  <label className="form-label fw-semibold">Description<span style={{ color: "red" }}>  *</span></label>
                   <textarea
                     className="form-control"
                     rows="4"

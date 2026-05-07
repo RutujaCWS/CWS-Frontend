@@ -165,9 +165,9 @@ function AdminDashboard({ user }) {
           <div className="row g-2">
             <div className="col-md-6 ">
               <div
-      className="card shadow-sm h-100 border-0 "
-      style={{ borderRadius: "10px" }}
-    >
+                  className="card shadow-sm h-100 border-0 "
+                  style={{ borderRadius: "10px" }}
+                >
                 <div className="card-body d-flex justify-content-between align-items-center">
                   {/* Employee Count */}
                   {/* <h4 className="text-success mb-0" style={{fontSize:"50px"}}>{employees.length}</h4> */}
@@ -224,9 +224,9 @@ function AdminDashboard({ user }) {
             {/* Pending Leaves */}
             <div className="col-md-6 ">
               <div
-      className="card shadow-sm h-100 border-0 "
-      style={{ borderRadius: "10px" }}
-    >
+                className="card shadow-sm h-100 border-0 "
+                style={{ borderRadius: "10px" }}
+              >
                 <div className="card-body d-flex justify-content-between align-items-center">
                   <div
                     style={{
@@ -254,7 +254,12 @@ function AdminDashboard({ user }) {
                     className="mb-0 fw-semibold"
                     style={{ fontSize: "20px", color: "#3A5FBE" }}
                   >
-                    Pending <br />
+                    <span
+                      style={{ marginLeft: "30px", display: "inline-block" }}
+                    >
+                      Pending
+                    </span>
+                     <br />
                     Leave Requests
                   </p>
                   <button
@@ -304,7 +309,12 @@ function AdminDashboard({ user }) {
                     className="mb-0 fw-semibold"
                     style={{ fontSize: "20px", color: "#3A5FBE" }}
                   >
-                    Attendance <br />
+                    <span
+                      style={{ marginLeft: "12px", display: "inline-block" }}
+                    >
+                      Attendance
+                    </span>
+                    <br />
                     Regularization
                   </p>
                   <button
@@ -353,8 +363,13 @@ function AdminDashboard({ user }) {
                     className="mb-0 fw-semibold"
                     style={{ fontSize: "20px", color: "#3A5FBE" }}
                   >
+                    <span
+                      style={{ marginLeft: "18px", display: "inline-block" }}
+                    > 
                     Today's
-                    <br /> Attendance
+                    </span>
+                    <br /> 
+                    Attendance
                   </p>
                   <button
                     className="btn btn-sm custom-outline-btn"

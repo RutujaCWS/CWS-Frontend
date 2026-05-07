@@ -275,14 +275,14 @@ function AdminCareer({ user }) {
       let res;
       if (editJobId) {
         res = await axios.put(
-          `http://localhost:8000/api/jobs/${editJobId}`,
+          `https://cws-backend-roan.vercel.app/api/jobs/${editJobId}`,
           payload,
           { headers: { "Content-Type": "application/json" } },
         );
         await fetchJobs();
       } else {
         const res = await axios.post(
-          "http://localhost:8000/api/jobs/",
+          "https://cws-backend-roan.vercel.app/api/jobs/",
           payload,
           { headers: { "Content-Type": "application/json" } },
         );

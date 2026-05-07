@@ -91,6 +91,7 @@ const VisualDiary = () => {
       document.documentElement.style.overflow = "";
     };
   }, [popupItem]);
+  
   return (
     <div className="gallery-wrapper">
       {/* FILTER */}

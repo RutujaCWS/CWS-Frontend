@@ -588,45 +588,54 @@ function EmployeePerformances() {
                   const isStatus = label === "Status";
                   const isRecommendation = label === "Recommendation";
                   const isFinalApproval = label === "Final Approval";
+                  
+                  // Get status style - matches table style
+                  const getStatusStyle = (status) => {
+                    switch (status) {
+                      case "Pending":
+                        return { backgroundColor: "#FFE493", color: "#212529" };
+                      case "Added":
+                        return { backgroundColor: "#d1f2dd", color: "#212529" };
+                      default:
+                        return { backgroundColor: "#e9ecef", color: "#212529" };
+                    }
+                  };
+                  
+                  // Get recommendation style - matches table style
+                  const getRecommendationStyle = (recommendation) => {
+                    switch (recommendation) {
+                      case "Pending":
+                        return { backgroundColor: "#FFE493", color: "#212529" };
+                      case "Promotion":
+                      case "Increment":
+                      case "Training":
+                        return { backgroundColor: "#d1f2dd", color: "#212529" };
+                      default:
+                        return { backgroundColor: "#e9ecef", color: "#212529" };
+                    }
+                  };
+                  
+                  // Get final approval style - matches table style
+                  const getFinalApprovalStyle = (adminStatus) => {
+                    switch (adminStatus?.toLowerCase()) {
+                      case "pending":
+                        return { backgroundColor: "#FFE493", color: "#212529" };
+                      case "approved":
+                        return { backgroundColor: "#d1f2dd", color: "#212529" };
+                      case "rejected":
+                        return { backgroundColor: "#f8d7da", color: "#721c24" };
+                      default:
+                        return { backgroundColor: "#e9ecef", color: "#212529" };
+                    }
+                  };
+                  
                   return (
                     <div className="row mb-2" key={label}>
                       <div className="col-4 fw-semibold">{label}</div>
                       <div className="col-8">
                         {isStatus ? (
                           <span
-                            className={`badge ${getStatusClass(value)}`}
                             style={{
-                              minWidth: "110px",
-                              textAlign: "center",
-                              padding: "6px 14px",
-                            }}
-                          >
-                            {value}
-                          </span>
-                        ) : isRecommendation ? (
-                          <span
-                            className={`badge ${getRecommendationClass(value)}`}
-                            style={{
-                              minWidth: "110px",
-                              textAlign: "center",
-                              padding: "6px 14px",
-                            }}
-                          >
-                            {value}
-                          </span>
-                        ) : isFinalApproval ? (
-                          <span
-                            style={{
-                              backgroundColor:
-                                selectedPerformance.adminStatus === "pending"
-                                  ? "#FFE493"
-                                  : selectedPerformance.adminStatus ===
-                                      "approved"
-                                    ? "#d1f2dd"
-                                    : selectedPerformance.adminStatus ===
-                                        "rejected"
-                                      ? "#f8d7da"
-                                      : "#e9ecef",
                               padding: "6px 14px",
                               borderRadius: "4px",
                               fontSize: "13px",
@@ -634,12 +643,43 @@ function EmployeePerformances() {
                               display: "inline-block",
                               minWidth: "110px",
                               textAlign: "center",
+                              ...getStatusStyle(value)
+                            }}
+                          >
+                            {value}
+                          </span>
+                        ) : isRecommendation ? (
+                          <span
+                            style={{
+                              padding: "6px 14px",
+                              borderRadius: "4px",
+                              fontSize: "13px",
+                              fontWeight: 500,
+                              display: "inline-block",
+                              minWidth: "110px",
+                              textAlign: "center",
+                              ...getRecommendationStyle(value)
+                            }}
+                          >
+                            {value}
+                          </span>
+                        ) : isFinalApproval ? (
+                          <span
+                            style={{
+                              padding: "6px 14px",
+                              borderRadius: "4px",
+                              fontSize: "13px",
+                              fontWeight: 500,
+                              display: "inline-block",
+                              minWidth: "110px",
+                              textAlign: "center",
+                              ...getFinalApprovalStyle(selectedPerformance.adminStatus)
                             }}
                           >
                             {value}
                           </span>
                         ) : (
-                          value // normal text for Rating or others
+                          value
                         )}
                       </div>
                     </div>
@@ -693,12 +733,12 @@ function EmployeePerformances() {
                     <div
                       className="p-2 border rounded bg-light"
                       tabIndex={-1}
-                     style={{ 
-                      whiteSpace: "pre-wrap",
-                      maxHeight: "60px",        
-                      overflowY: "auto",
-                      wordBreak: "break-word"
-                    }}
+                      style={{ 
+                        whiteSpace: "pre-wrap",
+                        maxHeight: "60px",        
+                        overflowY: "auto",
+                        wordBreak: "break-word"
+                      }}
                     >
                       {selectedPerformance.description}
                     </div>

@@ -1163,7 +1163,7 @@ setFilteredRequests(sorted);
                       </div>
                       <div className="col-12 mb-3">
                         <label className="form-label fw-semibold">
-                          Last Working Day *
+                          Last Working Day <span style={{ color: "red" }}>  *</span>
                         </label>
                         <input
                           type="date"
@@ -1182,9 +1182,13 @@ setFilteredRequests(sorted);
                           className="form-control"
                           rows="3"
                           placeholder="Enter comments here..."
+                          maxLength={300}
                           value={comment}
                           onChange={(e) => setComment(e.target.value)}
                         />
+                         <div style={{ fontSize: "12px", textAlign: "right", color: "#6c757d", marginTop: "4px" }}>
+                          {comment.length}/300
+                        </div>
                       </div>
                     </div>
                   )}
@@ -1230,17 +1234,19 @@ setFilteredRequests(sorted);
               </div>
 
               {/* Footer */}
-              <div className="modal-footer border-0 pt-0 d-flex gap-2" style={{ flexShrink: 0 }}>
+              <div className="modal-footer border-0 pt-0 d-flex " style={{ flexShrink: 0 }}>
                 {selected.status === "Pending" ? (
                   <>
                     <button
                       className="btn btn-sm btn-outline-success"
+                      style={{ minWidth: "90px" }}
                       onClick={handleApprove}
                     >
                       Approve
                     </button>
                     <button
                       className="btn btn-sm btn-outline-danger"
+                      style={{ minWidth: "90px" }}
                       onClick={handleReject}
                     >
                       Reject

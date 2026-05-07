@@ -18,6 +18,7 @@ function EmployeeResignation({ user }) {
   const [showEmployeePopup, setShowEmployeePopup] = useState(false);
   const [showResignationDetails, setShowResignationDetails] = useState(false);
   const [selectedResignation, setSelectedResignation] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
     reason: "",
     comments: "",
@@ -179,6 +180,7 @@ function EmployeeResignation({ user }) {
   const handleApply = async (e) => {
     e?.preventDefault();
 
+    if (isSubmitting) return;
     if (!form.reason) {
       alert("Please select reason");
       return;
@@ -195,6 +197,7 @@ function EmployeeResignation({ user }) {
       return;
     }
 
+    setIsSubmitting(true);
     try {
       // const userData = await fetchUser();
       // if (!userData) {
@@ -230,6 +233,9 @@ function EmployeeResignation({ user }) {
     } catch (err) {
       console.error("Error applying resignation:", err);
       alert(err.response?.data?.message || "Failed to apply resignation");
+    }
+    finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -928,7 +934,7 @@ function EmployeeResignation({ user }) {
                         className="form-label fw-semibold"
                         style={{ color: "#212529" }}
                       >
-                        Employee ID *
+                        Employee ID <span style={{ color: "red" }}>  *</span>
                       </label>
                       <input
                         type="text"
@@ -949,7 +955,7 @@ function EmployeeResignation({ user }) {
                         className="form-label fw-semibold"
                         style={{ color: "#212529" }}
                       >
-                        Reason *
+                        Reason <span style={{ color: "red" }}>  *</span>
                       </label>
                       <select
                         className="form-select"
@@ -1019,7 +1025,8 @@ function EmployeeResignation({ user }) {
                     <button
                       type="submit"
                       className="btn btn-sm custom-outline-btn"
-                         style={{minWidth:90}}
+                      style={{minWidth:90}}
+                      disabled={isSubmitting}
                     >
                       Submit
                     </button>

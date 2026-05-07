@@ -55,7 +55,9 @@ if (
 
 useEffect(() => {
   const checkModal = () => {
-    const modal = document.querySelector(".modal.show");
+  const modal =
+  document.querySelector(".modal.show") ||
+  document.querySelector(".custom-modal-bg");
     setIsModalOpen(!!modal);
   };
 

@@ -18,6 +18,7 @@ const [allTickets, setAllTickets] = useState([]);
   const [comment, setComment] = useState("");
   const [viewTicket, setViewTicket] = useState(null);
   const navigate = useNavigate();
+   const [fileError, setFileError] = useState("");
 
   /* ================= PAGINATION ================= */
   const [currentPage, setCurrentPage] = useState(1);
@@ -135,37 +136,8 @@ const fetchTickets = async () => {
   }, []);
   
 useEffect(() => {
-  if (!isFilterApplied) {
-    setTickets(allTickets);
-    return;
-  }
-
-  let filtered = [...allTickets];
-
-  if (status !== "All") {
-    filtered = filtered.filter((t) => t.status === status);
-  }
-
-  if (fromDate || toDate) {
-    filtered = filtered.filter((t) => {
-      const raisedDate = new Date(t.raisedDate);
-
-      const from = fromDate ? new Date(fromDate) : null;
-      const to = toDate ? new Date(toDate) : null;
-
-      if (from) from.setHours(0, 0, 0, 0);
-      if (to) to.setHours(23, 59, 59, 999);
-
-      if (from && raisedDate < from) return false;
-      if (to && raisedDate > to) return false;
-
-      return true;
-    });
-  }
-
-  setTickets(filtered);
-  setCurrentPage(1);
-}, [allTickets, isFilterApplied, status, fromDate, toDate]);
+  setTickets(allTickets);
+}, [allTickets]);
  
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -176,14 +148,12 @@ useEffect(() => {
       if (!regex.test(value)) return;
     }
 
-    // Description word limit (200)
-    if (name === "description") {
-      const words = value.split(/\s+/).filter(Boolean);
-  
-      if (words.length > 200) {
-        return;
-      }
-    }
+     // Description character limit (200)
+if (name === "description") {
+  if (value.length > 200) {
+    return;
+  }
+}
 
     setFormData((prev) => ({
       ...prev,
@@ -207,16 +177,11 @@ useEffect(() => {
       newErrors.priority = "Please select priority";
     }
 
-    const wordCount = formData.description
-      .trim()
-      .split(/\s+/)
-      .filter(Boolean).length;
-
-    if (!formData.description.trim()) {
-      newErrors.description = "Description is required";
-    } else if (wordCount > 200) {
-      newErrors.description = "Description must be within 200 words";
-    }
+ if (!formData.description.trim()) {
+  newErrors.description = "Description is required";
+} else if (formData.description.length > 200) {
+  newErrors.description = "Description must be within 200 characters";
+}
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -316,13 +281,13 @@ useEffect(() => {
   };
 
   ///comment added withvalidation
-  const isValidComment = (text) => {
-    return text.trim().split(/\s+/).length <= 100;
-  };
+const isValidComment = (text) => {
+  return text.length <= 100;
+};
   const addComment = async () => {
     if (!comment.trim()) return;
     if (!isValidComment(comment)) {
-      alert("Comment must be within 100 words");
+      alert("Comment must be within 100 characters");
       return;
     }
     try {
@@ -338,46 +303,61 @@ useEffect(() => {
     }
   };
 
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-  
-    const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
-    const ALLOWED_TYPES = [
-      "image/jpeg",
-      "image/jpg",
-      "application/pdf",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "application/vnd.ms-excel",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    ];
-  
-    let validFiles = [];
-  
-    for (let file of files) {
-      if (file.size > MAX_SIZE) {
-        alert(`❌ "${file.name}" exceeds 5 MB limit`);
-        e.target.value = ""; 
-        setFormData((prev) => ({ ...prev, attachment: [] }));
-        return;
-      }
-  
-      if (!ALLOWED_TYPES.includes(file.type)) {
-        alert(`❌ "${file.name}" is not supported. Use JPG, PDF, Word, Excel`);
-        e.target.value = ""; 
-        setFormData((prev) => ({ ...prev, attachment: [] }));
-        return;
-      }
-  
-      validFiles.push(file);
+ const handleFileChange = (e) => {
+  const files = Array.from(e.target.files);
+
+  const MAX_SIZE = 5 * 1024 * 1024;
+
+  const ALLOWED_TYPES = [
+    "image/jpeg",
+    "image/jpg",
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  ];
+
+  let validFiles = [];
+
+  for (let file of files) {
+    if (file.size > MAX_SIZE) {
+      setFileError(`"${file.name}" exceeds 5 MB limit`);
+      e.target.value = "";
+
+      setFormData((prev) => ({
+        ...prev,
+        attachment: [],
+      }));
+
+      return;
     }
-  
-    //  Only set if all files are valid
-    setFormData((prev) => ({
-      ...prev,
-      attachment: validFiles,
-    }));
-  };
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setFileError(
+        `"${file.name}" is not supported. Use JPG, PDF, Word, Excel`,
+      );
+
+      e.target.value = "";
+
+      setFormData((prev) => ({
+        ...prev,
+        attachment: [],
+      }));
+
+      return;
+    }
+
+    validFiles.push(file);
+  }
+
+  setFileError("");
+
+  setFormData((prev) => ({
+    ...prev,
+    attachment: validFiles,
+  }));
+};
 
 
 const applyFilter = () => {
@@ -763,12 +743,23 @@ const resetFilter = () => {
                       style={{ padding: "6px" }}
                       onChange={handleFileChange}
                     />
+                    <small
+  className="d-block text-muted mt-1"
+  style={{ fontSize: "12px" }}
+>
+  Allowed formats: JPG, PDF, DOC, DOCX, XLS, XLSX | Max size: 5MB
+</small>
+                                        {fileError && (
+  <small className="text-danger d-block mt-1">
+    {fileError}
+  </small>
+)}
                   </div>
                 </div>
 
                 {/* Description */}
                 <label className="form-label mt-3" style={{ color: "#3A5FBE" }}>
-                  Enter Description (Max 200 words)<span style={{ color: "red" }}>  *</span>
+                  Enter Description (Max 200 characters)<span style={{ color: "red" }}>  *</span>
                 </label>
                 <textarea
                   className="form-control form-control-sm mb-1"
@@ -779,22 +770,21 @@ const resetFilter = () => {
                   placeholder="Describe your issue"
                 />
 
-              {!errors.description && (
-                <div className="text-end" style={{ marginBottom: "8px" }}>
+        
+                <div className="text-end" >
                   <small>
-                    {formData.description.trim()
-                      ? formData.description.trim().split(/\s+/).filter(Boolean).length
-                      : 0}
-                    /200 words
-                  </small>
+                {formData.description.length}/200 characters
+                </small>
                 </div>
-              )}
-              {errors.description && (
-                <div className="invalid-feedback d-block" style={{ marginTop: "4px" }}>
-                  {errors.description}
-                </div>
-              )}
-
+           
+                       {errors.description && (
+  <small
+    className="text-danger d-block"
+    style={{ marginTop: "-25px" }}
+  >
+    {errors.description}
+  </small>
+)}
                 <div className="text-end">
                   <button
                     className="btn btn-sm custom-outline-btn"
@@ -1196,8 +1186,11 @@ const resetFilter = () => {
           }}
         >
           <div
-            className="modal-dialog modal-dialog"
-            style={{ maxWidth: "650px", width: "95%" ,marginTop:"100px"}}
+             className="modal-dialog modal-lg modal-dialog-centered"
+             style={{
+               maxWidth: "650px",
+               width: "95%",
+             }}
           >
             <div className="modal-content">
               <div
@@ -1553,10 +1546,7 @@ const resetFilter = () => {
   />
 
   <small style={{ color: "#6c757d" }}>
-    {editData.description.trim()
-      ? editData.description.trim().split(/\s+/).filter(Boolean).length
-      : 0}{" "}
-    / 200 words
+ {editData.description.length} / 200 characters
   </small>
 </div>
 
@@ -1590,10 +1580,7 @@ const resetFilter = () => {
 />
 
 <small className="text-muted">
-  {(comment || "").trim()
-    ? (comment || "").trim().split(/\s+/).filter(Boolean).length
-    : 0}
-  /100 words
+{comment.length}/100 characters
 </small>
                 </div>
 
