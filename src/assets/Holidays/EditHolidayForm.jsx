@@ -123,9 +123,11 @@ function EditHolidayForm({ holidayData, onUpdate, onClose }) {
                   className="form-control"
                   rows={2}
                   value={name}
+                  maxLength={50}
                   onChange={(e) => setName(e.target.value)}
                   required
                 />
+                <small className="text-muted">{name.length}/50 characters</small>
               </div>
 
               <div className="mb-3">
@@ -134,6 +136,7 @@ function EditHolidayForm({ holidayData, onUpdate, onClose }) {
                   type="date"
                   className="form-control"
                   value={date}
+                  min={new Date().toISOString().split("T")[0]}
                   onChange={(e) => setDate(e.target.value)}
                   required
                 />

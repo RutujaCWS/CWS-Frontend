@@ -65,7 +65,7 @@ const modalRef = useRef(null);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-
+    
     try {
       const token = localStorage.getItem("accessToken");
 
@@ -125,9 +125,11 @@ const modalRef = useRef(null);
                   type="text"
                   className="form-control"
                   value={name}
+                  maxLength={50}
                   onChange={(e) => setName(e.target.value)}
                   required
                 />
+                <small className="text-muted">{name.length}/50 characters</small>
               </div>
 
               <div className="mb-3">
@@ -136,6 +138,7 @@ const modalRef = useRef(null);
                   type="date"
                   className="form-control"
                   value={date}
+                  min={new Date().toISOString().split("T")[0]}
                   onChange={(e) => setDate(e.target.value)}
                   required
                 />

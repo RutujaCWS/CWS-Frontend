@@ -596,8 +596,11 @@ const ActivePolls = ({ user }) => {
                   className="form-control mb-2"
                   placeholder="Enter poll question"
                   value={pollQuestion}
+                  maxLength={50}
                   onChange={(e) => setPollQuestion(e.target.value)}
                 />
+                <small className="text-muted d-block mb-2">{pollQuestion.length}/50 characters</small>
+
                 {options.map((opt, index) => (
                   <div key={index} className="d-flex mb-2">
                     <input type="radio" disabled className="me-2 mt-2" />
@@ -605,6 +608,7 @@ const ActivePolls = ({ user }) => {
                       className="form-control me-2"
                       placeholder={`Option ${index + 1}`}
                       value={opt}
+                      maxLength={30}
                       onChange={(e) => updateOption(index, e.target.value)}
                     />
                     {options.length > 2 && (
@@ -636,14 +640,10 @@ const ActivePolls = ({ user }) => {
                   className="form-control mb-3"
                   placeholder="Enter poll description (max 300 words)"
                   value={pollDescription}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (countWords(value) <= 300) {
-                      setPollDescription(value);
-                    }
-                  }}
-
+                  maxLength={300}
+                  onChange={(e) => setPollDescription(e.target.value)}
                 />
+                <small className="text-muted">{pollDescription.length}/300 characters</small>
 
 
                 {/* Save & Cancel buttons aligned right */}
@@ -981,8 +981,10 @@ const ActivePolls = ({ user }) => {
                   className="form-control mb-2"
                   placeholder="Enter poll question"
                   value={editQuestion}
+                  maxLength={50}
                   onChange={(e) => setEditQuestion(e.target.value)}
                 />
+                <small className="text-muted d-block mb-2">{editQuestion.length}/50 characters</small>
 {editOptions.map((opt, index) => (
   <div
   key={index}
@@ -1003,6 +1005,7 @@ const ActivePolls = ({ user }) => {
   }}
                       placeholder={`Option ${index + 1}`}
                       value={opt.text}
+                      maxLength={30}
                       onChange={(e) => updateEditOption(index, e.target.value)}
                     />
                     {editOptions.length > 2 && (
@@ -1027,13 +1030,11 @@ const ActivePolls = ({ user }) => {
                   className="form-control mb-3"
                   placeholder="Enter poll description (max 300 words)"
                   value={editDescription}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (countWords(value) <= 300) {
-                      setEditDescription(value);
-                    }
-                  }}
+                  maxLength={300}
+                  onChange={(e) => setEditDescription(e.target.value)}
                 />
+                <small className="text-muted">{editDescription.length}/300 characters</small>
+
 
                 {/* Save & Cancel buttons aligned right */}
                 <div className="d-flex justify-content-end gap-2 flex-wrap">
