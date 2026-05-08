@@ -349,6 +349,7 @@ function OfficeLocationSetup() {
   const [editLocation, setEditLocation] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
     // rutuja code 
     useEffect(() => {
@@ -427,21 +428,43 @@ function OfficeLocationSetup() {
   };
 
   // ✅ Save changes (only after clicking Save)
-  const handleSave = () => {
-    setLoading(true);
+const handleSave = () => {
+  let newErrors = {};
 
-    axios
-      .post("https://cws-backend-roan.vercel.app/admin/office-location", editLocation)
-      .then(() => {
-        setLocation(editLocation); // ✅ Update page only now
-        alert("Office location saved");
-      })
-      .catch(() => alert("Failed to save location"))
-      .finally(() => {
-        setLoading(false);
-        setShowModal(false);
-      });
-  };
+  if (!editLocation.name?.trim()) {
+    newErrors.name = "Office name is required";
+  }
+
+  if (!editLocation.address?.trim()) {
+    newErrors.address = "Address is required";
+  }
+
+  if (!editLocation.lat?.toString().trim()) {
+    newErrors.lat = "Latitude is required";
+  }
+
+  if (!editLocation.lng?.toString().trim()) {
+    newErrors.lng = "Longitude is required";
+  }
+
+  setErrors(newErrors);
+
+  if (Object.keys(newErrors).length > 0) return;
+
+  setLoading(true);
+
+  axios
+    .post("https://cws-backend-roan.vercel.app/admin/office-location", editLocation)
+    .then(() => {
+      setLocation(editLocation);
+      alert("Office location saved");
+    })
+    .catch(() => alert("Failed to save location"))
+    .finally(() => {
+      setLoading(false);
+      setShowModal(false);
+    });
+};
 
   return (
     <div style={{ padding: "20px" }}>
@@ -494,87 +517,90 @@ function OfficeLocationSetup() {
                   <div className="modal-body">
                     {/* Name */}
                     <div className="mb-3">
-                      <label
-                        className="form-label"
-                        style={{ color: "#007BFF" }}
-                      >
-                        Office Name:
-                      </label>
-                      <input
-                        name="name"
-                        value={editLocation.name || ""}
-                        onChange={(e) =>
-                          setEditLocation({
-                            ...editLocation,
-                            [e.target.name]: e.target.value,
-                          })
-                        }
-                        className="form-control"
-                      // style={{ backgroundColor: "#E9F5FF" }}
-                      />
+                   <label className="form-label" style={{ color: "#007BFF" }}>
+  Office Name:<span style={{ color: "red" }}> *</span>
+</label>
+
+<input
+  name="name"
+  maxLength={50}
+  value={editLocation.name || ""}
+  onChange={(e) =>
+    setEditLocation({
+      ...editLocation,
+      [e.target.name]: e.target.value,
+    })
+  }
+  className={`form-control ${errors.name ? "is-invalid" : ""}`}
+/>
+
+<div className="invalid-feedback">{errors.name}</div>
                     </div>
 
                     {/* Latitude */}
                     <div className="mb-3">
-                      <label
-                        className="form-label"
-                        style={{ color: "#007BFF" }}
-                      >
-                        Latitude:
-                      </label>
-                      <input
-                        name="lat"
-                        value={editLocation.lat || ""}
-                        onChange={(e) =>
-                          setEditLocation({
-                            ...editLocation,
-                            [e.target.name]: e.target.value,
-                          })
-                        }
-                        className="form-control"
-                      />
+                  <label className="form-label" style={{ color: "#007BFF" }}>
+  Latitude:<span style={{ color: "red" }}> *</span>
+</label>
+
+<input
+  name="lat"
+  maxLength={25}
+  value={editLocation.lat || ""}
+  onChange={(e) =>
+    setEditLocation({
+      ...editLocation,
+      [e.target.name]: e.target.value,
+    })
+  }
+  className={`form-control ${errors.lat ? "is-invalid" : ""}`}
+/>
+
+<div className="invalid-feedback">{errors.lat}</div>
                     </div>
 
                     {/* Longitude */}
                     <div className="mb-3">
-                      <label
-                        className="form-label"
-                        style={{ color: "#007BFF" }}
-                      >
-                        Longitude:
-                      </label>
-                      <input
-                        name="lng"
-                        value={editLocation.lng || ""}
-                        onChange={(e) =>
-                          setEditLocation({
-                            ...editLocation,
-                            [e.target.name]: e.target.value,
-                          })
-                        }
-                        className="form-control"
-                      />
+                    <label className="form-label" style={{ color: "#007BFF" }}>
+  Longitude:<span style={{ color: "red" }}> *</span>
+</label>
+
+<input
+  name="lng"
+  maxLength={25}
+  value={editLocation.lng || ""}
+  onChange={(e) =>
+    setEditLocation({
+      ...editLocation,
+      [e.target.name]: e.target.value,
+    })
+  }
+  className={`form-control ${errors.lng ? "is-invalid" : ""}`}
+/>
+
+<div className="invalid-feedback">{errors.lng}</div>
                     </div>
 
                     {/* Address */}
                     <div className="mb-3">
-                      <label
-                        className="form-label"
-                        style={{ color: "#007BFF" }}
-                      >
-                        Address:
-                      </label>
-                      <input
-                        name="address"
-                        value={editLocation.address || ""}
-                        onChange={(e) =>
-                          setEditLocation({
-                            ...editLocation,
-                            [e.target.name]: e.target.value,
-                          })
-                        }
-                        className="form-control"
-                      />
+                    <label className="form-label" style={{ color: "#007BFF" }}>
+  Address:<span style={{ color: "red" }}> *</span>
+</label>
+
+<input
+  name="address"
+  maxLength={200}
+  value={editLocation.address || ""}
+  onChange={(e) =>
+    setEditLocation({
+      ...editLocation,
+      [e.target.name]: e.target.value,
+    })
+  }
+  className={`form-control ${errors.address ? "is-invalid" : ""}`}
+/>
+
+<div className="invalid-feedback">{errors.address}</div>
                     </div>
                   </div>
 

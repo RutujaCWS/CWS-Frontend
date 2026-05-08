@@ -1022,35 +1022,21 @@ const handleRowClick = (job) => {
                         fontSize: "14px",
                         borderBottom: "1px solid #dee2e6",
                         color: "#212529",
-                        cursor: isExpired(job) ? "not-allowed" : "pointer",
                         overflow: "hidden",
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis",
                         maxWidth: "250px",
                       }}
-                      onClick={(e) => {
-                        if (isExpired(job)) return;
-                        e.stopPropagation();
-                        setExpandedJobId(
-                          expandedJobId === job._id ? null : job._id,
-                        );
-                      }}
                     >
                       <div
                         style={{
-                          maxHeight:
-                            expandedJobId === job._id ? "150px" : "20px",
-                          overflowY:
-                            expandedJobId === job._id ? "auto" : "hidden",
-                          whiteSpace: "pre-wrap",
+                          overflow: "hidden",
+                          whiteSpace: "nowrap",
+                          textOverflow: "ellipsis",
                         }}
                       >
                         {job.jobDescription
-                          ? expandedJobId === job._id
-                            ? job.jobDescription.replace(/<[^>]+>/g, "")
-                            : job.jobDescription
-                              .replace(/<[^>]+>/g, "")
-                              .substring(0, 50) +
+                          ? job.jobDescription.replace(/<[^>]+>/g, "").substring(0, 50) +
                             (job.jobDescription.length > 50 ? "..." : "")
                           : "-"}
                       </div>
@@ -1244,7 +1230,6 @@ onClick={() => {
       </div>
 
       {/* //added by Rushikesh */}
-      {/* //added by Rushikesh */}
 {showAddJob && (
   <div
     ref={modalRef}
@@ -1280,7 +1265,7 @@ onClick={() => {
             {/* Job Title */}
             <div className="row align-items-center mb-3">
               <div className="col-12 col-md-4 fw-semibold">
-                Job Title *
+                Job Title <span style={{ color: "red" }}>  *</span>
               </div>
               <div className="col-12 col-md-8">
                 <input
@@ -1307,7 +1292,7 @@ onClick={() => {
             {/* Department */}
             <div className="row align-items-center mb-3">
               <div className="col-12 col-md-4 fw-semibold">
-                Department *
+                Department<span style={{ color: "red" }}>  *</span>
               </div>
               <div className="col-12 col-md-8">
                 <select
@@ -1339,7 +1324,7 @@ onClick={() => {
 
             {/* Location */}
             <div className="row align-items-center mb-3">
-              <div className="col-12 col-md-4 fw-semibold">Location *</div>
+              <div className="col-12 col-md-4 fw-semibold">Location<span style={{ color: "red" }}>  *</span></div>
               <div className="col-12 col-md-8">
                 <input
                   className={`form-control ${formErrors.location ? 'is-invalid' : ''}`}
@@ -1360,7 +1345,7 @@ onClick={() => {
 
             {/* Hiring Type */}
             <div className="row align-items-center mb-3">
-              <div className="col-12 col-md-4 fw-semibold">Hiring Type *</div>
+              <div className="col-12 col-md-4 fw-semibold">Hiring Type<span style={{ color: "red" }}>  *</span></div>
               <div className="col-12 col-md-8">
                 <select
                   className={`form-select ${formErrors.hiringType ? 'is-invalid' : ''}`}
@@ -1383,7 +1368,7 @@ onClick={() => {
 
             {/* Job Type */}
             <div className="row align-items-center mb-3">
-              <div className="col-12 col-md-4 fw-semibold">Job Type *</div>
+              <div className="col-12 col-md-4 fw-semibold">Job Type <span style={{ color: "red" }}>  *</span></div>
               <div className="col-12 col-md-8">
                 <select
                   className={`form-select ${formErrors.jobType ? 'is-invalid' : ''}`}
@@ -1406,7 +1391,7 @@ onClick={() => {
 
             {/* Openings */}
             <div className="row align-items-center mb-3">
-              <div className="col-12 col-md-4 fw-semibold">No of Openings *</div>
+              <div className="col-12 col-md-4 fw-semibold">No of Openings </div>
               <div className="col-12 col-md-8">
                 <input
                   type="number"
@@ -1431,7 +1416,7 @@ onClick={() => {
 
             {/* Description */}
             <div className="row mb-3">
-              <div className="col-12 col-md-4 fw-semibold">Job Description *</div>
+              <div className="col-12 col-md-4 fw-semibold">Job Description<span style={{ color: "red" }}>  *</span></div>
               <div className="col-12 col-md-8">
                 <RichTextEditor
                   value={newJob.jobDescription}
@@ -1470,7 +1455,7 @@ onClick={() => {
 
             {/* Min CTC */}
             <div className="row mb-3">
-              <div className="col-12 col-md-4 fw-semibold">Min CTC</div>
+              <div className="col-12 col-md-4 fw-semibold">Min CTC<span style={{ color: "red" }}>  *</span></div>
               <div className="col-12 col-md-8">
                 <input
                   type="number"
@@ -1492,7 +1477,7 @@ onClick={() => {
 
             {/* Max CTC */}
             <div className="row align-items-center mb-3">
-              <div className="col-12 col-md-4 fw-semibold">Max CTC</div>
+              <div className="col-12 col-md-4 fw-semibold">Max CTC<span style={{ color: "red" }}>  *</span></div>
               <div className="col-12 col-md-8">
                 <input
                   type="number"
@@ -1521,7 +1506,7 @@ onClick={() => {
 
             {/* Min Experience */}
             <div className="row mb-3">
-              <div className="col-12 col-md-4 fw-semibold">Min Experience(Years)</div>
+              <div className="col-12 col-md-4 fw-semibold">Min Experience(Yrs)<span style={{ color: "red" }}>  *</span></div>
               <div className="col-12 col-md-8">
                 <input
                   type="number"
@@ -1544,7 +1529,7 @@ onClick={() => {
 
             {/* Max Experience */}
             <div className="row mb-3">
-              <div className="col-12 col-md-4 fw-semibold">Max Experience(Years)</div>
+              <div className="col-12 col-md-4 fw-semibold">Max Experience(Yrs)<span style={{ color: "red" }}> *</span></div>
               <div className="col-12 col-md-8">
                 <input
                   type="number"
@@ -1572,7 +1557,7 @@ onClick={() => {
 
             {/* Skills */}
             <div className="row align-items-center mb-3">
-              <div className="col-12 col-md-4 fw-semibold">Important Skills *</div>
+              <div className="col-12 col-md-4 fw-semibold">Important Skills <span style={{ color: "red" }}>  *</span></div>
               <div className="col-12 col-md-8">
                 <input
                   className={`form-control ${formErrors.importantSkills ? 'is-invalid' : ''}`}
@@ -1598,7 +1583,7 @@ onClick={() => {
 
             {/* Due Date */}
             <div className="row align-items-center mb-3">
-              <div className="col-12 col-md-4 fw-semibold">Due On *</div>
+              <div className="col-12 col-md-4 fw-semibold">Due On <span style={{ color: "red" }}>  *</span></div>
               <div className="col-12 col-md-8">
                 <input
                   type="date"
@@ -1768,6 +1753,7 @@ onClick={() => {
               
   <button
     className="btn btn-sm custom-outline-btn"
+    style={{minWidth:90}}
     onClick={() => {
       setShowViewPopup(false);
       setViewJob(null); //rutuja
@@ -1780,6 +1766,7 @@ onClick={() => {
   {isExpired(viewJob?.dueOn) && (
     <button
       className="btn btn-sm custom-outline-btn"
+      style={{minWidth:90}}
       onClick={() => handleRepost(viewJob)}
     >
       Repost

@@ -548,7 +548,7 @@ useEffect(() => {
                     )}
                     {item.type === "pdf" && <p>📄 PDF Selected</p>}
                     <div>
-                      <label className="form-label fw-bold">Title</label>
+                      <label className="form-label fw-bold">Title<span style={{ color: "red" }}> *</span></label>
                       <input
                         className="form-control mb-2"
                         placeholder="Title"
@@ -563,7 +563,7 @@ useEffect(() => {
                     </div>
                     </div>
 
-                    <label className="form-label fw-bold">Description</label>
+                    <label className="form-label fw-bold">Description<span style={{ color: "red" }}> *</span></label>
                     <textarea
                       className="form-control mb-2"
                       placeholder="Description"
@@ -577,7 +577,7 @@ useEffect(() => {
                       <small>{item.description.length}/{MAX_DESC_LENGTH}</small>
                     </div>
                     <label className="form-label fw-bold">
-                      Select Category
+                      Select Category<span style={{ color: "red" }}> *</span>
                     </label>
                     <select
                       className="form-select"
@@ -1182,7 +1182,7 @@ useEffect(() => {
               <div className="modal-body px-4 py-3">
                 {/* Title */}
                 <div className="row mb-2">
-                  <div className="col-4 fw-semibold">Title</div>
+                  <div className="col-4 fw-semibold">Title<span style={{ color: "red" }}> *</span></div>
                   <div className="col-8">
                     <input
                       className="form-control"
@@ -1202,7 +1202,7 @@ useEffect(() => {
 
                 {/* Description */}
                 <div className="row mb-2">
-                  <div className="col-4 fw-semibold">Description</div>
+                  <div className="col-4 fw-semibold">Description<span style={{ color: "red" }}> *</span></div>
                   <div className="col-8">
                     <textarea
                       className="form-control"
@@ -1224,7 +1224,7 @@ useEffect(() => {
 
                 {/* Category */}
                 <div className="row mb-3">
-                  <div className="col-4 fw-semibold">Category</div>
+                  <div className="col-4 fw-semibold">Category<span style={{ color: "red" }}> *</span></div>
                   <div className="col-8">
                     <select
                       className="form-select"

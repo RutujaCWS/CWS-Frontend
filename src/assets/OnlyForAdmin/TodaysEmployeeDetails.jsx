@@ -1116,7 +1116,8 @@ function TodaysEmployeeDetails() {
                 {/* 🔹 Footer */}
                 <div className="modal-footer border-0 pt-0">
                   <button
-                    className="btn custom-outline-btn"
+                    className="btn btn-sm custom-outline-btn"
+                    style={{minWidth:90}}
                     onClick={closeModal}
                   >
                     Close

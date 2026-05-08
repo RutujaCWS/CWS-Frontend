@@ -13,7 +13,7 @@ function AdminSetting({ user, setUser }) {
       className="container-fluid p-3 p-md-4 p-2"
       style={{ backgroundColor: "#f8f9fa", minHeight: "100vh" }}
     >
-      <div className="d-flex justify-content-center  mb-3 gap-2">
+      <div className="d-flex justify-content-center flex-wrap mb-3 gap-2">
         <button
           type="button"
           className={`btn btn-sm ${activeTab === "officeLocation" ? "btn-primary" : "btn-outline-primary"}`}

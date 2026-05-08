@@ -9,6 +9,7 @@ function MyProfile({ user, setUser }) {
   const [error, setError] = useState("");
   const [removingImage, setRemovingImage] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [fileErrors, setFileErrors] = useState({});
 
   const handleRemoveImage = async (e) => {
     e?.preventDefault?.();
@@ -771,12 +772,24 @@ function MyProfile({ user, setUser }) {
                   <label className="form-label text-primary">{label}</label>
 
                   {isEditing ? (
+                    <>
                     <input
                       type="file"
                       name={field}
                       accept=".jpg,.jpeg,.png,application/pdf"
                       onChange={handleFileChange}
+
                     />
+                    <small className="text-muted d-block mt-1"style={{fontSize:"13px"}}>
+                      Allowed formats: PDF, JPG, JPEG, PNG | Max size: 5 MB
+                    </small>
+
+                    {fileErrors[field] && (
+                      <small className="text-danger d-block mt-1">
+                        {fileErrors[field]}
+                      </small>
+                    )}
+                    </>
                   ) : !file ? (
                     "-"
                   ) : (
@@ -807,12 +820,23 @@ function MyProfile({ user, setUser }) {
               <label className="form-label text-primary">Bank Passbook</label>
 
               {isEditing ? (
+                  <>
                 <input
                   type="file"
                   name="passbookPdf"
                   accept=".jpg,.jpeg,.png,application/pdf"
                   onChange={handleFileChange}
                 />
+                <small className="text-muted d-block mt-1" style={{fontSize:"13px"}}>
+                  Allowed formats: PDF, JPG, JPEG, PNG | Max size: 5 MB
+                </small>
+
+                {fileErrors.passbookPdf && (
+                  <small className="text-danger d-block mt-1">
+                    {fileErrors.passbookPdf}
+                  </small>
+                )}
+                </>
               ) : profile.bankDetails?.passbookPdf ? (
                 (() => {
                   const file = profile.bankDetails.passbookPdf;

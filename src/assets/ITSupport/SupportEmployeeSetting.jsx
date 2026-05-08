@@ -14,6 +14,7 @@ function SupportEmployeeSetting() {
 const [allTickets, setAllTickets] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [selectedTicket, setSelectedTicket] = useState(null);
+  const [localDescription, setLocalDescription] = useState("");
   const [editData, setEditData] = useState(null);
   const [comment, setComment] = useState("");
   const [viewTicket, setViewTicket] = useState(null);
@@ -33,6 +34,7 @@ const [status, setStatus] = useState("All");
   const [showTickets, setShowTickets] = useState(false);
   const [showRaiseModal, setShowRaiseModal] = useState(false);
   const [isFilterApplied, setIsFilterApplied] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     employeeName: "",
     category: "",
@@ -129,16 +131,25 @@ const fetchTickets = async () => {
 };
 
 
-  useEffect(() => {
-    fetchTickets();
-    const interval = setInterval(fetchTickets, 8000);
-    return () => clearInterval(interval);
-  }, []);
-  
 useEffect(() => {
-  setTickets(allTickets);
-}, [allTickets]);
- 
+  fetchTickets();
+
+  const interval = setInterval(() => {
+    if (!isFilterApplied) {
+      fetchTickets();
+    }
+  }, 8000);
+
+  return () => clearInterval(interval);
+}, [isFilterApplied]);
+  
+  useEffect(() => {
+    if (!isFilterApplied) {
+      setTickets(allTickets);
+    }
+  }, [allTickets, isFilterApplied]);
+  
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -188,9 +199,10 @@ if (name === "description") {
   };
 
   const handleSubmit = async () => {
+    if (isSubmitting) return;
     try {
       if (!validateForm()) return;
-
+      setIsSubmitting(true);
       const data = new FormData();
       data.append("employeeName", formData.employeeName);
       data.append("category", formData.category);
@@ -224,6 +236,9 @@ if (name === "description") {
     } catch (err) {
       console.error("Submit ticket error:", err.response?.data || err);
       alert(err.response?.data?.message || "Ticket submit failed");
+    }
+    finally {
+      setIsSubmitting(false); 
     }
   };
 
@@ -359,6 +374,11 @@ const isValidComment = (text) => {
   }));
 };
 
+useEffect(() => {
+  if (editData) {
+    setLocalDescription(editData.description);
+  }
+}, [editData?._id]);
 
 const applyFilter = () => {
   const today = new Date();
@@ -790,6 +810,7 @@ const resetFilter = () => {
                     className="btn btn-sm custom-outline-btn"
                     style={{ minWidth: 90 }}
                     onClick={handleSubmit}
+                    disabled={isSubmitting}
                   >
                     Submit Ticket
                   </button>
@@ -1297,13 +1318,13 @@ const resetFilter = () => {
                       viewTicket.attachment.length > 0
                         ? viewTicket.attachment.map((file, i) => (
                             <div key={i}>
-                              <a
-                                href={`https://cws-backend-roan.vercel.app/uploads/${file}`}
-                                download
-                                className="btn btn-sm btn-outline-primary mb-1"
-                              >
-                                ⬇ download {file.split("/").pop()}
-                              </a>
+                             <a
+                            href={file.replace("/upload/", "/upload/fl_attachment/")}
+                            download
+                            className="btn btn-sm btn-outline-primary mb-1"
+                          >
+                            ⬇ Download {file.split("/").pop()}
+                          </a>
                             </div>
                           ))
                         : "-"}
@@ -1522,33 +1543,34 @@ const resetFilter = () => {
                   />
                 </div>
 
-                    <div className="mb-3">
-  <label className="form-label fw-semibold">
-    Description (Max 200 words)
-  </label>
+                <div className="mb-3">
+                    <label className="form-label fw-semibold">
+                      Description (Max 200 characters)
+                    </label>
 
-  <textarea
-    className="form-control"
-    rows="3"
-    value={editData.description}
-    onChange={(e) => {
-      const value = e.target.value;
-      const words = value.trim().split(/\s+/).filter(Boolean);
+                    <textarea
+                      className="form-control"
+                      rows="3"
+                      maxLength={200}
+                      value={localDescription} 
+                      onChange={(e) => {
+                        setLocalDescription(e.target.value);  
+                      }}
+                      onBlur={() => {
+                        if (localDescription !== editData.description) {
+                          setEditData({
+                            ...editData,
+                            description: localDescription,
+                          });
+                        }
+                      }}
+                      placeholder="Enter description"
+                    />
 
-      if (words.length <= 200) {
-        setEditData({
-          ...editData,
-          description: value,
-        });
-      }
-    }}
-    placeholder="Enter description"
-  />
-
-  <small style={{ color: "#6c757d" }}>
- {editData.description.length} / 200 characters
-  </small>
-</div>
+                    <small style={{ color: "#6c757d" }}>
+                      {localDescription.length} / 200 characters
+                    </small>
+                  </div>
 
                 <div className="mb-3">
                   <label className="form-label fw-semibold">Status</label>
@@ -1571,6 +1593,7 @@ const resetFilter = () => {
   rows="3"
   placeholder="Add your comment here..."
   value={comment}
+  maxLength={100}
   onChange={(e) => {
     const words = e.target.value.trim().split(/\s+/).filter(Boolean);
     if (words.length <= 100) {

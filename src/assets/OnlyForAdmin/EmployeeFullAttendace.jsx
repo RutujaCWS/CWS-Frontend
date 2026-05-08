@@ -45,14 +45,28 @@ function EmployeeFullAttendance() {
     fetchHolidays();
   }, []);
   
+  const formatDate = (date) => {
+    const d = new Date(date);
+  
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+  
+    return `${year}-${month}-${day}`;
+  };
+  
   const isHoliday = (date) => {
-    const dateStr = date.toISOString().split('T')[0];
-    return holidays.some(holiday => {
-      const holidayDate = new Date(holiday.date).toISOString().split('T')[0];
+    if (!Array.isArray(holidays)) return false;
+  
+    const dateStr = formatDate(date);
+  
+    return holidays.some((holiday) => {
+      const holidayDate = formatDate(holiday.date);
+  
       return holidayDate === dateStr;
     });
   };
-
+  
   useEffect(() => {
     const fetchWeeklyOffConfig = async () => {
       try {
@@ -326,7 +340,7 @@ const handleReset = () => {
     );
     setDisplayData(newDisplayData);
   }
-}, [filteredAttendance, fromDate, toDate]);
+}, [filteredAttendance, fromDate, toDate, holidays]);
   // ✅ Function to export data to Excel
   const handleDownloadExcel = () => {
     if (filteredAttendance.length === 0) {

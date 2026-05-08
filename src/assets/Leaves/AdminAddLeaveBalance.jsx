@@ -248,6 +248,23 @@ function AdminAddLeaveBalance({fetchNotifications}) {
             : l
         ),
       );
+
+      if (selectedLeave && selectedLeave._id === leaveId) {
+        setSelectedLeave((prev) => ({
+          ...prev,
+          status: status,
+          totalDays:
+            breakdown?.totalDays ??
+            updatedLeaveFromBackend?.totalDays ??
+            prev.totalDays,
+          paidDays:
+            breakdown?.paidDays ??
+            updatedLeaveFromBackend?.paidDays,
+          lwpDays:
+            breakdown?.lwpDays ??
+            updatedLeaveFromBackend?.lwpDays,
+        }));
+      }
   
       if (breakdown?.totalDays) {
         setPreviewDaysMap(prev => ({

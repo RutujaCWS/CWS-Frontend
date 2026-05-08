@@ -21,6 +21,10 @@ function HrPolicy() {
     title: "",
     description: "",
   });
+
+  const [showFileModal, setShowFileModal] = useState(false);
+const [selectedFile, setSelectedFile] = useState(null); 
+  
   const [policies, setPolicies] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [editFile, setEditFile] = useState(null);//added by shivani
@@ -43,7 +47,8 @@ function HrPolicy() {
     showModal ||
     showAddModal ||
     showStatusModal ||
-    statusPolicy;
+    statusPolicy||
+    showFileModal; 
 
   useEffect(() => {
     if (!isAnyModalOpen || !modalRef.current) return;
@@ -102,7 +107,8 @@ function HrPolicy() {
       !!showViewModal ||
       showModal ||
       showAddModal ||
-      showStatusModal;
+      showStatusModal||
+      showFileModal;
 
     if (isModalOpen) {
       document.body.style.overflow = "hidden";
@@ -121,6 +127,7 @@ function HrPolicy() {
     showModal,
     showAddModal,
     showStatusModal,
+    showFileModal,
   ]);
 
 
@@ -471,6 +478,25 @@ function HrPolicy() {
     !readEmployees.some(read => read.employeeId === emp._id)
   );
 
+  // Helper function to detect file type from URL or extension
+const getFileType = (url) => {
+  if (!url) return "unknown";
+  
+  const urlLower = url.toLowerCase();
+  
+  // Check by extension
+  if (urlLower.endsWith('.pdf')) return "pdf";
+  if (urlLower.endsWith('.jpg') || urlLower.endsWith('.jpeg') || urlLower.endsWith('.png') || urlLower.endsWith('.gif') || urlLower.endsWith('.webp')) return "image";
+  if (urlLower.endsWith('.mp4') || urlLower.endsWith('.webm') || urlLower.endsWith('.ogg') || urlLower.endsWith('.mov')) return "video";
+  
+  // Check by URL pattern (if backend stores type)
+  if (urlLower.includes('/image/') || urlLower.includes('image')) return "image";
+  if (urlLower.includes('/video/') || urlLower.includes('video')) return "video";
+  if (urlLower.includes('/pdf/') || urlLower.includes('pdf')) return "pdf";
+  
+  return "unknown";
+};
+
   return (
     <div className="container-fluid ">
       <div className="d-flex justify-content-between mb-3">
@@ -680,24 +706,40 @@ function HrPolicy() {
 
 
                     <td style={{ padding: "10px", verticalAlign: "middle", fontSize: "14px", borderBottom: "1px solid #dee2e6", whiteSpace: "nowrap" }}>
-                      {policy.image ? (
-                        <a
-                          href={policy.image}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          style={{
-                            color: "#3A5FBE",
-                            fontWeight: 500,
-                            textDecoration: "none",
-                          }}
-                        >
-                          📄 View File
-                        </a>
-                      ) : (
-                        <span style={{ color: "#9ca3af" }}></span>
-                      )}
-                    </td>
+                    {policy.image ? (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const fileType = getFileType(policy.image);
+                          setSelectedFile({
+                            url: policy.image,
+                            title: policy.title,
+                            type: fileType
+                          });
+                          setShowFileModal(true);
+                        }}
+                        style={{
+                          color: "#3A5FBE",
+                          fontWeight: 500,
+                          textDecoration: "none",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          padding: 0,
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.textDecoration = "underline";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.textDecoration = "none";
+                        }}
+                      >
+                        📄 View File
+                      </button>
+                    ) : (
+                      <span style={{ color: "#9ca3af" }}>-</span>
+                    )}
+                  </td>
 
                     <td style={{ padding: "10px", verticalAlign: "middle", fontSize: "14px", borderBottom: "1px solid #dee2e6", whiteSpace: "nowrap" }}>
                       <button
@@ -1196,193 +1238,298 @@ function HrPolicy() {
           Back
         </button>
       </div>
-      {showStatusModal &&
-        statusPolicy &&
-        (() => {
-          console.log("Employees:", employees);
-          //  console.log("Acknowledgements:", getAllAcksForPolicy(statusPolicy._id));
-          //const readEmployees = getAllAcksForPolicy(statusPolicy._id);
-          // const readList = readEmployees;
-          //Added by harshada 25 Feb 2026
-          // // Employees who READ
-          // const readList = employees.filter(emp =>
-          //   readEmployees.some(r =>
-          //     String(r.employeeId) === String(emp._id)
-          //   )
-          // );
+      {showStatusModal && statusPolicy && (
+  <div
+    className="modal fade show"
+    ref={modalRef}
+    tabIndex="-1"
+    style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "rgba(0,0,0,0.5)",
+      position: "fixed",
+      inset: 0,
+      zIndex: 1050,
+    }}
+  >
+    <div
+      className="modal-dialog modal-dialog-centered"
+      style={{ maxWidth: "520px", width: "95%" }}
+    >
+      <div className="modal-content">
+        {/* HEADER */}
+        <div
+          className="modal-header text-white"
+          style={{ backgroundColor: "#3A5FBE" }}
+        >
+          <h5 className="modal-title mb-0">
+            Policy Status – {statusPolicy.title}
+          </h5>
+          <button
+            type="button"
+            className="btn-close btn-close-white"
+            onClick={() => setShowStatusModal(false)}
+          />
+        </div>
 
-          // // Employees who NOT READ
-          // const pendingEmployees = employees.filter(emp =>
-          //   !readEmployees.some(r =>
-          //     String(r.employeeId) === String(emp._id)
-          //   )
-          // );
-
-          // //Added by harshada
-          // const pendingEmployees = employees.filter(
-          //   (emp) =>
-          //     !readList.some(
-          //       (r) => String(r.employeeId) === String(emp._id)
-          //     )
-          // );
-
-          // Employees who READ
-          const readList = readEmployees;
-
-          // Employees who NOT READ
-          const pendingEmployees = employees.filter(emp =>
-            !readEmployees.some(r => String(r.employeeId) === String(emp._id))
-          );
-
-          return (
-            <div
+        {/* BODY */}
+        <div className="modal-body p-0">
+          {/* TABS */}
+          <div style={{ display: "flex", borderBottom: "1px solid #dee2e6" }}>
+            <button
+              onClick={() => setActiveTab("read")}
               style={{
-                position: "fixed",
-                inset: 0,
-                background: "rgba(0,0,0,0.45)",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                zIndex: 9999,
+                flex: 1,
+                padding: "10px",
+                border: "none",
+                background: activeTab === "read" ? "#e0e7ff" : "transparent",
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "background 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab !== "read") {
+                  e.target.style.backgroundColor = "#f3f4f6";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== "read") {
+                  e.target.style.backgroundColor = "transparent";
+                }
               }}
             >
+              Read ({readList.length})
+            </button>
+            <button
+              onClick={() => setActiveTab("pending")}
+              style={{
+                flex: 1,
+                padding: "10px",
+                border: "none",
+                background: activeTab === "pending" ? "#fde68a" : "transparent",
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "background 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab !== "pending") {
+                  e.target.style.backgroundColor = "#f3f4f6";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== "pending") {
+                  e.target.style.backgroundColor = "transparent";
+                }
+              }}
+            >
+              Pending ({pendingList.length})
+            </button>
+          </div>
+
+          {/* CONTENT */}
+          <div style={{ padding: "16px", maxHeight: "350px", overflowY: "auto" }}>
+            {activeTab === "read" && (
+              <>
+                {readList.length === 0 ? (
+                  <p className="text-center text-muted py-3 mb-0">
+                    No employee has read this policy.
+                  </p>
+                ) : (
+                  <table className="table table-sm mb-0">
+                    <thead>
+                      <tr>
+                        <th style={{ borderBottom: "1px solid #dee2e6", padding: "8px" }}>
+                          Employee Name
+                        </th>
+                        <th style={{ borderBottom: "1px solid #dee2e6", padding: "8px" }}>
+                          Date & Time
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {readList.map((item, index) => (
+                        <tr key={index}>
+                          <td style={{ padding: "8px", verticalAlign: "middle" }}>
+                            {item.employeeName || "-"}
+                          </td>
+                          <td style={{ padding: "8px", verticalAlign: "middle" }}>
+                            {item.acknowledgedAt
+                              ? new Date(item.acknowledgedAt).toLocaleString()
+                              : "-"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </>
+            )}
+
+            {activeTab === "pending" && (
+              <>
+                {pendingList.length === 0 ? (
+                  <p className="text-center text-muted py-3 mb-0">
+                    All employees have read this policy.
+                  </p>
+                ) : (
+                  <table className="table table-sm mb-0">
+                    <thead>
+                      <tr>
+                        <th style={{ borderBottom: "1px solid #dee2e6", padding: "8px" }}>
+                          Employee Name
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pendingList.map((emp) => (
+                        <tr key={emp._id}>
+                          <td style={{ padding: "8px", verticalAlign: "middle" }}>
+                            {emp.name}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* FOOTER */}
+        <div className="modal-footer border-0">
+          <button
+            className="btn btn-sm custom-outline-btn"
+            style={{ minWidth: 90 }}
+            onClick={() => setShowStatusModal(false)}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+
+      {showFileModal && selectedFile && (
+        <div
+          className="modal fade show"
+          ref={modalRef}
+          tabIndex="-1"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(0,0,0,0.5)",
+            position: "fixed",
+            inset: 0,
+            zIndex: 1050,
+          }}
+        >
+          <div 
+            className="modal-dialog modal-lg modal-dialog-centered"
+            style={{ width: "650px" }}
+          >
+            <div className="modal-content">
+              {/* HEADER */}
               <div
-                style={{
-                  width: "520px",
-                  background: "#fff",
-                  borderRadius: "12px",
-                  overflow: "hidden",
-                }}
+                className="modal-header text-white"
+                style={{ backgroundColor: "#3A5FBE" }}
               >
-                <div
-                  className="modal-content"
-                  // samiksha p
-                  ref={modalRef}
-                  tabIndex="-1"
+                <h5 className="modal-title mb-0">
+                  {selectedFile.title || "File Viewer"}
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close btn-close-white"
+                  onClick={() => {
+                    setShowFileModal(false);
+                    setSelectedFile(null);
+                  }}
+                />
+              </div>
+
+              {/* BODY - Dynamic content based on file type */}
+              <div className="modal-body p-3">
+                {selectedFile.type === "image" && (
+                  <div className="text-center">
+                    <img
+                      src={selectedFile.url}
+                      alt={selectedFile.title || "Image"}
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "60vh",
+                        objectFit: "contain",
+                      }}
+                    />
+                  </div>
+                )}
+
+                {selectedFile.type === "video" && (
+                  <div className="text-center">
+                    <video
+                      src={selectedFile.url}
+                      controls
+                      autoPlay
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "60vh",
+                      }}
+                    >
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                )}
+
+                {selectedFile.type === "pdf" && (
+                  <iframe
+                    src={selectedFile.url}
+                    title={selectedFile.title || "PDF Viewer"}
+                    style={{
+                      width: "100%",
+                      height: "60vh",
+                      border: "none",
+                    }}
+                    frameBorder="0"
+                  />
+                )}
+
+                {selectedFile.type === "unknown" && (
+                  <div className="text-center p-4">
+                    <p>Cannot preview this file type.</p>
+                    <a 
+                      href={selectedFile.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="btn btn-sm custom-outline-btn"
+                    >
+                      Download File
+                    </a>
+                  </div>
+                )}
+              </div>
+
+              {/* FOOTER */}
+              <div className="modal-footer border-0">
+                <button
+                  className="btn btn-sm custom-outline-btn"
+                  style={{ minWidth: 90 }}
+                  onClick={() => {
+                    setShowFileModal(false);
+                    setSelectedFile(null);
+                  }}
                 >
-                  {/* HEADER */}
-                  <div
-                    style={{
-                      background: "#3A5FBE",
-                      color: "#fff",
-                      padding: "14px 18px",
-                      fontWeight: 600,
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    Policy Status – {statusPolicy.title}
-                    <span
-                      style={{ cursor: "pointer" }}
-                      onClick={() => setShowStatusModal(false)}
-                    >
-                      ✕
-                    </span>
-                  </div>
-
-                  {/* TABS */}
-                  <div
-                    style={{
-                      display: "flex",
-                      borderBottom: "1px solid #e5e7eb",
-                    }}
-                  >
-                    <button
-                      onClick={() => setActiveTab("read")}
-                      style={{
-                        flex: 1,
-                        padding: "10px",
-                        border: "none",
-                        background:
-                          activeTab === "read" ? "#e0e7ff" : "transparent",
-                        fontWeight: 600,
-                      }}
-                    >
-                      Read
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("pending")}
-                      style={{
-                        flex: 1,
-                        padding: "10px",
-                        border: "none",
-                        background:
-                          activeTab === "pending" ? "#fde68a" : "transparent",
-                        fontWeight: 600,
-                      }}
-                    >
-                      Pending
-                    </button>
-                  </div>
-
-                  {/* CONTENT */}
-                  <div
-                    style={{
-                      padding: "16px",
-                      maxHeight: "300px",
-                      overflowY: "auto",
-                    }}
-                  >
-                    {activeTab === "read" && (
-                      <>
-                        {/* Employees who READ (Red Tab) */}
-                        {readList.length === 0 ? (
-                          <p>No employee has read this policy.</p>
-                        ) : (
-                          <table width="100%">
-                            <thead>
-                              <tr>
-                                <th>Name</th>
-                                <th>Date & Time</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {readList.map((item, index) => (
-                                <tr key={index}>
-                                  <td>{item.employeeName || "-"}</td>
-                                  <td>
-                                    {item.acknowledgedAt
-                                      ? new Date(item.acknowledgedAt).toLocaleString()
-                                      : "-"}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        )}
-                      </>
-                    )}
-
-                    {activeTab === "pending" && (
-                      <>
-                        {pendingEmployees.length === 0 ? (
-                          <p style={{ margin: 0 }}>
-                            All employees have read this policy.
-                          </p>
-                        ) : (
-                          <table style={{ width: "100%", margin: 0 }}>
-                            <thead>
-                              <tr>
-                                <th style={{ textAlign: "left" }}>Name</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {pendingEmployees.map((e) => (
-                                <tr key={e._id}>
-                                  <td>{e.name}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </div>
+                  Close
+                </button>
               </div>
             </div>
-          );
-        })()}
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
 }

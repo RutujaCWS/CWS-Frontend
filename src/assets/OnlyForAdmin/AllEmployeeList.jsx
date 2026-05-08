@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { NavLink, useNavigate, useParams,useLocation } from "react-router-dom";
@@ -170,19 +168,37 @@ useEffect(() => {
   const handleDeleteEmployee = async (id) => {
     if (!window.confirm("Are you sure you want to delete this employee?"))
       return;
-
+  
     try {
       const token = localStorage.getItem("accessToken");
-      await axios.delete(`https://cws-backend-roan.vercel.app/soft/deleteEmployee/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      // Remove from active list and push to deleted list
+  
+      await axios.delete(
+        `https://cws-backend-roan.vercel.app/soft/deleteEmployee/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+  
       const deletedEmp = employees.find((emp) => emp._id === id);
-      setEmployees((prev) => prev.filter((emp) => emp._id !== id));
-      setOldEmployees((prev) => [...prev, deletedEmp]);
-      setFilteredEmployees(displayedList);
-      alert("Employee soft deleted successfully!");
+  
+      const updatedEmployees = employees.filter(
+        (emp) => emp._id !== id
+      );
+  
+      setEmployees(updatedEmployees);
+  
+      setOldEmployees((prev) => [
+        ...prev,
+        deletedEmp,
+      ]);
+  
+      // ✅ active table instant update
+      if (!showOldEmployees) {
+        setFilteredEmployees(updatedEmployees);
+      }
+  
+      alert("Employee moved to bin successfully!");
+  
     } catch (err) {
       console.error(err);
       alert("Error deleting employee. Please try again.");

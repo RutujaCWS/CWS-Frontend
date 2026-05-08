@@ -190,13 +190,17 @@ const validateField = (name, value) => {
   let error = "";
 
   switch (name) {
-    case "name":
-      if (!value.trim()) {
-        error = "Name is required.";
-      } else if (!/^[A-Za-z\s]+$/.test(value.trim())) {
-        error = "Name must contain only letters and spaces.";
-      }
-      break;
+ case "name":
+  if (!value.trim()) {
+    error = "Name is required.";
+  } else if (value.trim().length < 3) {
+    error = "Name must be at least 3 characters.";
+  } else if (value.trim().length > 50) {
+    error = "Name cannot exceed 50 characters.";
+  } else if (!/^[A-Za-z\s]+$/.test(value.trim())) {
+    error = "Name must contain only letters and spaces.";
+  }
+  break;
 
     case "email":
       if (!value.trim()) {
@@ -218,11 +222,13 @@ const validateField = (name, value) => {
       }
       break;
 
-    case "employeeId":
-      if (!value.trim()) {
-        error = "Employee ID is required.";
-      }
-      break;
+   case "employeeId":
+  if (!value.trim()) {
+    error = "Employee ID is required.";
+  } else if (value.trim().length > 20) {
+    error = "Employee ID cannot exceed 20 characters.";
+  }
+  break;
 
     case "salary":
       if (!value) {
@@ -231,6 +237,21 @@ const validateField = (name, value) => {
         error = "Salary must be greater than 0.";
       }
       break;
+      case "joiningDate":
+  if (!value) {
+    error = "Date of Joining is required.";
+  } else {
+    const selectedDate = new Date(value);
+    const today = new Date();
+
+    today.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate > today) {
+      error = "Future joining date is not allowed.";
+    }
+  }
+  break;
 
     case "dob":
       if (!value) {
@@ -245,17 +266,21 @@ const validateField = (name, value) => {
       }
       break;
 
-    case "designation":
-      if (!value.trim()) {
-        error = "Designation is required.";
-      }
-      break;
+  case "designation":
+  if (!value.trim()) {
+    error = "Designation is required.";
+  } else if (value.trim().length > 50) {
+    error = "Designation cannot exceed 50 characters.";
+  }
+  break;
 
-    case "department":
-      if (!value.trim()) {
-        error = "Department is required.";
-      }
-      break;
+   case "department":
+  if (!value.trim()) {
+    error = "Department is required.";
+  } else if (value.trim().length > 30) {
+    error = "Department cannot exceed 30 characters.";
+  }
+  break;
 case "pfNumber":
   if (!value.trim()) {
     error = "PF Number is required.";
@@ -282,13 +307,15 @@ const validateBankField = (name, value) => {
   let error = "";
 
   switch (name) {
-    case "bankName":
-      if (!value.trim()) {
-        error = "Bank name is required.";
-      } else if (!/^[A-Za-z\s]+$/.test(value.trim())) {
-        error = "Bank name must contain only letters and spaces.";
-      }
-      break;
+case "bankName":
+  if (!value.trim()) {
+    error = "Bank name is required.";
+  } else if (value.trim().length > 50) {
+    error = "Bank name cannot exceed 50 characters.";
+  } else if (!/^[A-Za-z\s]+$/.test(value.trim())) {
+    error = "Bank name must contain only letters and spaces.";
+  }
+  break;
 
     case "accountNumber":
       if (!value.trim()) {
@@ -324,31 +351,44 @@ const validateBankField = (name, value) => {
 
   return error;
 };
-
 const validateAddressField = (addressKey, name, value) => {
   let error = "";
 
   switch (name) {
-    case "street":
-      if (value.trim() && value.trim().length < 3) {
-        error = "Street looks too short.";
-      }
-      break;
+ case "street":
+  if (!value.trim()) {
+    error = "Street is required.";
+  } else if (value.trim().length < 3) {
+    error = "Street looks too short.";
+  } else if (value.trim().length > 100) {
+    error = "Street cannot exceed 100 characters.";
+  }
+  break;
 
-    case "city":
-      if (value.trim() && !/^[A-Za-z\s]+$/.test(value.trim())) {
-        error = "City must contain only letters and spaces.";
-      }
-      break;
+case "city":
+  if (!value.trim()) {
+    error = "City is required.";
+  } else if (value.trim().length > 30) {
+    error = "City cannot exceed 30 characters.";
+  } else if (!/^[A-Za-z\s]+$/.test(value.trim())) {
+    error = "City must contain only letters and spaces.";
+  }
+  break;
 
-    case "state":
-      if (value.trim() && !/^[A-Za-z\s]+$/.test(value.trim())) {
-        error = "State must contain only letters and spaces.";
-      }
-      break;
+   case "state":
+  if (!value.trim()) {
+    error = "State is required.";
+  } else if (value.trim().length > 30) {
+    error = "State cannot exceed 30 characters.";
+  } else if (!/^[A-Za-z\s]+$/.test(value.trim())) {
+    error = "State must contain only letters and spaces.";
+  }
+  break;
 
     case "zip":
-      if (value.trim() && !/^\d{6}$/.test(value.trim())) {
+      if (!value.trim()) {
+        error = "PIN is required.";
+      } else if (!/^\d{6}$/.test(value.trim())) {
         error = "PIN must be exactly 6 digits.";
       }
       break;
@@ -381,57 +421,73 @@ const validateAddressField = (addressKey, name, value) => {
         bankDetails: { ...prev.bankDetails, [key]: value },
       }));
       validateBankField(key, value);
-    } else if (
-      fieldName.startsWith("currentAddress.") ||
-      fieldName.startsWith("permanentAddress.")
-    ) {
-      const [addressKey, key] = fieldName.split(".");
+ } else if (
+  fieldName.startsWith("currentAddress.") ||
+  fieldName.startsWith("permanentAddress.")
+) {
+  const [addressKey, key] = fieldName.split(".");
 
-      setFormData((prev) => ({
-        ...prev,
-        [addressKey]: {
-          ...prev[addressKey],
-          [key]: value,
-        },
-      }));
+  setFormData((prev) => {
+    const updatedData = {
+      ...prev,
+      [addressKey]: {
+        ...prev[addressKey],
+        [key]: value,
+      },
+    };
 
-      validateAddressField(addressKey, key, value);
+  
+    if (sameAddress && addressKey === "currentAddress") {
+      updatedData.permanentAddress = {
+        ...updatedData.currentAddress,
+      };
+    }
+
+    return updatedData;
+  });
+
+  validateAddressField(addressKey, key, value);
+
     } else {
       setFormData((prev) => ({ ...prev, [fieldName]: value }));
       validateField(fieldName, value);
     }
   };
 
-  const handleFileChange = (e) => {
-    const { name, files: selectedFiles } = e.target;
-    const file = selectedFiles[0];
-    let error = "";
+const handleFileChange = (e) => {
+  const { name, files: selectedFiles } = e.target;
+  const file = selectedFiles[0];
+  let error = "";
 
-    if (!file) {
-      error = "This file is required.";
+  const maxFileSize = 5 * 1024 * 1024; // 5MB
+
+  if (!file) {
+    error = "This file is required.";
+  } else {
+    const allowedImageTypes = ["image/jpeg", "image/png", "image/jpg"];
+    const allowedDocTypes = [...allowedImageTypes, "application/pdf"];
+
+    if (file.size > maxFileSize) {
+      error = "File size must be less than 5MB.";
+    } else if (name === "image") {
+      if (!allowedImageTypes.includes(file.type)) {
+        error = "Profile image must be JPG or PNG format.";
+      }
     } else {
-      const allowedImageTypes = ["image/jpeg", "image/png", "image/jpg"];
-      const allowedDocTypes = [...allowedImageTypes, "application/pdf"];
-
-      if (name === "image") {
-        if (!allowedImageTypes.includes(file.type)) {
-          error = "Profile image must be JPG or PNG format.";
-        }
-      } else {
-        if (!allowedDocTypes.includes(file.type)) {
-          error = "Only PDF or image formats are allowed.";
-        }
+      if (!allowedDocTypes.includes(file.type)) {
+        error = "Only PDF or image formats are allowed.";
       }
     }
+  }
 
-    setErrors((prev) => ({ ...prev, [name]: error }));
+  setErrors((prev) => ({ ...prev, [name]: error }));
 
-    if (!error) {
-      setFiles((prev) => ({ ...prev, [name]: file }));
-    } else {
-      setFiles((prev) => ({ ...prev, [name]: null }));
-    }
-  };
+  if (!error) {
+    setFiles((prev) => ({ ...prev, [name]: file }));
+  } else {
+    setFiles((prev) => ({ ...prev, [name]: null }));
+  }
+};
 
   const validateForm = () => {
     const newErrors = {};
@@ -455,7 +511,95 @@ const validateAddressField = (addressKey, name, value) => {
     return Object.keys(newErrors).length === 0;
   };
 
+const validateStep = () => {
+  let newErrors = {};
+
+  if (step === 1) {
+    const step1Fields = [
+      "name",
+      "email",
+      "contact",
+      "employeeId",
+      "dob",
+      "designation",
+      "department",
+      "salary",
+    ];
+
+    step1Fields.forEach((field) => {
+      const value = formData[field];
+      const error = validateField(field, value);
+
+      if (error) {
+        newErrors[field] = error;
+      }
+    });
+  }
+
+  if (step === 2) {
+    Object.entries(formData.currentAddress).forEach(([key, value]) => {
+      const error = validateAddressField(
+        "currentAddress",
+        key,
+        value
+      );
+
+      if (error) {
+        newErrors[`currentAddress.${key}`] = error;
+      }
+    });
+
+    if (!sameAddress) {
+      Object.entries(formData.permanentAddress).forEach(([key, value]) => {
+        const error = validateAddressField(
+          "permanentAddress",
+          key,
+          value
+        );
+
+        if (error) {
+          newErrors[`permanentAddress.${key}`] = error;
+        }
+      });
+    }
+  }
+
+  if (step === 3) {
+    ["bankName", "accountNumber", "ifsc"].forEach((field) => {
+      const error = validateBankField(
+        field,
+        formData.bankDetails[field]
+      );
+
+      if (error) {
+        newErrors[`bankDetails.${field}`] = error;
+      }
+    });
+
+    const pfError = validateField("pfNumber", formData.pfNumber);
+    if (pfError) {
+      newErrors.pfNumber = pfError;
+    }
+
+    const uanError = validateField("uanNumber", formData.uanNumber);
+    if (uanError) {
+      newErrors.uanNumber = uanError;
+    }
+  }
+
+  setErrors((prev) => ({
+    ...prev,
+    ...newErrors,
+  }));
+
+  return Object.keys(newErrors).length === 0;
+};
+
 const handleNext = () => {
+  const isValid = validateStep();
+
+  if (!isValid) return;
+
   setStep((prev) => prev + 1);
 
   setTimeout(() => {
@@ -476,6 +620,7 @@ const handleBack = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+      if (loading) return;
     const newErrors = gatherAllErrors();
     setErrors(newErrors);
 
@@ -583,9 +728,18 @@ const handleBack = () => {
         passbookPdf: null,
         certificatePdf: null,
       });
-    } catch (err) {
-      setMessage(err.response?.data?.error || "Server error");
-      console.log(err);
+    }catch (err) {
+  console.log("Add Employee Error:", err.response?.data || err);
+
+  const errorMessage =
+    err.response?.data?.message ||
+    err.response?.data?.error ||
+    "Failed to add employee";
+
+  setMessage(errorMessage);
+
+  alert(errorMessage);
+
     } finally {
       setLoading(false);
     }
@@ -751,6 +905,7 @@ className="modal-dialog modal-lg"
                             className="form-control"
                             name="name"
                             value={formData.name}
+                            maxLength={50}
                             //onChange={handleChange}
                             onChange={handleChange}
                           />
@@ -765,6 +920,7 @@ className="modal-dialog modal-lg"
                             className="form-control"
                             name="email"
                             value={formData.email}
+                            maxLength={30}
                             onChange={handleChange}
                             required
                           />
@@ -803,6 +959,7 @@ className="modal-dialog modal-lg"
                           <input
                             type="text"
                             className="form-control"
+                            maxLength={20}
                             name="employeeId"
                             value={formData.employeeId}
                             onChange={handleChange}
@@ -867,6 +1024,7 @@ className="modal-dialog modal-lg"
                             type="text"
                             className="form-control"
                             name="designation"
+                            maxLength={50}
                             value={formData.designation}
                             onChange={handleChange}
                             required
@@ -883,6 +1041,7 @@ className="modal-dialog modal-lg"
   <select
     className="form-select"
     name="department"
+    maxLength={30}
     value={formData.department}
     onChange={handleChange}
     required
@@ -1087,6 +1246,7 @@ className="modal-dialog modal-lg"
                             name="doj"
                             value={formData.doj}
                             onChange={handleChange}
+                              max={new Date().toISOString().split("T")[0]}
                           />
                         </div>
                       </div>
@@ -1105,6 +1265,7 @@ className="modal-dialog modal-lg"
                             <input
                               type="text"
                               className="form-control"
+                              maxLength={50}
                               name="currentAddress.street"
                               value={formData.currentAddress.street}
                               onChange={handleChange}
@@ -1119,6 +1280,7 @@ className="modal-dialog modal-lg"
                             <label>City:</label>
                             <input
                               type="text"
+                              maxLength={30}
                               className="form-control"
                               name="currentAddress.city"
                               value={formData.currentAddress.city}
@@ -1135,6 +1297,7 @@ className="modal-dialog modal-lg"
                             <input
                               type="text"
                               className="form-control"
+                              maxLength={30}
                               name="currentAddress.state"
                               value={formData.currentAddress.state}
                               onChange={handleChange}
@@ -1193,6 +1356,7 @@ className="modal-dialog modal-lg"
                          <input
   type="text"
   className="form-control"
+  maxLength={100}
   name="permanentAddress.street"
   value={formData.permanentAddress.street}
   onChange={handleChange}
@@ -1210,6 +1374,7 @@ className="modal-dialog modal-lg"
                               type="text"
                               className="form-control"
                               name="permanentAddress.city"
+                              maxLength={30}
                               value={formData.permanentAddress.city}
                               onChange={handleChange}
                                disabled={sameAddress}
@@ -1226,6 +1391,7 @@ className="modal-dialog modal-lg"
                               type="text"
                               className="form-control"
                               name="permanentAddress.state"
+                              maxLength={30}
                               value={formData.permanentAddress.state}
                               onChange={handleChange}
                                disabled={sameAddress}
@@ -1294,6 +1460,7 @@ className="modal-dialog modal-lg"
                           <input
                             type="text"
                             className="form-control"
+                            maxLength={50}
                             placeholder="Bank Name"
                             name="bankDetails.bankName"
                             value={formData.bankDetails.bankName}

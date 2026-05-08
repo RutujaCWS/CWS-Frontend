@@ -263,7 +263,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
 
   // Handle input changes with validation
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
+    let { name, value, files } = e.target;
 
     // --- Live restrictions (prevent invalid typing) ---
     if (name === "name") {
@@ -304,14 +304,14 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
       // ✅ Allow only letters and spaces (no numbers or symbols)
       if (!/^[A-Za-z\s]*$/.test(value)) return;
     }
-          if (key === "ifsc") {
-        const upperValue = value.toUpperCase();
-
-        if (!/^[A-Z0-9]*$/.test(upperValue)) return;
-        if (upperValue.length > 11) return;
-
-        value = upperValue;
-      }
+    if (key === "ifsc") {
+      const upperValue = value.toUpperCase();
+    
+      if (!/^[A-Z0-9]*$/.test(upperValue)) return;
+      if (upperValue.length > 11) return;
+    
+      value = upperValue;
+    }
 
     if (files && files[0]) {
       // File input
@@ -1448,19 +1448,25 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
     </div> */}
       <div className="text-end mt-3">
       <button
-          className="btn btn-sm custom-outline-btn"
-          style={{ minWidth: 90 }}
-          onClick={() => {
-           navigate(
+        className="btn btn-sm custom-outline-btn"
+        style={{ minWidth: 90 }}
+        onClick={() => {
+          if (location.state?.fromOldEmployees) {
+            navigate(
               `/dashboard/${role}/${username}/${id}/allemployeedetails`,
               {
                 state: { openOldEmployees: true, fromProfile: true },
               }
             );
-          }}
-        >
-          Back
-        </button>
+          } else {
+            navigate(
+              `/dashboard/${role}/${username}/${id}/allemployeedetails`
+            );
+          }
+        }}
+      >
+        Back
+      </button>
       </div>
     </div>
   );

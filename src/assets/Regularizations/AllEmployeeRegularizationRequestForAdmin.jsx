@@ -156,24 +156,76 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
   };
 
   const handleStatusChange = async (id, status) => {
+    const confirmAction = window.confirm(
+      `Are you sure you want to ${status.toLowerCase()} this request?`
+    );
+    if (!confirmAction) return;
+
     try {
       const token = localStorage.getItem("accessToken");
+  
       await axios.put(
         `https://cws-backend-roan.vercel.app/attendance/regularization/${id}/status`,
         { status },
-        { headers: { Authorization: `Bearer ${token}` } },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      fetchData();
+  
+      // local state update
+      const updatedRegularizations = regularizations.map((item) =>
+        item._id === id
+          ? {
+              ...item,
+              regularizationRequest: {
+                ...item.regularizationRequest,
+                status,
+              },
+            }
+          : item
+      );
+  
+      setRegularizations(updatedRegularizations);
+      setFilteredRegularizations(updatedRegularizations);
+  
+      // modal data update instantly
+      if (selectedRequest?._id === id) {
+        setSelectedRequest((prev) => ({
+          ...prev,
+          regularizationRequest: {
+            ...prev.regularizationRequest,
+            status,
+          },
+        }));
+      }
+  
+      // counts update instantly
+      setApprovedCount(
+        updatedRegularizations.filter(
+          (r) => r.regularizationRequest.status === "Approved"
+        ).length
+      );
+  
+      setRejectedCount(
+        updatedRegularizations.filter(
+          (r) => r.regularizationRequest.status === "Rejected"
+        ).length
+      );
+  
+      setPendingCount(
+        updatedRegularizations.filter(
+          (r) => r.regularizationRequest.status === "Pending"
+        ).length
+      );
+
+      alert(`Regularization request ${status} successfully.`);
     } catch (err) {
       const errorMessage =
         err.response?.data?.error ||
         "Something went wrong while applying regularization.";
-
+  
       alert(`❌ ${errorMessage}`);
-      // setMessage(errorMessage);
     }
   };
-
+  
   // const formatTime = (dateString) =>
   //   dateString ? new Date(dateString).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "-";
 
@@ -1142,7 +1194,6 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                             style={{ width: 90 }}
                             onClick={() => {
                               handleStatusChange(selectedRequest._id, "Approved");
-                              setSelectedRequest(null);
                             }}
                           >
                             Approve
@@ -1153,7 +1204,6 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                             style={{ width: 90 }}
                             onClick={() => {
                               handleStatusChange(selectedRequest._id, "Rejected");
-                              setSelectedRequest(null);
                             }}
                           >
                             Reject
