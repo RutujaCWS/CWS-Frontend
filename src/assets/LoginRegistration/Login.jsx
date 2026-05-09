@@ -203,6 +203,9 @@ function Login() {
               <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
+                  style={{
+                    WebkitTextSecurity: showPassword ? "none" : "disc",
+                  }}
                   value={password}
                   maxLength={20}
                   onChange={(e) => setPassword(e.target.value)}

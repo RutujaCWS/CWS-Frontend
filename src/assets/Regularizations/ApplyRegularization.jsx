@@ -829,7 +829,28 @@ function ApplyRegularization({ user, selectedRecord }) {
                           minutes: renderTimeViewClock,
                         }}
                         slotProps={{
-                          textField: { fullWidth: true, size: "small" },
+                          textField: {
+                            fullWidth: true,
+                            size: "small",
+                          },
+                        
+                          desktopPaper: {
+                            sx: {
+                              width: "320px",
+                              height:"285px"
+                        
+                            },
+                          },
+                        
+                        popper: {
+                          sx: {
+                            "& .MuiPaper-root": {
+                              transform: "scale(0.60)",
+                              transformOrigin: "top center",
+                              marginTop: "-7px",
+                            },
+                          },
+                        },
                         }}
                       />
                     </LocalizationProvider>
@@ -866,7 +887,28 @@ function ApplyRegularization({ user, selectedRecord }) {
                           minutes: renderTimeViewClock,
                         }}
                         slotProps={{
-                          textField: { fullWidth: true, size: "small" },
+                          textField: {
+                            fullWidth: true,
+                            size: "small",
+                          },
+                        
+                          desktopPaper: {
+                            sx: {
+                              width: "320px",
+                              height:"285px"
+                        
+                            },
+                          },
+                        
+                        popper: {
+                          sx: {
+                            "& .MuiPaper-root": {
+                              transform: "scale(0.60)",
+                              transformOrigin: "top center",
+                              marginTop: "-7px",
+                            },
+                          },
+                        },
                         }}
                       />
                     </LocalizationProvider>

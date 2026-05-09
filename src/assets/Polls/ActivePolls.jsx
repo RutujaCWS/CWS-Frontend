@@ -11,6 +11,7 @@ const ActivePolls = ({ user }) => {
   const [popupPreviousPolls, setPopupPreviousPolls] = useState(null);
   const [previousPolls, setPreviousPolls] = useState([]);
   const [voteMessage, setVoteMessage] = useState("");
+  const [creatingPoll, setCreatingPoll] = useState(false);
 
   // rutuja code 
   const [showVotedMembers, setShowVotedMembers] = useState(false);
@@ -155,7 +156,15 @@ const ActivePolls = ({ user }) => {
   }, []);
 
   // ========== Admin Poll Functions ==========
-  const addOption = () => setOptions([...options, ""]);
+  const addOption = () => {
+    if (options.length >= 5) {
+      alert("Maximum 5 options allowed");
+      return;
+    }
+    setOptions([...options, ""]);
+  };
+
+
   const updateOption = (index, value) => {
     const updated = [...options];
     updated[index] = value;
@@ -169,12 +178,16 @@ const ActivePolls = ({ user }) => {
   };
 
   const createPoll = async () => {
+    if (creatingPoll) return;
+
     if (!pollQuestion.trim() || options.some((o) => !o.trim())) {
       alert("Please enter a question and fill all options");
       return;
     }
 
     try {
+      setCreatingPoll(true);
+
       const token = localStorage.getItem("accessToken");
       const res = await axios.post(
         "https://cws-backend-roan.vercel.app/api/polls/create",
@@ -196,8 +209,13 @@ const ActivePolls = ({ user }) => {
       setOptions(["", ""]);
       setShowCreatePoll(false);
 
+      alert("Poll created successfully!");
+
     } catch (err) {
       console.error(err);
+    }
+    finally {
+      setCreatingPoll(false);
     }
   };
 
@@ -261,8 +279,12 @@ const ActivePolls = ({ user }) => {
   };
 
   const addEditOption = () => {
-    setEditOptions([...editOptions, { text: "" }]);
-  };
+  if (editOptions.length >= 5) {
+    alert("Maximum 5 options allowed");
+    return;
+  }
+  setEditOptions([...editOptions, { text: "" }]);
+};
 
   const updateEditOption = (index, value) => {
     const updated = [...editOptions];
@@ -307,6 +329,12 @@ const ActivePolls = ({ user }) => {
       setSavedPolls(prev => prev.filter(p => p?._id?.toString() !== pollId?.toString()));
 
       setPreviousPolls(prev => prev.filter(p => p?._id?.toString() !== pollId?.toString()));
+
+      const activeRes = await axios.get(
+        "https://cws-backend-roan.vercel.app/api/polls/active"
+      );
+  
+      setSavedPolls(activeRes.data ? [activeRes.data] : []);  
 
       alert("Poll deleted successfully!");
 
@@ -652,6 +680,7 @@ const ActivePolls = ({ user }) => {
                     className="btn btn-sm custom-outline-btn"
                     style={{ minWidth: 90 }}
                     onClick={createPoll}
+                    disabled={creatingPoll}
                   >
                     Save Poll
                   </button>

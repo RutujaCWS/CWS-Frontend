@@ -1198,12 +1198,13 @@ useEffect(() => {
                       </div>
                       <div className="col-12 mb-3">
                         <label className="form-label fw-semibold">
-                          Last Working Day *
+                          Last Working Day<span style={{ color: "red" }}>  *</span>
                         </label>
                         <input
                           type="date"
                           className="form-control"
                           value={editedLwd}
+                          min={new Date().toISOString().split('T')[0]}
                           onChange={(e) => setEditedLwd(e.target.value)}
                         />
                       </div>
@@ -1218,8 +1219,12 @@ useEffect(() => {
                           rows="3"
                           placeholder="Enter comments here..."
                           value={comment}
+                          maxLength={300}
                           onChange={(e) => setComment(e.target.value)}
                         />
+                        <div style={{ fontSize: "12px", textAlign: "right", color: "#6c757d" }}>
+                          {comment?.length || 0}/300
+                        </div>
                       </div>
                     </div>
                   )}
@@ -1265,17 +1270,19 @@ useEffect(() => {
               </div>
 
               {/* Footer */}
-              <div className="modal-footer border-0 pt-0 d-flex gap-2" style={{ flexShrink: 0 }}>
+              <div className="modal-footer border-0 pt-0 d-flex" style={{ flexShrink: 0 }}>
                 {selected.status === "Pending" ? (
                   <>
                     <button
                       className="btn btn-sm btn-outline-success"
+                      style={{ minWidth: "90px" }}
                       onClick={handleApprove}
                     >
                       Approve
                     </button>
                     <button
                       className="btn btn-sm btn-outline-danger"
+                      style={{ minWidth: "90px" }}
                       onClick={handleReject}
                     >
                       Reject
@@ -1593,7 +1600,7 @@ useEffect(() => {
                         className="form-label fw-semibold"
                         style={{ color: "#212529" }}
                       >
-                        Employee ID *
+                        Employee ID<span style={{ color: "red" }}>  *</span>
                       </label>
                       <input
                         type="text"
@@ -1609,7 +1616,7 @@ useEffect(() => {
                   </div>
                   <div className="mb-3">
                     <div className="col-12">
-                      <label className="form-label fw-semibold">Reason *</label>
+                      <label className="form-label fw-semibold">Reason<span style={{ color: "red" }}>  *</span></label>
                       <select
                         className="form-select"
                         value={applyForm.reason}
@@ -1656,7 +1663,7 @@ useEffect(() => {
                   <button
                     type="submit"
                     className="btn btn-sm custom-outline-btn"
-                    style={{ maxWidth: 90 }}
+                    style={{ minWidth: 90 }}
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? "Submitting..." : "Submit"}
@@ -1664,7 +1671,7 @@ useEffect(() => {
                   <button
                     type="button"
                     className="btn btn-sm custom-outline-btn"
-                     style={{ maxWidth: 90 }}
+                     style={{ minWidth: 90 }}
                     onClick={() => {
                       resetApplyForm();
                       setShowApplyModal(false);

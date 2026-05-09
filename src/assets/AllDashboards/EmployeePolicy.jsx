@@ -24,7 +24,7 @@ function EmployeePolicy({ user }) {
   const [searchInput, setSearchInput] = useState("");
   const [searchText, setSearchText] = useState("");
   const [ackData, setAckData] = useState([]);
-
+  const [downloadedPolicies, setDownloadedPolicies] = useState([]);
 
   const modalRef = useRef(null);
   const isAnyModalOpen = showModal;
@@ -217,36 +217,49 @@ function EmployeePolicy({ user }) {
   };
 
 
-    const handleDownloadPolicy = async (policy) => {
-      if (!policy || isDownloading) return;
-
-      setIsDownloading(true);
-
-      try {
-        const response = await fetch(policy.image);
-        const blob = await response.blob();
-
-        const url = window.URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = url;
-
-        const fileName =
-          policy.image.split("/").pop().split("?")[0] || "file";
-
-        link.download = fileName;
-
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        window.URL.revokeObjectURL(url);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsDownloading(false);
-      }
-    };
+  const handleDownloadPolicy = async (policy) => {
+    if (!policy?.image) {
+      alert("No file uploaded");
+      return;
+    }
+  
+    if (
+      isDownloading ||
+      downloadedPolicies.includes(policy._id)
+    ) {
+      alert("File already downloaded");
+      return;
+    }
+  
+  
+        setIsDownloading(true);
+  
+        try {
+          const response = await fetch(policy.image);
+          const blob = await response.blob();
+  
+          const url = window.URL.createObjectURL(blob);
+  
+          const link = document.createElement("a");
+          link.href = url;
+  
+          const fileName =
+            policy.image.split("/").pop().split("?")[0] || "file";
+  
+          link.download = fileName;
+  
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+  
+          window.URL.revokeObjectURL(url);
+            setDownloadedPolicies((prev) => [...prev, policy._id]);
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setIsDownloading(false);
+        }
+      };
 
   const uniqueTitles = [...new Set(policies.map((p) => p.title))];
   const thStyle = {
@@ -956,11 +969,18 @@ function EmployeePolicy({ user }) {
 
                       <button
                         className="btn btn-sm custom-outline-btn"
-                        onClick={() => handleDownloadPolicy(selectedPolicy)} 
-                        style={{ minWidth: 90 }}
-                        disabled={isDownloading}
+                        onClick={() => handleDownloadPolicy(selectedPolicy)}
+                        style={{ minWidth: 120 }}
+                        disabled={
+                          isDownloading ||
+                          downloadedPolicies.includes(selectedPolicy._id)
+                        }
                       >
-                        Download
+                        {downloadedPolicies.includes(selectedPolicy._id)
+                          ? "Already Downloaded"
+                          : isDownloading
+                          ? "Downloading..."
+                          : "Download"}
                       </button>
 
                       <button

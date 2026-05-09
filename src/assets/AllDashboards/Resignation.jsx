@@ -11,6 +11,7 @@ function Resignation() {
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [loading, setLoading] = useState(true);
 
   //addded by shivani
   const [showRowModal, setShowRowModal] = useState(false);
@@ -100,6 +101,7 @@ function Resignation() {
   }, [showModal, showRowModal]);
   // Get all resignations
   const fetchResignations = async () => {
+    setLoading(true);
     try {
       const token = getToken();
       const response = await axios.get("https://cws-backend-roan.vercel.app/resignation", {
@@ -138,6 +140,9 @@ function Resignation() {
       if (err.response?.status === 401) {
         alert("Authentication failed. Please log in again.");
       }
+    }
+    finally {
+      setLoading(false); 
     }
   };
 
@@ -348,8 +353,36 @@ function Resignation() {
     }
   };
 
+  if (loading) {
+    return (
+      <div
+        style={{
+          height: "100vh",
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div className="text-center">
+          <div
+            className="spinner-grow"
+            role="status"
+            style={{ width: "4rem", height: "4rem", color: "#3A5FBE" }}
+          >
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-3 fw-semibold" style={{ color: "#3A5FBE" }}>
+            Loading, please wait...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container-fluid">
+
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 style={{ color: "#3A5FBE", fontSize: "25px", marginLeft: "15px" }}>
           Resignation Requests
@@ -619,8 +652,8 @@ function Resignation() {
           }}
         >
           <div
-            className="modal-dialog "
-            style={{ maxWidth: "650px", width: "95%", marginTop: "120px" }}
+            className="modal-dialog modal-dialog-centered" 
+            style={{ maxWidth: "600px", width: "95%"}}
           >
             <div className="modal-content">
               {/* Header */}
@@ -652,11 +685,12 @@ function Resignation() {
                       </div>
                       <div className="col-12 mb-3">
                         <label className="form-label fw-semibold">
-                          Last Working Day *
+                          Last Working Day<span style={{ color: "red" }}>  *</span>
                         </label>
                         <input
                           type="date"
                           className="form-control"
+                          min={new Date().toISOString().split('T')[0]}
                           value={editedLwd}
                           onChange={(e) => setEditedLwd(e.target.value)}
                         />
@@ -672,8 +706,14 @@ function Resignation() {
                           rows="3"
                           placeholder="Enter comments here..."
                           value={comment}
+                          maxLength={300}
                           onChange={(e) => setComment(e.target.value)}
                         />
+                        <div className="d-flex justify-content-end mt-1">
+                          <span style={{ fontSize: "12px", color: comment.length === 300 ? "#dc3545" : "#6c757d" }}>
+                            {comment.length}/300 characters
+                          </span>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -721,18 +761,20 @@ function Resignation() {
               </div>
 
               {/* Footer */}
-              <div className="modal-footer border-0 pt-0 d-flex gap-2">
+              <div className="modal-footer border-0 pt-0 d-flex">
                 {selected.status === "Pending" ? (
                   <>
                     <button
                       className="btn btn-sm btn-outline-success"
                       onClick={handleApprove}
+                      style={{ minWidth: 90 }}
                     >
                       Approve
                     </button>
                     <button
                       className="btn btn-sm btn-outline-danger"
                       onClick={handleReject}
+                      style={{ minWidth: 90 }}
                     >
                       Reject
                     </button>
@@ -769,8 +811,8 @@ function Resignation() {
           onClick={closeRowModal}
         >
           <div
-            className="modal-dialog "
-            style={{ maxWidth: "650px", width: "95%", marginTop: "120px" }}
+            className="modal-dialog modal-dialog-centered" 
+            style={{ maxWidth: "600px", width: "95%"}}
           >
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               {/* Header */}

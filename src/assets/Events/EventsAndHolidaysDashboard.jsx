@@ -73,41 +73,34 @@ function EventsAndHolidaysDashboard() {
     }
   };
 const modalRef = useRef(null);
-
-  useEffect(() => {
-  const isAnyModalOpen = 
-    selectedEvent || 
-    selectedHoliday || 
-    selectedAnnouncement || 
-    editingEvent || 
-    editingHoliday || 
+useEffect(() => {
+  const isAnyModalOpen =
+    selectedEvent ||
+    selectedHoliday ||
+    selectedAnnouncement ||
+    editingEvent ||
+    editingHoliday ||
     editingAnnouncement;
 
   if (isAnyModalOpen) {
-    document.body.style.overflow = 'hidden';
-    document.body.style.height = '100vh';
-    document.body.style.position = 'fixed';
-    document.body.style.width = '100%';
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
   } else {
-    document.body.style.overflow = 'unset';
-    document.body.style.height = 'auto';
-    document.body.style.position = 'static';
-    document.body.style.width = 'auto';
+    document.body.style.overflow = "";
+    document.documentElement.style.overflow = "";
   }
 
   return () => {
-    document.body.style.overflow = 'unset';
-    document.body.style.height = 'auto';
-    document.body.style.position = 'static';
-    document.body.style.width = 'auto';
+    document.body.style.overflow = "";
+    document.documentElement.style.overflow = "";
   };
 }, [
-  selectedEvent, 
-  selectedHoliday, 
-  selectedAnnouncement, 
-  editingEvent, 
-  editingHoliday, 
-  editingAnnouncement
+  selectedEvent,
+  selectedHoliday,
+  selectedAnnouncement,
+  editingEvent,
+  editingHoliday,
+  editingAnnouncement,
 ]);
 
 useEffect(() => {
@@ -356,28 +349,37 @@ const validAnnouncements = announcementsList.filter((announcement) => {
                       </div>
                     </div>
 
-                    {isAdmin && (
-                      <>
-                        <button
-                          className="btn btn-sm custom-outline-btn edit-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setEditingEvent(event);
-                          }}
-                        >
-                          <i className="bi bi-pencil-square edit-icon"></i>
-                        </button>
-                        <button
-                          className="btn btn-sm btn-outline-danger delete-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteEvent(event._id || event.id);
-                          }}
-                        >
-                          <i className="bi bi-trash delete-icon"></i>
-                        </button>
-                      </>
-                    )}
+             {isAdmin && (
+<div
+  className="d-flex gap-2"
+  style={{
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+    zIndex: 2,
+  }}
+>
+  <button
+    className="btn btn-sm custom-outline-btn"
+    onClick={(e) => {
+      e.stopPropagation();
+      setEditingEvent(event);
+    }}
+  >
+    <i className="bi bi-pencil-square"></i>
+  </button>
+
+  <button
+    className="btn btn-sm btn-outline-danger"
+    onClick={(e) => {
+      e.stopPropagation();
+      handleDeleteEvent(event._id || event.id);
+    }}
+  >
+    <i className="bi bi-trash"></i>
+  </button>
+</div>
+)}
                   </div>
                 </div>
               ))}
@@ -451,13 +453,15 @@ const validAnnouncements = announcementsList.filter((announcement) => {
           <EditEventForm
             eventData={editingEvent}
             onClose={() => setEditingEvent(null)}
-            onUpdate={(updatedEvent) => {
-              setEventsList((prev) =>
-                prev.map((ev) =>
-                  ev._id === updatedEvent._id ? updatedEvent : ev,
-                ),
-              );
-            }}
+        onUpdate={(updatedEvent) => {
+  setEventsList((prev) =>
+    prev.map((ev) =>
+      ev._id === updatedEvent._id
+        ? { ...ev, ...updatedEvent }
+        : ev
+    )
+  );
+}}
           />
         )}
         {/* ------------------ HOLIDAYS ------------------ */}
@@ -501,28 +505,41 @@ const validAnnouncements = announcementsList.filter((announcement) => {
                       </div>
                     </div>
 
-                    {isAdmin && (
-                      <>
-                        <button
-                          className="btn btn-sm custom-outline-btn edit-btn"
-                          onClick={(e) => {
-                            e.stopPropagation(); 
-                            setEditingHoliday(h);
-                          }}
-                        >
-                          <i className="bi bi-pencil-square edit-icon"></i>
-                        </button>
-                        <button
-                          className="btn btn-sm btn-outline-danger delete-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteHoliday(h._id);
-                          }}
-                        >
-                          <i className="bi bi-trash delete-icon"></i>
-                        </button>
-                      </>
-                    )}
+         {isAdmin && (
+<div
+  className="d-flex gap-2"
+  style={{
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+    zIndex: 2,
+  }}
+>
+  <button
+    className="btn btn-sm custom-outline-btn"
+onClick={(e) => {
+  e.stopPropagation();
+
+  setEditingEvent(null);
+  setEditingAnnouncement(null);
+
+  setEditingHoliday(h);
+}}
+  >
+    <i className="bi bi-pencil-square"></i>
+  </button>
+
+  <button
+    className="btn btn-sm btn-outline-danger"
+onClick={(e) => {
+  e.stopPropagation();
+  handleDeleteHoliday(h._id || h.id);
+}}
+  >
+    <i className="bi bi-trash"></i>
+  </button>
+</div>
+)}
                   </div>
                 </div>
               ))}
@@ -592,22 +609,30 @@ const validAnnouncements = announcementsList.filter((announcement) => {
           <EditHolidayForm
             holidayData={editingHoliday}
             onClose={() => setEditingHoliday(null)}
-            onUpdate={(updated) => {
-              setHolidayList((prev) =>
-                prev.map((h) => (h._id === updated._id ? updated : h)),
-              );
-            }}
+        onUpdate={(updated) => {
+  setHolidayList((prev) =>
+    prev.map((h) =>
+      h._id === updated._id
+        ? { ...h, ...updated }
+        : h
+    )
+  );
+}}
           />
         )}
         {editingAnnouncement && (
           <EditAnnouncementForm
             data={editingAnnouncement}
             onClose={() => setEditingAnnouncement(null)}
-            onUpdate={(updated) => {
-              setAnnouncementsList((prev) =>
-                prev.map((a) => (a._id === updated._id ? updated : a)),
-              );
-            }}
+         onUpdate={(updated) => {
+  setHolidayList((prev) =>
+    prev.map((h) =>
+      h._id === updated._id
+        ? { ...h, ...updated }
+        : h
+    )
+  );
+}}
           />
         )}
 
@@ -674,30 +699,43 @@ const validAnnouncements = announcementsList.filter((announcement) => {
                         </div>
                       </div>
 
-                      {isAdmin && (
-                        <>
-                          <button
-                            className="btn btn-sm custom-outline-btn edit-btn"
-                           onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingAnnouncement(announcement);
-                            }}
-                          >
-                            <i className="bi bi-pencil-square"></i>
-                          </button>
-                          <button
-                            className="btn btn-sm btn-outline-danger delete-btn"
-                            onClick={(e) => {
-                              e.stopPropagation(); // 👈 popup open hou naye mhanun
-                              handleDeleteAnnouncement(
-                                announcement._id || announcement.id,
-                              );
-                            }}
-                          >
-                            <i className="bi bi-trash delete-icon"></i>
-                          </button>
-                        </>
-                      )}
+            {isAdmin && (
+<div
+  className="d-flex gap-2"
+  style={{
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+    zIndex: 2,
+  }}
+>
+  <button
+    className="btn btn-sm custom-outline-btn"
+onClick={(e) => {
+  e.stopPropagation();
+
+  setEditingEvent(null);
+  setEditingHoliday(null);
+
+  setEditingAnnouncement(announcement);
+}}
+  >
+    <i className="bi bi-pencil-square"></i>
+  </button>
+
+  <button
+    className="btn btn-sm btn-outline-danger"
+  onClick={(e) => {
+  e.stopPropagation();
+  handleDeleteAnnouncement(
+    announcement._id || announcement.id
+  );
+}}
+  >
+    <i className="bi bi-trash"></i>
+  </button>
+</div>
+)}
                     </div>
                   </div>
                 ))}

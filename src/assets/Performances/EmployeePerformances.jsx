@@ -632,7 +632,7 @@ function EmployeePerformances() {
                   return (
                     <div className="row mb-2" key={label}>
                       <div className="col-4 fw-semibold">{label}</div>
-                      <div className="col-8">
+                      <div className="col-8 ps-3">
                         {isStatus ? (
                           <span
                             style={{
@@ -690,7 +690,7 @@ function EmployeePerformances() {
                   selectedPerformance.approvedBy && (
                     <div className="row mb-2">
                       <div className="col-4 fw-semibold">Approved By</div>
-                      <div className="col-8">
+                      <div className="col-8 ps-3">
                         <span className="fw-semibold">
                           {selectedPerformance.approvedBy.name}
                         </span>
@@ -710,7 +710,7 @@ function EmployeePerformances() {
                   selectedPerformance.rejectedBy && (
                     <div className="row mb-2">
                       <div className="col-4 fw-semibold">Rejected By</div>
-                      <div className="col-8">
+                      <div className="col-8 ps-3">
                         <span className="fw-semibold">
                           {selectedPerformance.rejectedBy.name}
                         </span>
@@ -729,7 +729,7 @@ function EmployeePerformances() {
                 {/* DESCRIPTION */}
                 <div className="row mt-3">
                   <div className="col-4 fw-semibold">Description</div>
-                  <div className="col-8">
+                  <div className="col-8 ps-3">
                     <div
                       className="p-2 border rounded bg-light"
                       tabIndex={-1}

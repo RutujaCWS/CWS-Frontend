@@ -99,10 +99,16 @@ const modalRef = useRef(null);
       );
 
       // if (onAdd) onAdd(res.data);
+      const newEvent = res.data.event || res.data;
 
-      // 👇 Adjust here — make sure we send the *actual event object* only
-      const newEvent = res.data.event || res.data; // handle both possible response shapes
-      if (onAdd && newEvent) onAdd(newEvent);
+      const formattedEvent = {
+        ...newEvent,
+        type: "Event",  
+        name: newEvent.name || name,
+        date: newEvent.date || date
+      };
+
+      if (onAdd && formattedEvent) onAdd(formattedEvent);
       alert("Event added successfully!");
       setName("");
       setDate("");

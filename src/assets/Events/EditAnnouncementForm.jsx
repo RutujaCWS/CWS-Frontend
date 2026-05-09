@@ -151,11 +151,11 @@ function EditAnnouncementForm({ data, onClose, onUpdate }) {
                 type="text"
                 className="form-control"
                 value={name}
-                maxLength={30}
+                maxLength={50}
                 onChange={(e) => setName(e.target.value)}
                 required
               />
-              <small className="text-muted">{name.length}/30 characters</small>
+              <small className="text-muted">{name.length}/50 characters</small>
             </div>
 
             <div className="mb-3">

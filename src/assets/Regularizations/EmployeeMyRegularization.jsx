@@ -1037,9 +1037,7 @@ function EmployeeMyRegularization({ employeeId, refreshKey }) {
               {/* Footer */}
               <div className="modal-footer border-0 pt-0">
                 {(selectedRequest?.regularizationRequest?.status ===
-                  "Pending" ||
-                  selectedRequest?.regularizationRequest?.status ===
-                  "Rejected") && (
+                  "Pending") && (
                     <button
                       className="btn btn-outline-danger me-2 btn-sm"
                       style={{ minWidth: 90 }}

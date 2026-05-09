@@ -2052,7 +2052,7 @@ const [referralErrors, setReferralErrors] = useState({});
                     >
 
                      <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-4 fw-semibold">First Name</div>
+                        <div className="col-12 col-md-4 fw-semibold">First Name<span style={{ color: "red" }}>  *</span></div>
                         <div className="col-12 col-md-8">
                         <input
                           name="firstName"
@@ -2081,7 +2081,7 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       {/* Last Name */}
                       <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-4 fw-semibold">Last Name</div>
+                        <div className="col-12 col-md-4 fw-semibold">Last Name<span style={{ color: "red" }}>  *</span></div>
                         <div className="col-12 col-md-8">
                           <input
                             name="lastName"
@@ -2095,7 +2095,7 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       {/* Email */}
                       <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-4 fw-semibold">Email</div>
+                        <div className="col-12 col-md-4 fw-semibold">Email<span style={{ color: "red" }}>  *</span></div>
                         <div className="col-12 col-md-8">
                          <input
                             type="email"
@@ -2109,7 +2109,7 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       {/* Phone */}
                       <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-4 fw-semibold">Phone Number</div>
+                        <div className="col-12 col-md-4 fw-semibold">Phone Number<span style={{ color: "red" }}>  *</span></div>
                         <div className="col-12 col-md-8">
                         <input
                         name="phone"
@@ -2126,7 +2126,7 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       {/* Experience */}
                       <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-4 fw-semibold">Experience</div>
+                        <div className="col-12 col-md-4 fw-semibold">Experience<span style={{ color: "red" }}>  *</span></div>
                         <div className="col-12 col-md-8">
                         <input
                           type="number"
@@ -2141,7 +2141,7 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       {/* City */}
                       <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-4 fw-semibold">Current City</div>
+                        <div className="col-12 col-md-4 fw-semibold">Current City<span style={{ color: "red" }}>  *</span></div>
                         <div className="col-12 col-md-8">
                           <input
                           name="city"
@@ -2154,7 +2154,7 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       {/* Resume */}
                       <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-4 fw-semibold">Resume</div>
+                        <div className="col-12 col-md-4 fw-semibold">Resume<span style={{ color: "red" }}>  *</span></div>
                         <div className="col-12 col-md-8">
                          <input
                           type="file"

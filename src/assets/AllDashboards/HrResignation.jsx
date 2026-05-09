@@ -1203,11 +1203,12 @@ if (!user || role !== "hr") {
                       </div>
                       <div className="col-12 mb-3">
                         <label className="form-label fw-semibold">
-                          Last Working Day *
+                          Last Working Day<span style={{ color: "red" }}>  *</span>
                         </label>
                         <input
                           type="date"
                           className="form-control"
+                          min={new Date().toISOString().split('T')[0]}
                           value={editedLwd}
                           onChange={(e) => setEditedLwd(e.target.value)}
                         />
@@ -1223,8 +1224,12 @@ if (!user || role !== "hr") {
                           rows="3"
                           placeholder="Enter comments here..."
                           value={comment}
+                          maxLength={300}
                           onChange={(e) => setComment(e.target.value)}
                         />
+                        <div style={{ fontSize: "12px", textAlign: "right", color: "#6c757d" }}>
+    {comment?.length || 0}/300
+  </div>
                       </div>
                     </div>
                   )}
@@ -1270,17 +1275,19 @@ if (!user || role !== "hr") {
               </div>
 
               {/* Footer */}
-              <div className="modal-footer border-0 pt-0 d-flex gap-2" style={{ flexShrink: 0 }}>
+              <div className="modal-footer border-0 pt-0 d-flex" style={{ flexShrink: 0 }}>
                 {selected.status === "Pending" ? (
                   <>
                     <button
                       className="btn btn-sm btn-outline-success"
+                      style={{minWidth:90}}
                       onClick={handleApprove}
                     >
                       Approve
                     </button>
                     <button
                       className="btn btn-sm btn-outline-danger"
+                      style={{minWidth:90}}
                       onClick={handleReject}
                     >
                       Reject
@@ -1598,7 +1605,7 @@ if (!user || role !== "hr") {
                         className="form-label fw-semibold"
                         style={{ color: "#212529" }}
                       >
-                        Employee ID *
+                        Employee ID <span style={{ color: "red" }}>  *</span>
                       </label>
                       <input
                         type="text"
@@ -1614,7 +1621,7 @@ if (!user || role !== "hr") {
                   </div>
                   <div className="mb-3">
                     <div className="col-12">
-                      <label className="form-label fw-semibold">Reason *</label>
+                      <label className="form-label fw-semibold">Reason <span style={{ color: "red" }}>  *</span></label>
                       <select
                         className="form-select"
                         value={applyForm.reason}
@@ -1661,7 +1668,7 @@ if (!user || role !== "hr") {
                   <button
                     type="submit"
                     className="btn btn-sm custom-outline-btn"
-                    style={{ maxWidth: 90 }}
+                    style={{ minWidth: 90 }}
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? "Submitting..." : "Submit"}
@@ -1669,7 +1676,7 @@ if (!user || role !== "hr") {
                   <button
                     type="button"
                     className="btn btn-sm custom-outline-btn"
-                     style={{ maxWidth: 90 }}
+                     style={{ minWidth: 90 }}
                     onClick={() => {
                       resetApplyForm();
                       setShowApplyModal(false);
@@ -1701,13 +1708,8 @@ if (!user || role !== "hr") {
           onClick={closePopup}
         >
          <div
-  className="modal-dialog modal-lg"
-  style={{
-    width: "600px",
-    position: "relative",
-    margin: "80px auto",
-overflowY: "auto", // 🔥 adjust this (80–120)
-  }}
+  className="modal-dialog modal-lg modal-dialog-centered"
+  style={{ width: "600px" }}
   onClick={(e) => e.stopPropagation()}
 >
           

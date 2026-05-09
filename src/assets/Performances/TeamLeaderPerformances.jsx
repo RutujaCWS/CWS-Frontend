@@ -587,6 +587,7 @@ function TeamLeaderPerformances() {
                 />
               </div>
 
+
               <div className="modal-body" style={{ maxHeight: "60vh" }}>
                 {[
                   ["Request ID", selectedPerformance.requestId],
@@ -607,14 +608,14 @@ function TeamLeaderPerformances() {
                 ].map(([label, value]) => (
                   <div className="row mb-2" key={label}>
                     <div className="col-4 fw-semibold">{label}</div>
-                    <div className="col-8">{value}</div>
+                    <div className="col-8 ps-3">{value}</div>
                   </div>
                 ))}
 
                 {/* Rating */}
                 <div className="row mb-2">
                   <div className="col-4 fw-semibold">Rating</div>
-                  <div className="col-8">
+                  <div className="col-8 ps-3">
                     {isEditMode ? (
                       <input
                         type="number"
@@ -636,9 +637,9 @@ function TeamLeaderPerformances() {
                 </div>
 
                 {/* Status */}
-                <div className="row mb-2">
+                <div className="row mb-1">
                   <div className="col-4 fw-semibold">Status</div>
-                  <div className="col-8">
+                  <div className="col-8 ps-3">
                     {isEditMode ? (
                       <select
                         className="form-select"
@@ -655,11 +656,15 @@ function TeamLeaderPerformances() {
                       </select>
                     ) : (
                       <span
-                        className={`badge ${getStatusClass(selectedPerformance.status)}`}
                         style={{
+                          backgroundColor: selectedPerformance.status === "Pending" ? "#FFE493" : "#d1f2dd",
+                          padding: "6px 14px",
+                          borderRadius: "4px",
+                          fontSize: "13px",
+                          fontWeight: 500,
+                          display: "inline-block",
                           minWidth: "110px",
                           textAlign: "center",
-                          padding: "6px 14px",
                         }}
                       >
                         {selectedPerformance.status}
@@ -671,7 +676,7 @@ function TeamLeaderPerformances() {
                 {/* Recommendation */}
                 <div className="row mb-2">
                   <div className="col-4 fw-semibold">Recommendation</div>
-                  <div className="col-8">
+                  <div className="col-8 ps-3">
                     {isEditMode ? (
                       <select
                         className="form-select"
@@ -690,13 +695,15 @@ function TeamLeaderPerformances() {
                       </select>
                     ) : (
                       <span
-                        className={`badge ${getRecommendationClass(
-                          selectedPerformance.recommendation
-                        )}`}
                         style={{
+                          backgroundColor: selectedPerformance.recommendation === "Pending" ? "#FFE493" : "#d1f2dd",
+                          padding: "6px 14px",
+                          borderRadius: "4px",
+                          fontSize: "13px",
+                          fontWeight: 500,
+                          display: "inline-block",
                           minWidth: "110px",
                           textAlign: "center",
-                          padding: "6px 14px",
                         }}
                       >
                         {selectedPerformance.recommendation}
@@ -708,7 +715,7 @@ function TeamLeaderPerformances() {
                 {/* Final Approval Status */}
                 <div className="row mb-2">
                   <div className="col-4 fw-semibold">Final Approval</div>
-                  <div className="col-8">
+                  <div className="col-8 ps-3">
                     <span
                       style={{
                         backgroundColor:
@@ -739,7 +746,7 @@ function TeamLeaderPerformances() {
                   selectedPerformance.approvedBy && (
                     <div className="row mb-2">
                       <div className="col-4 fw-semibold">Approved By</div>
-                      <div className="col-8">
+                      <div className="col-8 ps-3">
                         <span className="fw-semibold">
                           {selectedPerformance.approvedBy.name}
                         </span>
@@ -757,7 +764,7 @@ function TeamLeaderPerformances() {
                   selectedPerformance.rejectedBy && (
                     <div className="row mb-2">
                       <div className="col-4 fw-semibold">Rejected By</div>
-                      <div className="col-8">
+                      <div className="col-8 ps-3">
                         <span className="fw-semibold">
                           {selectedPerformance.rejectedBy.name}
                         </span>
@@ -774,7 +781,7 @@ function TeamLeaderPerformances() {
                 {/* Description */}
                 <div className="row mt-3">
                   <div className="col-4 fw-semibold">Description</div>
-                  <div className="col-8">
+                  <div className="col-8 ps-3">
                     <div
                       className="p-2 border rounded bg-light"
                       style={{

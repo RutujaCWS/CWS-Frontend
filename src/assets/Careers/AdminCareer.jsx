@@ -155,8 +155,8 @@ function AdminCareer({ user }) {
   
     // Skills
     const skillsText = Array.isArray(newJob.importantSkills)
-      ? newJob.importantSkills.join(", ")
-      : "";
+  ? newJob.importantSkills.join(", ")
+  : newJob.importantSkills || "";
   
     if (!skillsText.trim()) {
       errors.importantSkills = "Important Skills required";
@@ -265,9 +265,13 @@ function AdminCareer({ user }) {
           max: Number(newJob.experience.max),
         },
 
-        importantSkills: Array.isArray(newJob.importantSkills)
-          ? newJob.importantSkills
-          : [],
+        importantSkills:
+  typeof newJob.importantSkills === "string"
+    ? newJob.importantSkills
+        .split(",")
+        .map((skill) => skill.trim())
+        .filter((skill) => skill !== "")
+    : newJob.importantSkills,
 
         status: "Active",
       };
@@ -412,6 +416,20 @@ function AdminCareer({ user }) {
   
    
     if (isSearchEmpty && isStatusDefault && isDateEmpty) {
+temp.sort((a, b) => {
+  const aExpired = isExpired(a.dueOn) ? 1 : 0;
+  const bExpired = isExpired(b.dueOn) ? 1 : 0;
+
+  // Active jobs first
+  if (aExpired !== bExpired) {
+    return aExpired - bExpired;
+  }
+
+  // Latest due date first for active/repost jobs
+  return new Date(b.dueOn) - new Date(a.dueOn);
+});
+  
+      
       setFilteredJobs(temp);
       return;
     }
@@ -446,10 +464,12 @@ function AdminCareer({ user }) {
       const toDate = new Date(assignDateToFilter);
       temp = temp.filter((job) => new Date(job.dueOn) <= toDate);
     }
-  
+
     setFilteredJobs(temp);
     setCurrentPage(1);
   };
+
+
 
   const getApplicantsInfo = async (jobId) => {
     try {
@@ -487,11 +507,18 @@ function AdminCareer({ user }) {
     setAssignDateFromFilter("");
     setAssignDateToFilter("");
     setCurrentPage(1);
-  
-    // immediately reset list
-    let temp = jobs.filter(
-      (job) => job.jobType === activeTab || job.jobType === "both"
-    );
+temp.sort((a, b) => {
+  const aExpired = isExpired(a.dueOn) ? 1 : 0;
+  const bExpired = isExpired(b.dueOn) ? 1 : 0;
+
+  // Active jobs first
+  if (aExpired !== bExpired) {
+    return aExpired - bExpired;
+  }
+
+  // Latest due date first for active/repost jobs
+  return new Date(b.dueOn) - new Date(a.dueOn);
+});
     setFilteredJobs(temp);
   };
 
@@ -729,16 +756,13 @@ const handleRowClick = (job) => {
             onSubmit={handleFilterSubmit}
             style={{ justifyContent: "space-between" }}
           >
-            <div className="col-12 col-md-auto d-flex align-items-center gap-2 mb-1  ms-2">
+            <div className="col-12 col-md-auto d-flex align-items-center gap-2 mb-1">
               <label
                 htmlFor="employeeNameFilter"
-                className="fw-bold mb-0 text-start text-md-end"
+                className="fw-bold mb-0"
                 style={{
                   fontSize: "16px",
                   color: "#3A5FBE",
-                  width: "50px",
-                  minWidth: "50px",
-                  marginRight: "2px",
                 }}
               >
                 Search
@@ -753,7 +777,7 @@ const handleRowClick = (job) => {
               />
             </div>
 
-            <div className="col-12 col-md-auto d-flex align-items-center mb-1 ms-2">
+            <div className="col-12 col-md-auto d-flex align-items-center mb-1">
               <label
                 htmlFor="assignDateFromFilter"
                 className="fw-bold mb-0 text-start text-md-end"
@@ -994,12 +1018,15 @@ const handleRowClick = (job) => {
                         padding: "12px",
                         verticalAlign: "middle",
                         fontSize: "14px",
-                        borderBottom: "1px solid #dee2e6",
-                        whiteSpace: "nowrap",
+                        // borderBottom: "1px solid #dee2e6",
                         color: "#212529",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        maxWidth: "100px",
                       }}
                     >
-                      {job.location}
+                      {job.location?.trim()}
                     </td>
                     <td
                       style={{
@@ -1007,8 +1034,9 @@ const handleRowClick = (job) => {
                         verticalAlign: "middle",
                         fontSize: "14px",
                         borderBottom: "1px solid #dee2e6",
-                        whiteSpace: "nowrap",
                         color: "#212529",
+                        textAlign: "center",
+                        width: "90px",
                       }}
                     >
                       {job.noOfOpenings}
@@ -1431,23 +1459,19 @@ onClick={() => {
                   }
                   }
                 />
-                {formErrors.jobDescription && (
-                  <div className="invalid-feedback d-block">
-                    {formErrors.jobDescription}
-                  </div>
-                )}
                 <div
-                  className="char-count"
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    fontSize: "12px",
-                    color: "#6c757d",
-                    marginTop: "4px",
-                  }}
+                  className="d-flex justify-content-between align-items-center mt-1"
                 >
-                  {newJob.jobDescription.replace(/<[^>]+>/g, '').length}/300 characters
+                  <small className="text-danger"style={{ marginTop: "0" }}>
+                    {formErrors.jobDescription}
+                  </small>
+
+                  <small className="text-muted"style={{ marginTop: "-10px" }}>
+                    {newJob.jobDescription.replace(/<[^>]+>/g, "").length}/300
+                    characters
+                  </small>
                 </div>
+                            
               </div>
             </div>
 
@@ -1557,29 +1581,34 @@ onClick={() => {
 
             {/* Skills */}
             <div className="row align-items-center mb-3">
-              <div className="col-12 col-md-4 fw-semibold">Important Skills <span style={{ color: "red" }}>  *</span></div>
-              <div className="col-12 col-md-8">
-                <input
-                  className={`form-control ${formErrors.importantSkills ? 'is-invalid' : ''}`}
-                  maxLength={100}
-                  value={newJob.importantSkills.join(", ") || ""}
-                  onChange={(e) =>
-                    setNewJob({
-                      ...newJob,
-                      importantSkills: e.target.value
-                        .split(",")
-                        .map((s) => s.trim()),
-                    })
-                  }
-                  placeholder="Enter skills separated by commas"
-                />
-                {formErrors.importantSkills && (
-                  <div className="invalid-feedback d-block">
-                    {formErrors.importantSkills}
-                  </div>
-                )}
-              </div>
-            </div>
+  <div className="col-12 col-md-4 fw-semibold">
+    Important Skills <span style={{ color: "red" }}> *</span>
+  </div>
+
+  <div className="col-12 col-md-8">
+    <input
+      type="text"
+      className={`form-control ${
+        formErrors.importantSkills ? "is-invalid" : ""
+      }`}
+      maxLength={100}
+      value={newJob.importantSkills || ""}
+      onChange={(e) => {
+        setNewJob((prev) => ({
+          ...prev,
+          importantSkills: e.target.value,
+        }));
+      }}
+      placeholder="Enter skills separated by commas"
+    />
+
+    {formErrors.importantSkills && (
+      <div className="invalid-feedback d-block">
+        {formErrors.importantSkills}
+      </div>
+    )}
+  </div>
+</div>
 
             {/* Due Date */}
             <div className="row align-items-center mb-3">

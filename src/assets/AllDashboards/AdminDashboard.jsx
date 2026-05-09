@@ -375,7 +375,7 @@ function AdminDashboard({ user }) {
                     className="btn btn-sm custom-outline-btn"
                     onClick={() =>
                       navigate(
-                        `/dashboard/${role}/${username}/${id}/TodaysAttendanceDetails`,
+                        `/dashboard/${role}/${username}/${id}/employee`,
                       )
                     }
                   >

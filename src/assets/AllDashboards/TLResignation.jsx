@@ -1168,6 +1168,7 @@ setFilteredRequests(sorted);
                         <input
                           type="date"
                           className="form-control"
+                          min={new Date().toISOString().split('T')[0]}
                           value={editedLwd}
                           onChange={(e) => setEditedLwd(e.target.value)}
                         />
@@ -1564,7 +1565,7 @@ setFilteredRequests(sorted);
                         className="form-label fw-semibold"
                         style={{ color: "#212529" }}
                       >
-                        Employee ID *
+                        Employee ID<span style={{ color: "red" }}>  *</span>
                       </label>
                       <input
                         type="text"
@@ -1580,7 +1581,7 @@ setFilteredRequests(sorted);
                   </div>
                   <div className="mb-3">
                     <div className="col-12">
-                      <label className="form-label fw-semibold">Reason *</label>
+                      <label className="form-label fw-semibold">Reason<span style={{ color: "red" }}>  *</span></label>
                       <select
                         className="form-select"
                         value={applyForm.reason}
@@ -1627,7 +1628,7 @@ setFilteredRequests(sorted);
                   <button
                     type="submit"
                     className="btn btn-sm custom-outline-btn"
-                    style={{ maxWidth: 90 }}
+                    style={{ minWidth: 90 }}
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? "Submitting..." : "Submit"}
@@ -1635,7 +1636,7 @@ setFilteredRequests(sorted);
                   <button
                     type="button"
                     className="btn btn-sm custom-outline-btn"
-                     style={{ maxWidth: 90 }}
+                     style={{ minWidth: 90 }}
                     onClick={() => {
                       resetApplyForm();
                       setShowApplyModal(false);

@@ -1135,6 +1135,9 @@ const getFileType = (url) => {
                         setNewPolicy({ ...newPolicy, pdf: file });
                       }}
                     />
+                    <small className="text-muted d-block mt-1" style={{fontSize:"13px"}}>
+                      Allowed formats: PDF | Max size: 5 MB
+                    </small>
                   </div>
                 </div>
               </div>

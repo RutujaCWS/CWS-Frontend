@@ -423,7 +423,23 @@ const [tl, setTl] = useState("");
     };
   
   
+const handleSectionChange = (section) => {
+  setActiveView(section);
 
+  // reset all request filters
+  setSearchTerm("");
+  setStatusFilter("All");
+  setEmployees(allEmployees);
+
+  // reset manager request filters
+  setPendingSearchTerm("");
+  setPendingStatusFilter("All");
+  setPendingRequests(allPendingRequests);
+
+  // reset pagination
+  setCurrentPage(1);
+  setPendingCurrentPage(1);
+};
 
   // Submit request
   const submitRequest = async () => {
@@ -661,7 +677,7 @@ const [tl, setTl] = useState("");
             activeView === "all" ? "#fff" : "#3A5FBE",
           minWidth: "120px",
         }}
-        onClick={() => setActiveView("all")}
+     onClick={() => handleSectionChange("all")}
       >
         All Requests
       </button>
@@ -677,13 +693,13 @@ const [tl, setTl] = useState("");
             activeView === "pending" ? "#fff" : "#3A5FBE",
           minWidth: "120px",
         }}
-        onClick={() => {
-          setActiveView("pending");
+      onClick={() => {
+  handleSectionChange("pending");
 
-          if (pendingRequests.length === 0) {
-            fetchPendingRequests();
-          }
-        }}
+  if (pendingRequests.length === 0) {
+    fetchPendingRequests();
+  }
+}}
       >
         Manager Requests
       </button>
@@ -1064,12 +1080,12 @@ const [tl, setTl] = useState("");
             <div className="text-center p-4">
               <p className="mt-2">Loading pending requests...</p>
             </div>
-          ) : pendingRequests.length > 0 ? (
+          ) : (
             <>
               <div
                 className="table-responsive mt-3"
                 style={{
-                  boxShadow: "0 2px 6px rgba(255, 165, 0, 0.2)",
+          
                   borderRadius: "8px",
                 }}
               >
@@ -1095,7 +1111,14 @@ const [tl, setTl] = useState("");
                   </thead>
 
                   <tbody>
-                    {currentPendingPerformances.map((emp, index) => (
+                        {pendingRequests.length === 0 ? (
+                  <tr>
+                    <td colSpan="11" className="text-center py-4 text-muted">
+                      No performance requests found.
+                    </td>
+                  </tr>
+                ) : (
+                    currentPendingPerformances.map((emp, index) => (
                       <tr
                         key={emp._id || index}
                         onClick={() => setSelectedPerformance(emp)}
@@ -1184,7 +1207,8 @@ const [tl, setTl] = useState("");
                           )}
                         </td>
                       </tr>
-                    ))}
+                    ))
+  )}
                   </tbody>
                 </table>
               </div>
@@ -1222,7 +1246,7 @@ const [tl, setTl] = useState("");
 
                   <div className="d-flex align-items-center">
                     <button
-                    className="btn btn-sm focus-ring"
+                    className="btn btn-sm "
                       onClick={() =>
                         handlePendingPageChange(pendingCurrentPage - 1)
                       }
@@ -1231,7 +1255,7 @@ const [tl, setTl] = useState("");
                       ‹
                     </button>
                     <button
-                     className="btn btn-sm focus-ring"
+                     className="btn btn-sm "
                       onClick={() =>
                         handlePendingPageChange(pendingCurrentPage + 1)
                       }
@@ -1242,13 +1266,9 @@ const [tl, setTl] = useState("");
                   </div>
                 </div>
               </nav>
-            </>
-          ) : (
-            <div className="alert alert-info mt-3">
-              No pending requests found. All performance requests have been
-              processed.
-            </div>
+                        </>
           )}
+     
         </>
       )}
 
@@ -1522,8 +1542,6 @@ const [tl, setTl] = useState("");
               </div>
 
               <div className="modal-body" style={{ maxHeight: "60vh" }}>
-
-
 {[
   ["Request ID", selectedPerformance.requestId],
   ["Employee Name", selectedPerformance.employeeName],
@@ -1546,9 +1564,6 @@ const [tl, setTl] = useState("");
     }`,
   ],
   ["Rating", selectedPerformance.rating ?? "-"],
-  ["Status", selectedPerformance.status],
-  ["Recommendation", selectedPerformance.recommendation || "-"],
-  ["Admin Status", selectedPerformance.adminStatus || "pending"],
 ].map(([label, value]) => (
   <div
     className="row"
@@ -1573,6 +1588,88 @@ const [tl, setTl] = useState("");
     </div>
   </div>
 ))}
+
+{/* Status */}
+<div className="row mb-2">
+  <div className="col-5 col-sm-4 fw-semibold">Status</div>
+
+  <div className="col-7 col-sm-8" style={{ paddingLeft: "10px" }}>
+    <span
+      style={{
+        
+        backgroundColor:
+          selectedPerformance.status === "Pending"
+            ? "#FFE493"
+            : "#d1f2dd",
+        padding: "6px 14px",
+        borderRadius: "4px",
+        fontSize: "13px",
+        fontWeight: 500,
+        display: "inline-block",
+        minWidth: "90px",
+        textAlign: "center",
+      }}
+    >
+      {selectedPerformance.status}
+    </span>
+  </div>
+</div>
+
+{/* Recommendation */}
+<div className="row mb-2">
+  <div className="col-5 col-sm-4 fw-semibold">Recommendation</div>
+
+  <div className="col-7 col-sm-8" style={{ paddingLeft: "10px" }}>
+    <span
+      style={{
+        backgroundColor:
+          selectedPerformance.recommendation === "Pending"
+            ? "#FFE493"
+            : "#d1f2dd",
+        padding: "6px 14px",
+        borderRadius: "4px",
+        fontSize: "13px",
+        fontWeight: 500,
+        display: "inline-block",
+        minWidth: "90px",
+        textAlign: "center",
+      }}
+    >
+      {selectedPerformance.recommendation || "-"}
+    </span>
+  </div>
+</div>
+
+{/* Admin Status */}
+<div className="row mb-2">
+  <div className="col-5 col-sm-4 fw-semibold">Admin Status</div>
+
+  <div className="col-7 col-sm-8" style={{ paddingLeft: "10px" }}>
+    <span
+      style={{
+        backgroundColor:
+          selectedPerformance.adminStatus === "pending"
+            ? "#FFE493"
+            : selectedPerformance.adminStatus === "approved"
+            ? "#d1f2dd"
+            : "#ffcccc",
+        padding: "6px 14px",
+        borderRadius: "4px",
+        fontSize: "13px",
+        fontWeight: 500,
+        display: "inline-block",
+        minWidth: "90px",
+        textAlign: "center",
+      }}
+    >
+      {selectedPerformance.adminStatus
+        ? selectedPerformance.adminStatus.charAt(0).toUpperCase() +
+          selectedPerformance.adminStatus.slice(1)
+        : "Pending"}
+    </span>
+  </div>
+</div>
+
 
                 {selectedPerformance.adminStatus === "approved" &&
                   selectedPerformance.approvedBy && (
@@ -1614,16 +1711,16 @@ const [tl, setTl] = useState("");
                 {/* DESCRIPTION */}
                 <div className="row mt-3">
                   <div className="col-4 fw-semibold">Description</div>
-                  <div className="col-8">
+                  <div className="col-8 ps-3">
                     <div
                       className="p-2 border rounded bg-light"
                      tabIndex={-1}
                   style={{
-  whiteSpace: "pre-wrap",
-  maxHeight: "120px",
-  overflowY: "auto",
-  wordBreak: "break-word",
-}}
+                        whiteSpace: "pre-wrap",
+                        maxHeight: "120px",
+                        overflowY: "auto",
+                        wordBreak: "break-word",
+                      }}
                     >
                       {selectedPerformance.description}
                     </div>

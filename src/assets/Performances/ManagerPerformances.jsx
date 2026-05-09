@@ -631,13 +631,11 @@ function ManagerPerformances() {
               </div>
 
               {/* BODY */}
-              <div className="modal-body"
-               style={{ maxHeight: "60vh" }}>
+              <div className="modal-body" style={{ maxHeight: "60vh" }}>
                 {[
                   ["Request ID", selectedPerformance.requestId],
                   ["Employee Name", selectedPerformance.employeeName],
                   ["Employee ID", selectedPerformance.employeeId],
-                  // ["Manager", selectedPerformance.manager],
                   ["Department", selectedPerformance.department],
                   [
                     "Duration",
@@ -656,14 +654,15 @@ function ManagerPerformances() {
                   ],
                 ].map(([label, value]) => (
                   <div className="row mb-2" key={label}>
-                    <div className="col-4 fw-semibold">{label}</div>
-                    <div className="col-8">{value}</div>
+                    <div className="col-4 fw-semibold" >{label}</div>
+                    <div className="col-8 ps-3">{value}</div>
                   </div>
                 ))}
+                
                 {/* ===== RATING ===== */}
                 <div className="row mb-2">
                   <div className="col-4 fw-semibold">Rating</div>
-                  <div className="col-8">
+                  <div className="col-8 ps-3">
                     {isEditMode ? (
                       <input
                         type="number"
@@ -684,9 +683,10 @@ function ManagerPerformances() {
                   </div>
                 </div>
 
-                <div className="row mb-2">
+                {/* Status */}
+                <div className="row mb-1">
                   <div className="col-4 fw-semibold">Status</div>
-                  <div className="col-8">
+                  <div className="col-8 ps-3">
                     {isEditMode ? (
                       <select
                         className="form-select"
@@ -703,11 +703,15 @@ function ManagerPerformances() {
                       </select>
                     ) : (
                       <span
-                        className={`badge ${getStatusClass(selectedPerformance.status)}`}
                         style={{
+                          backgroundColor: selectedPerformance.status === "Pending" ? "#FFE493" : "#d1f2dd",
+                          padding: "6px 14px",
+                          borderRadius: "4px",
+                          fontSize: "13px",
+                          fontWeight: 500,
+                          display: "inline-block",
                           minWidth: "110px",
                           textAlign: "center",
-                          padding: "6px 14px",
                         }}
                       >
                         {selectedPerformance.status}
@@ -716,9 +720,10 @@ function ManagerPerformances() {
                   </div>
                 </div>
 
+                {/* Recommendation */}
                 <div className="row mb-2">
                   <div className="col-4 fw-semibold">Recommendation</div>
-                  <div className="col-8">
+                  <div className="col-8 ps-3">
                     {isEditMode ? (
                       <select
                         className="form-select"
@@ -737,11 +742,16 @@ function ManagerPerformances() {
                       </select>
                     ) : (
                       <span
-                        className={`badge ${getRecommendationClass(selectedPerformance.recommendation)}`}
                         style={{
+                          backgroundColor: selectedPerformance.recommendation === "Pending" ? "#FFE493" : "#d1f2dd",
+                          padding: "6px 14px",
+                          borderRadius: "4px",
+                          fontSize: "13px",
+                          fontWeight: 500,
+                          display: "inline-block",
                           minWidth: "110px",
                           textAlign: "center",
-                          padding: "6px 14px",
+                          
                         }}
                       >
                         {selectedPerformance.recommendation}
@@ -750,10 +760,10 @@ function ManagerPerformances() {
                   </div>
                 </div>
 
-                {/* Added by Rutuja */}
+                {/* Final Approval */}
                 <div className="row mb-2">
                   <div className="col-4 fw-semibold">Final Approval</div>
-                  <div className="col-8">
+                  <div className="col-8 ps-3">
                     <span
                       style={{
                         backgroundColor:
@@ -761,7 +771,7 @@ function ManagerPerformances() {
                             ? "#FFE493"
                             : selectedPerformance.adminStatus === "approved"
                               ? "#d1f2dd"
-                              : "#f8d7da", // red for rejected
+                              : "#f8d7da",
                         padding: "6px 14px",
                         borderRadius: "4px",
                         fontSize: "13px",
@@ -785,7 +795,7 @@ function ManagerPerformances() {
                   selectedPerformance.approvedBy && (
                     <div className="row mb-2">
                       <div className="col-4 fw-semibold">Approved By</div>
-                      <div className="col-8">
+                      <div className="col-8 ps-3">
                         <span className="fw-semibold">
                           {selectedPerformance.approvedBy.name}
                         </span>
@@ -805,7 +815,7 @@ function ManagerPerformances() {
                   selectedPerformance.rejectedBy && (
                     <div className="row mb-2">
                       <div className="col-4 fw-semibold">Rejected By</div>
-                      <div className="col-8">
+                      <div className="col-8 ps-3">
                         <span className="fw-semibold">
                           {selectedPerformance.rejectedBy.name}
                         </span>
@@ -824,7 +834,7 @@ function ManagerPerformances() {
                 {/* DESCRIPTION */}
                 <div className="row mt-3">
                   <div className="col-4 fw-semibold">Description</div>
-                  <div className="col-8">
+                  <div className="col-8 ps-3.5">
                     <div
                       className="p-2 border rounded bg-light"
                       style={{ 
