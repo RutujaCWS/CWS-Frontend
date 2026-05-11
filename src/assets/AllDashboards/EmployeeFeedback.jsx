@@ -1576,14 +1576,16 @@ if (
                     </div>
                   )}
 
-                  <div className="row mb-2">
+                  <div className="row mb-2"style={{ wordBreak:"break-word",
+                        overflowWrap:"break-word"}}>
                     <div className="col-5 col-sm-4 fw-semibold">Title</div>
                     <div className="col-sm-8 col-7">
                       {selectedFeedback.title}
                     </div>
                   </div>
 
-                  <div className="row mb-2">
+                  <div className="row mb-2"style={{ wordBreak:"break-word",
+                        overflowWrap:"break-word"}}>
                     <div className="col-5 col-sm-4 fw-semibold">
                       Description
                     </div>

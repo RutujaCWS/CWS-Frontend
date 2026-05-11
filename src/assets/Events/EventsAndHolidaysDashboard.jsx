@@ -786,7 +786,10 @@ onClick={(e) => {
                   <div className="container-fluid">
                     <div className="row mb-2">
                       <div className="col-4 fw-semibold">Description</div>
-                      <div className="col-8">
+                      <div className="col-8" style={{
+                        wordBreak:"break-word",
+                        overflowWrap:"break-word"
+                      }}>
                         {selectedAnnouncement.description || "-"}
                       </div>
                     </div>

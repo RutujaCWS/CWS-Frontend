@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./EmployeeCareer.css";
 import axios from "axios";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/bootstrap.css";
 import TablePagination from "./TablePagination";
 
 const EmployeeCareer = ({ user }) => {
@@ -13,6 +15,8 @@ const EmployeeCareer = ({ user }) => {
   const [referralPage, setReferralPage] = useState(0);
   const [errors, setErrors] = useState({});
 const [referralErrors, setReferralErrors] = useState({});
+const [phone, setPhone] = useState("");
+
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchText, setSearchText] = useState("");
   const [locationFilter, setLocationFilter] = useState("All");
@@ -215,6 +219,13 @@ const [referralErrors, setReferralErrors] = useState({});
     fetchAppliedJobs();
     fetchRefferedJobs();
   }, []);
+
+useEffect(() => {
+  if (!showViewModal && !showReferralModal) {
+    setErrors({});
+  }
+}, [showViewModal, showReferralModal]);
+
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -482,23 +493,32 @@ const [referralErrors, setReferralErrors] = useState({});
           error = "Enter valid email";
         break;
   
-      case "phone":
-        if (!value.trim()) error = "Phone number is required";
-        else if (!/^\d{10}$/.test(value))
-          error = "Enter valid 10 digit number";
-        break;
+        case "phone":
+          if (!value.trim()) {
+            error = "Phone number is required";
+          } else if (value.replace(/\D/g, "").length < 7) {
+            error = "Enter valid phone number";
+          }
+          break;
   
-      case "experience":
-        if (!value) error = "Experience is required";
-        else if (Number(value) < 0)
-          error = "Invalid experience";
-        break;
+          case "experience":
+            if (!value) {
+              error = "Experience is required";
+            } else if (Number(value) < 0 || Number(value) > 99) {
+              error = "Experience must be between 0 and 99";
+            }
+            break;
   
-      case "city":
-        if (!value.trim()) error = "City is required";
-        else if (!/^[A-Za-z ]+$/.test(value))
-          error = "Only letters allowed";
-        break;
+            case "city":
+              if (!value.trim()) {
+                error = "City is required";
+              } else if (!/^[A-Za-z ]+$/.test(value)) {
+                error = "Only letters allowed";
+              } else if (value.trim().length > 30) {
+                error = "City name should not exceed 30 characters";
+              }
+              break;
+              
   
       case "resume":
         if (!files || !files[0])
@@ -1343,7 +1363,8 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       <div className="row mb-2">
                         <div className="col-4 fw-semibold">Location</div>
-                        <div className="col-8">{selectedAppliedJob?.job?.location}
+                        <div className="col-8"style={{ wordBreak:"break-word",
+                        overflowWrap:"break-word"}}>{selectedAppliedJob?.job?.location}
                         </div>
                       </div>
 
@@ -1410,7 +1431,8 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       <div className="row mb-2">
                         <div className="col-4 fw-semibold">Description</div>
-                        <div className="col-8" style={{ textAlign: "left", }}>
+                        <div className="col-8" style={{wordBreak:"break-word",
+                    overflowWrap:"break-word" }}>
                           <div
                             style={{ textAlign: "justify" }}
                             dangerouslySetInnerHTML={{
@@ -1434,7 +1456,7 @@ const [referralErrors, setReferralErrors] = useState({});
                 </div>
               </div>
             </div>
-          // </div>
+          </div>
         )}
 
         {/* ===== MY REFERRAL TAB ===== */}
@@ -1741,7 +1763,8 @@ const [referralErrors, setReferralErrors] = useState({});
 
                     <div className="row mb-2">
                       <div className="col-4 fw-semibold">Location</div>
-                      <div className="col-8">{selectedReferral?.job?.location}</div>
+                      <div className="col-8"style={{ wordBreak:"break-word",
+                        overflowWrap:"break-word"}}>{selectedReferral?.job?.location}</div>
                     </div>
 
                     <div className="row mb-2">
@@ -1806,13 +1829,14 @@ const [referralErrors, setReferralErrors] = useState({});
 
                     <div className="row mb-2">
                       <div className="col-4 fw-semibold">Description</div>
-                      <div className="col-8" style={{ textAlign: "left", }}>
+                      <div className="col-8" style={{wordBreak:"break-word",
+                    overflowWrap:"break-word" }}>
                         <div
-                          style={{
-                            textAlign: "justify",
-                            width: "100%",
-                            display: "block",
-                          }}
+                          // style={{
+                          //   textAlign: "justify",
+                          //   width: "100%",
+                          //   display: "block",
+                          // }}
                           dangerouslySetInnerHTML={{
                             __html: selectedReferral?.job?.jobDescription,
                           }}
@@ -1854,12 +1878,19 @@ const [referralErrors, setReferralErrors] = useState({});
                   className="modal-header"
                   style={{ backgroundColor: "#3A5FBE" }}
                 >
-                  <h5 className="modal-title" style={{ color: "white" }}>
+                  <h5 className="modal-title text-white" style={{
+                    wordBreak: "break-word",
+                    overflowWrap: "break-word",
+                    whiteSpace: "normal",
+                  }}>
                     {selectedJob.jobTitle}
                   </h5>
                   <button
                     className="btn-close btn-close-white"
-                    onClick={() => setShowViewModal(false)}
+                    onClick={() => {
+                      setShowViewModal(false);
+                      setErrors({});
+                    }}
                   />
                 </div>
                 <div
@@ -1910,7 +1941,10 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       <div className="row mb-2">
                         <div className="col-4 fw-semibold">Location</div>
-                        <div className="col-8">{selectedJob.location}</div>
+                        <div className="col-8"style={{
+                          wordBreak: "break-word",
+                          overflowWrap: "break-word",
+                        }}>{selectedJob.location}</div>
                       </div>
 
                       <div className="row mb-2">
@@ -1930,6 +1964,7 @@ const [referralErrors, setReferralErrors] = useState({});
                         </div>
                       </div>
 
+
                       <div className="row mb-2">
                         <div className="col-4 fw-semibold">Posted</div>
                         <div className="col-8">
@@ -1941,10 +1976,13 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       <div className="row mb-2">
                         <div className="col-4 fw-semibold">Key Skills</div>
-                        <div className="col-8">
+                        <div className="col-8"style={{
+                          wordBreak: "break-word",
+                          overflowWrap: "break-word",
+                        }}>
                           <ul className="mb-0 list-unstyled ps-0">
                             {selectedJob.importantSkills?.map((skill, i) => (
-                              <li key={i} style={{ marginBottom: "2px" }}>
+                              <li key={i} style={{ marginBottom: "2px",  }}>
                                 {skill}
                               </li>
                             ))}
@@ -1967,9 +2005,9 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       <div className="row mb-2">
                         <div className="col-4 fw-semibold">Description</div>
-                        <div className="col-8" style={{ textAlign: "left", }}>
+                        <div className="col-8" style={{ wordBreak:"break-word",
+                      overflowWrap:"break-word" }}>
                           <div
-                            style={{ textAlign: "left", }}
                             dangerouslySetInnerHTML={{
                               __html: selectedJob.jobDescription,
                             }}
@@ -1981,7 +2019,10 @@ const [referralErrors, setReferralErrors] = useState({});
                         <button
                           type="button"
                           className="btn btn-sm custom-outline-btn"
-                          onClick={() => setShowViewModal(false)}
+                          onClick={() => {
+                            setShowViewModal(false);
+                            setErrors({});
+                          }}
                           style={{ minWidth: 90 }}
                         >
                           Close
@@ -2111,15 +2152,22 @@ const [referralErrors, setReferralErrors] = useState({});
                       <div className="row align-items-center mb-3">
                         <div className="col-12 col-md-4 fw-semibold">Phone Number<span style={{ color: "red" }}>  *</span></div>
                         <div className="col-12 col-md-8">
-                        <input
-                        name="phone"
-                        maxLength={10}
-                        className={`form-control ${errors.phone ? "is-invalid" : ""}`}
-                        onInput={(e) => {
-                          e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
-                          validateField("phone", e.target.value);
-                        }}
-                      />
+                        <PhoneInput
+                          country={"in"}
+                          value={phone}
+                          onChange={(value) => {
+                            setPhone(value);
+                            validateField("phone", value);
+                          }}
+                          inputProps={{
+                            name: "phone",
+                            required: true,
+                          }}
+                          containerStyle={{ width: "100%" }}
+                          inputStyle={{ width: "100%", height: "38px" }}
+                          enableSearch={true}
+                          searchPlaceholder="Search country..."
+                        />
                       <div className="invalid-feedback">{errors.phone}</div>
                         </div>
                       </div>
@@ -2132,8 +2180,12 @@ const [referralErrors, setReferralErrors] = useState({});
                           type="number"
                           name="experience"
                           min="0"
+                          max="99"
                           className={`form-control ${errors.experience ? "is-invalid" : ""}`}
-                          onChange={(e) => validateField("experience", e.target.value)}
+                          onChange={(e) => {
+                            e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 2);
+                            validateField("experience", e.target.value);
+                          }}
                         />
                         <div className="invalid-feedback">{errors.experience}</div>
                         </div>
@@ -2145,6 +2197,7 @@ const [referralErrors, setReferralErrors] = useState({});
                         <div className="col-12 col-md-8">
                           <input
                           name="city"
+                          maxLength={30}
                           className={`form-control ${errors.city ? "is-invalid" : ""}`}
                           onChange={(e) => validateField("city", e.target.value)}
                         />
@@ -2217,7 +2270,10 @@ const [referralErrors, setReferralErrors] = useState({});
                   </h5>
                   <button
                     className="btn-close btn-close-white"
-                    onClick={() => setShowReferralModal(false)}
+                    onClick={() => {
+                      setShowReferralModal(false);
+                      setErrors({});
+                    }}
                   />
                 </div>
                 <div
@@ -2270,7 +2326,8 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       <div className="row mb-2">
                         <div className="col-4 fw-semibold">Location</div>
-                        <div className="col-8">{selectedJob.location}</div>
+                        <div className="col-8"style={{ wordBreak:"break-word",
+                        overflowWrap:"break-word"}}>{selectedJob.location}</div>
                       </div>
 
                       <div className="row mb-2">
@@ -2327,9 +2384,9 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       <div className="row mb-2">
                         <div className="col-4 fw-semibold">Description</div>
-                        <div className="col-8" style={{ textAlign: "left", }}>
+                        <div className="col-8" style={{ WordBreak:"break-word",
+                      overflowWrap:"break-word" }}>
                           <div
-                            style={{ textAlign: "left", }}
                             dangerouslySetInnerHTML={{
                               __html: selectedJob.jobDescription,
                             }}
@@ -2337,7 +2394,10 @@ const [referralErrors, setReferralErrors] = useState({});
                           <div className="text-end mt-3">
                             <button
                               className="btn btn-sm custom-outline-btn me-2"
-                              onClick={() => setShowReferralModal(false)}
+                              onClick={() => {
+                                setShowReferralModal(false);
+                                setErrors({});
+                              }}
                               type="buttun"
                               style={{ minWidth: 90 }}
                             >
@@ -2423,7 +2483,7 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       {/* Candidate Info */}
                      <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-4 fw-semibold">First Name</div>
+                        <div className="col-12 col-md-4 fw-semibold">First Name<span style={{ color: "red" }}>  *</span></div>
                         <div className="col-12 col-md-8">
                         <input
                           name="firstName"
@@ -2451,7 +2511,7 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       {/* Last Name */}
                       <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-4 fw-semibold">Last Name</div>
+                        <div className="col-12 col-md-4 fw-semibold">Last Name<span style={{ color: "red" }}>  *</span></div>
                         <div className="col-12 col-md-8">
                           <input
                             name="lastName"
@@ -2465,7 +2525,7 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       {/* Email */}
                       <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-4 fw-semibold">Email</div>
+                        <div className="col-12 col-md-4 fw-semibold">Email<span style={{ color: "red" }}>  *</span></div>
                         <div className="col-12 col-md-8">
                          <input
                             type="email"
@@ -2479,31 +2539,43 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       {/* Phone */}
                       <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-4 fw-semibold">Phone Number</div>
+                        <div className="col-12 col-md-4 fw-semibold">Phone Number<span style={{ color: "red" }}>  *</span></div>
                         <div className="col-12 col-md-8">
-                        <input
-                        name="phone"
-                        maxLength={10}
-                        className={`form-control ${errors.phone ? "is-invalid" : ""}`}
-                        onInput={(e) => {
-                          e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
-                          validateField("phone", e.target.value);
-                        }}
-                      />
+                        <PhoneInput
+                          country={"in"}
+                          value={phone}
+                          onChange={(value) => {
+                            setPhone(value);
+                            validateField("phone", value);
+                          }}
+                          inputProps={{
+                            name: "phone",
+                            required: true,
+                          }}
+                          containerStyle={{ width: "100%" }}
+                          inputStyle={{ width: "100%", height: "38px" }}
+                          enableSearch={true}
+                          searchPlaceholder="Search country..."
+                        />
+                    
                       <div className="invalid-feedback">{errors.phone}</div>
                         </div>
                       </div>
 
                       {/* Experience */}
                       <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-4 fw-semibold">Experience</div>
+                        <div className="col-12 col-md-4 fw-semibold">Experience<span style={{ color: "red" }}>  *</span></div>
                         <div className="col-12 col-md-8">
                         <input
                           type="number"
                           name="experience"
                           min="0"
+                          max="99"
                           className={`form-control ${errors.experience ? "is-invalid" : ""}`}
-                          onChange={(e) => validateField("experience", e.target.value)}
+                          onChange={(e) => {
+                            e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 2);
+                            validateField("experience", e.target.value);
+                          }}
                         />
                         <div className="invalid-feedback">{errors.experience}</div>
                         </div>
@@ -2511,10 +2583,11 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       {/* City */}
                       <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-4 fw-semibold">Current City</div>
+                        <div className="col-12 col-md-4 fw-semibold">Current City<span style={{ color: "red" }}>  *</span></div>
                         <div className="col-12 col-md-8">
                           <input
                           name="city"
+                          maxLength={30}
                           className={`form-control ${errors.city ? "is-invalid" : ""}`}
                           onChange={(e) => validateField("city", e.target.value)}
                         />
@@ -2524,7 +2597,7 @@ const [referralErrors, setReferralErrors] = useState({});
 
                       {/* Resume */}
                       <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-4 fw-semibold">Resume</div>
+                        <div className="col-12 col-md-4 fw-semibold">Resume<span style={{ color: "red" }}>  *</span></div>
                         <div className="col-12 col-md-8">
                          <input
                           type="file"

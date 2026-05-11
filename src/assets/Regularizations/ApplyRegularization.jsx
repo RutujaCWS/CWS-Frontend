@@ -11,8 +11,8 @@ import dayjs from "dayjs";
 function ApplyRegularization({ user, selectedRecord }) {
   const [date, setDate] = useState("");
   const [checkIn, setCheckIn] = useState("");
-  const [checkInTime, setCheckInTime] = useState("");
-  const [checkOutTime, setCheckOutTime] = useState("");
+  const [checkInTime, setCheckInTime] = useState(null);
+  const [checkOutTime, setCheckOutTime] = useState(null);
   const [checkOut, setCheckOut] = useState("");
   const [message, setMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -24,6 +24,7 @@ function ApplyRegularization({ user, selectedRecord }) {
   const [pendingCount, setPendingCount] = useState(0);
   const [workMode, setWorkMode] = useState("");
   const [attendance, setAttendance] = useState([]); // ✅ store attendance data
+  
   const [reason, setReason] = useState("");
 
   //TANVI
@@ -240,8 +241,10 @@ function ApplyRegularization({ user, selectedRecord }) {
           },
         );
         setCheckIn(localCheckIn);
+        setCheckInTime(dayjs(`2000-01-01T${localCheckIn}`));
       } else {
         setCheckIn("");
+        setCheckInTime(null);
       }
 
       // 🕒 Convert and prefill existing Check-Out
@@ -256,8 +259,10 @@ function ApplyRegularization({ user, selectedRecord }) {
           },
         );
         setCheckOut(localCheckOut);
+        setCheckOutTime(dayjs(`2000-01-01T${localCheckOut}`));
       } else {
         setCheckOut("");
+        setCheckOutTime(null);
       }
 
       // ✅ Auto-fill Work Mode (e.g., WFH or Office)
@@ -507,8 +512,8 @@ function ApplyRegularization({ user, selectedRecord }) {
       setDate("");
       setCheckIn("");
       setCheckOut("");
-      setCheckInTime("");
-      setCheckOutTime("");
+      setCheckInTime(null);
+setCheckOutTime(null);
       setWorkMode("");
       setMessage("");
       setReason("");
@@ -732,8 +737,8 @@ function ApplyRegularization({ user, selectedRecord }) {
                     setDate("");
                     setCheckIn("");
                     setCheckOut("");
-                    setCheckInTime("");
-                    setCheckOutTime("");
+                    setCheckInTime(null);
+setCheckOutTime(null);
                     setWorkMode("");
                     setMessage("");
                     setReason("");
@@ -757,7 +762,16 @@ function ApplyRegularization({ user, selectedRecord }) {
                       type="date"
                       className="form-control"
                       value={date}
-                      onChange={(e) => setDate(e.target.value)}
+                      onChange={(e) => {
+                        const selectedDate = e.target.value;
+                      
+                        setDate(selectedDate);
+                      
+                        setCheckIn("");
+                        setCheckOut("");
+                        setCheckInTime(null);
+                        setCheckOutTime(null);
+                      }}
                       required
                       //min={minDate}
                       max={maxDate}
@@ -806,22 +820,14 @@ function ApplyRegularization({ user, selectedRecord }) {
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <TimePicker
                         label="Select Check-In Time"
-                        value={
-                          checkIn
-                            ? dayjs(checkIn, "HH:mm") // if employee already checked in
-                            : checkInTime
-                              ? dayjs(checkInTime)
-                              : null
-                        }
+                        value={checkInTime}
                         onChange={(newValue) => {
-                          if (
-                            checkInTime &&
-                            dayjs(checkInTime).isSame(newValue, "minute")
-                          ) {
-                            document.activeElement.blur(); // 👈 close on repeat click
-                          } else {
-                            setCheckInTime(newValue);
+                          setCheckInTime(newValue);
+                        
+                          if (newValue && dayjs(newValue).isValid()) {
                             setCheckIn(dayjs(newValue).format("HH:mm"));
+                          } else {
+                            setCheckIn("");
                           }
                         }}
                         viewRenderers={{
@@ -864,22 +870,14 @@ function ApplyRegularization({ user, selectedRecord }) {
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <TimePicker
                         label="Select Check-Out Time"
-                        value={
-                          checkOut
-                            ? dayjs(checkOut, "HH:mm") // if employee already checked out
-                            : checkOutTime
-                              ? dayjs(checkOutTime)
-                              : null
-                        }
+                        value={checkOutTime}
                         onChange={(newValue) => {
-                          if (
-                            checkOutTime &&
-                            dayjs(checkOutTime).isSame(newValue, "minute")
-                          ) {
-                            document.activeElement.blur();
-                          } else {
-                            setCheckOutTime(newValue);
+                          setCheckOutTime(newValue);
+                        
+                          if (newValue && dayjs(newValue).isValid()) {
                             setCheckOut(dayjs(newValue).format("HH:mm"));
+                          } else {
+                            setCheckOut("");
                           }
                         }}
                         viewRenderers={{
@@ -964,8 +962,8 @@ function ApplyRegularization({ user, selectedRecord }) {
                         setDate("");
                         setCheckIn("");
                         setCheckOut("");
-                        setCheckInTime("");
-                        setCheckOutTime("");
+                        setCheckInTime(null);
+                        setCheckOutTime(null);
                         setWorkMode("");
                         setMessage("");
                         setReason("");

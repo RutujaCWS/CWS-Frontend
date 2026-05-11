@@ -1119,11 +1119,11 @@ const handleRowClick = (job) => {
                         <>
 
                           {/* added by rushikesh */}
-                          <div className="d-flex flex-nowrap align-items-center gap-2">
+                          <div className="d-flex flex-nowrap align-items-center gap-1">
 
                             <button
                               className="btn btn-sm custom-outline-btn"
-                              style={{ minWidth: 120 }}
+                              style={{ minWidth: 135 }}
                               onClick={(e) => {
                                 e.stopPropagation();
 navigate(`/dashboard/${role}/${username}/${id}/job-candidates/${job._id}`);
@@ -1134,7 +1134,7 @@ navigate(`/dashboard/${role}/${username}/${id}/job-candidates/${job._id}`);
 
                             {/* mahesh code */}
                             <button
-                              className="btn btn-sm custom-outline-btn me-2"
+                              className="btn btn-sm custom-outline-btn"
                               disabled={isExpired(job.dueOn)}
                               style={{
                                 opacity: isExpired(job.dueOn) ? 0.5 : 1,
@@ -1677,7 +1677,15 @@ onClick={() => {
                 className="modal-header text-white"
                 style={{ backgroundColor: "#3A5FBE" }}
               >
-                <h5 className="modal-title mb-0">{viewJob.jobTitle}</h5>
+                    <h5
+                      className="modal-title mb-0"
+                      style={{
+                        wordBreak: "break-word",
+                        overflowWrap: "break-word",
+                      }}
+                    >
+                      {viewJob.jobTitle}
+                    </h5>                
                 <button
                   type="button"
                   className="btn-close btn-close-white"
@@ -1705,7 +1713,10 @@ onClick={() => {
 
                   <div className="row mb-2">
                     <div className="col-3 fw-semibold">Location</div>
-                    <div className="col-9">{viewJob.location}</div>
+                    <div className="col-9" style={{
+                      wordBreak: "break-word",
+                      overflowWrap: "break-word",
+                    }}>{viewJob.location}</div>
                   </div>
 
                   <div className="row mb-2">
@@ -1733,7 +1744,10 @@ onClick={() => {
                   {/* Key Skills */}
                   <div className="row mb-2">
                     <div className="col-3 fw-semibold">Key Skills</div>
-                    <div className="col-9">
+                    <div className="col-9" style={{
+                            wordBreak: "break-word",
+                            overflowWrap: "break-word",
+                          }}>
                       <ul className="mb-0 list-unstyled ps-0">
                         {viewJob.importantSkills?.map((skill, i) => (
                           <li key={i} style={{ marginBottom: "2px" }}>
@@ -1763,7 +1777,10 @@ onClick={() => {
                   {/* Description */}
                   <div className="row mb-2">
                     <div className="col-3 fw-semibold">Description</div>
-                    <div className="col-9">
+                    <div className="col-9" style={{
+                        wordBreak: "break-word",
+                        overflowWrap: "break-word",
+                      }}>
                       <div
                         dangerouslySetInnerHTML={{
                           __html: viewJob.jobDescription,

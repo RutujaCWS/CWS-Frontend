@@ -830,10 +830,12 @@ const AdminFeedback = () => {
                         Feedback Content
                       </h6>
                     </div>
-                    <div className="row mb-2">
+                    <div className="row mb-2" style={{ wordBreak:"break-word",
+                        overflowWrap:"break-word"}}>
                       <div
                         className="col-5 col-sm-3 fw-semibold"
-                        style={{ color: "#212529" }}
+                        style={{ color: "#212529",
+                       }}
                       >
                         Title
                       </div>
@@ -844,7 +846,8 @@ const AdminFeedback = () => {
                         {selectedFeedback.title}
                       </div>
                     </div>
-                    <div className="row">
+                    <div className="row"style={{ wordBreak:"break-word",
+                        overflowWrap:"break-word"}}>
                       <div
                         className="col-5 col-sm-3 fw-semibold"
                         style={{ color: "#212529" }}
