@@ -464,6 +464,13 @@ fetchNotifications();
       return "0.5 day";
     }
 
+    if (
+      leave.totalDays === 0 &&
+      leave.isSandwich
+    ) {
+      return "Sandwich leave calculated in previous applied leave";
+    }
+
     const days =
   leave.status === "approved"
     ? leave.totalDays
@@ -1244,11 +1251,13 @@ fetchNotifications();
                                 (new Date(l.dateTo) - new Date(l.dateFrom)) /
                                   (1000 * 60 * 60 * 24),
                               ) + 1} */}
-                          {l.duration === "half" 
-                            ? 0.5 
-                            : (l.status === "approved" 
-                                ? (l.totalDays ?? previewDaysMap[l._id] ?? 1)
-                                : (previewDaysMap[l._id] ?? l.totalDays ?? 1))
+                          {l.duration === "half"
+                          ? "0.5"
+                          : l.isSandwich && l.totalDays === 0
+                          ? "Sandwich Leave"
+                          : l.status === "approved"
+                          ? l.totalDays
+                          : (previewDaysMap[l._id] ?? l.totalDays ?? 1)
                           }
                         </td>
                         <td

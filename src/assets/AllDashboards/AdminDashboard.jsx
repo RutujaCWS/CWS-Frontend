@@ -162,7 +162,7 @@ function AdminDashboard({ user }) {
       <div className="row g-2  align-items-stretch">
         {/* Total Employees */}
         <div className="col-md-8">
-          <div className="row g-2">
+          <div className="row g-3">
             <div className="col-md-6 ">
               <div
                   className="card shadow-sm h-100 border-0 "
@@ -177,7 +177,7 @@ function AdminDashboard({ user }) {
                       padding: "10px",
                       textAlign: "center",
                       minWidth: "75px",
-                      minHeight: "75px",
+                      minHeight: "82px",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -234,7 +234,7 @@ function AdminDashboard({ user }) {
                       padding: "10px",
                       textAlign: "center",
                       minWidth: "75px",
-                      minHeight: "75px",
+                      minHeight: "82px",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -289,7 +289,7 @@ function AdminDashboard({ user }) {
                       padding: "10px",
                       textAlign: "center",
                       minWidth: "75px",
-                      minHeight: "75px",
+                      minHeight: "82px",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -343,7 +343,7 @@ function AdminDashboard({ user }) {
                       padding: "10px",
                       textAlign: "center",
                       minWidth: "75px",
-                      minHeight: "75px",
+                      minHeight: "82px",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -386,12 +386,12 @@ function AdminDashboard({ user }) {
             </div>
           </div>
         </div>
-        <div className="col-md-4 ">
+        <div className="col-md-4 g-2 ">
           <HolidaysCards />
         </div>
 
          {/* Events Section */}
-      <div className="col-12 col-sm-6 col-md-4">
+      <div className="col-12 col-sm-6 col-md-4 g-3">
           <EventCard />
         </div>
        
@@ -401,7 +401,7 @@ function AdminDashboard({ user }) {
 
       {/* Row 3: Employee Registry + Leave Requests + Events */}
         {/* Recent Employee Registry */}
-       <div className="col-12 col-sm-6 col-md-4 order-3 order-sm-3 order-md-0">
+       <div className="col-12 col-sm-6 col-md-4 order-3 order-sm-3 order-md-0 g-3">
   <div
       className="card shadow-sm h-100 border-0 "
       style={{ borderRadius: "10px" }}
@@ -499,7 +499,7 @@ function AdminDashboard({ user }) {
         </div>
 
         {/* Leave & Regularization Requests */}
-       <div className="col-12 col-sm-6 col-md-4 order-3 order-md-0">
+       <div className="col-12 col-sm-6 col-md-4 order-3 order-md-0 g-3">
       <div
       className="card shadow-sm h-100 border-0 "
       style={{ borderRadius: "10px" }}
@@ -647,7 +647,7 @@ function AdminDashboard({ user }) {
       
 
       {/*  Poll */}
-   <div className="col-12 col-md-4">
+   <div className="col-12 col-md-4 g-3">
         <ActivePolls user={user} />
       </div>
 

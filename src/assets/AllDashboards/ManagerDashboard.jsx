@@ -851,8 +851,11 @@ function ManagerDashboard({ user }) {
                           whiteSpace: "nowrap",
                         }}
                       >
-                         {l.duration === "half" ? 0.5 : (l.totalDays || 1)}
-
+                  {l.duration === "half"
+                          ? "0.5"
+                          : l.isSandwich && l.totalDays === 0
+                          ? "Sandwich Leave"
+                          : l.totalDays}
                       </td>
                       {/* <td style={{ padding: '12px', verticalAlign: 'middle', fontSize: '14px', borderBottom: '1px solid #dee2e6', whiteSpace: 'nowrap' }}>{l.reason}</td> */}
 
@@ -1052,7 +1055,11 @@ function ManagerDashboard({ user }) {
                           Duration
                         </div>
                         <div className="col-sm-9 col-5">
-                        {selectedLeave.duration === "half" ? "0.5 day" : `${selectedLeave.totalDays || 1} ${(selectedLeave.totalDays || 1) === 1 ? "day" : "days"}`}
+                        {selectedLeave.isSandwich && selectedLeave.totalDays === 0
+                          ? "Sandwich leave calculated in previous applied leave"
+                          : `${selectedLeave.totalDays} ${
+                          selectedLeave.totalDays === 1 ? "day" : "days"
+                          }`}
                         </div>
                       </div>
 

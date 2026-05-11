@@ -17,6 +17,8 @@ function ApplyRegularization({ user, selectedRecord }) {
   const [message, setMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
 
   // ✅ Regularization counts
   const [acceptedCount, setAcceptedCount] = useState(0);
@@ -26,7 +28,9 @@ function ApplyRegularization({ user, selectedRecord }) {
   const [attendance, setAttendance] = useState([]); // ✅ store attendance data
   
   const [reason, setReason] = useState("");
+  
 
+  
   //TANVI
   const modalRef = useRef(null);
 
@@ -177,6 +181,22 @@ function ApplyRegularization({ user, selectedRecord }) {
     fetchAttendance();
   }, [user._id]);
 
+  useEffect(() => {
+    const modalBody = document.querySelector(".modal-body");
+  
+    if (!modalBody) return;
+  
+    if (isTimePickerOpen) {
+      modalBody.style.overflow = "hidden";
+    } else {
+      modalBody.style.overflowY = "auto";
+    }
+  
+    return () => {
+      modalBody.style.overflowY = "auto";
+    };
+  }, [isTimePickerOpen]);
+
   // ✅ Whenever date changes, check if there’s an attendance record for it
   // useEffect(() => {
   //   if (!date || attendance.length === 0) return;
@@ -283,6 +303,9 @@ function ApplyRegularization({ user, selectedRecord }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
 
     try {
       const selected = new Date(date);
@@ -525,6 +548,9 @@ setCheckOutTime(null);
       alert(`❌ ${errorMessage}`);
       setMessage(errorMessage);
     }
+  finally {
+    setIsSubmitting(false);
+  }
   };
 
   // ✅ Date limits
@@ -821,6 +847,8 @@ setCheckOutTime(null);
                       <TimePicker
                         label="Select Check-In Time"
                         value={checkInTime}
+                        onOpen={() => setIsTimePickerOpen(true)}
+                        onClose={() => setIsTimePickerOpen(false)}
                         onChange={(newValue) => {
                           setCheckInTime(newValue);
                         
@@ -839,21 +867,30 @@ setCheckOutTime(null);
                             fullWidth: true,
                             size: "small",
                           },
-                        
-                          desktopPaper: {
-                            sx: {
-                              width: "320px",
-                              height:"285px"
-                        
+
+                        desktopPaper: {
+                          sx: {
+                            width: "320px",
+                            height: "250px",
+
+                            "& .MuiClock-root": {
+                              transform: "scale(0.92)",
+                              marginTop: "-7px",
+                              marginRight:"5px"
+                            },
+
+                            "& .MuiDialogActions-root": {
+                              marginTop: "-25px",
                             },
                           },
-                        
+                        },
+
                         popper: {
+                          placement: "top-start",
                           sx: {
                             "& .MuiPaper-root": {
-                              transform: "scale(0.60)",
-                              transformOrigin: "top center",
-                              marginTop: "-7px",
+                              transformOrigin: "bottom center",
+                              marginBottom: "4px",
                             },
                           },
                         },
@@ -871,6 +908,8 @@ setCheckOutTime(null);
                       <TimePicker
                         label="Select Check-Out Time"
                         value={checkOutTime}
+                        onOpen={() => setIsTimePickerOpen(true)}
+                        onClose={() => setIsTimePickerOpen(false)}
                         onChange={(newValue) => {
                           setCheckOutTime(newValue);
                         
@@ -889,21 +928,30 @@ setCheckOutTime(null);
                             fullWidth: true,
                             size: "small",
                           },
-                        
-                          desktopPaper: {
-                            sx: {
-                              width: "320px",
-                              height:"285px"
-                        
+
+                        desktopPaper: {
+                          sx: {
+                            width: "320px",
+                            height: "250px",
+
+                            "& .MuiClock-root": {
+                              transform: "scale(0.92)",
+                              marginTop: "-7px",
+                              marginRight:"5px"
+                            },
+
+                            "& .MuiDialogActions-root": {
+                              marginTop: "-25px",
                             },
                           },
-                        
+                        },
+
                         popper: {
+                          placement: "top-start",
                           sx: {
                             "& .MuiPaper-root": {
-                              transform: "scale(0.60)",
-                              transformOrigin: "top center",
-                              marginTop: "-7px",
+                              transformOrigin: "bottom center",
+                              marginBottom: "4px",
                             },
                           },
                         },
@@ -941,15 +989,16 @@ setCheckOutTime(null);
                   </div>
 
                   <div className="d-flex justify-content-end gap-2">
-                    <button
-                      type="submit"
-                      className="btn btn-sm custom-outline-btn"
-                      style={{
-                        minWidth: "90px",
-                      }}
-                    >
-                      Submit
-                    </button>
+                  <button
+                    type="submit"
+                    className="btn btn-sm custom-outline-btn"
+                    style={{
+                      minWidth: "90px",
+                    }}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Submitting..." : "Submit"}
+                  </button>
                     <button
                       type="button"
                       className="btn btn-sm custom-outline-btn"

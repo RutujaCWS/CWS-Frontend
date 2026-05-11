@@ -101,8 +101,12 @@ function HolidaysCard({}) {
 
   return (
     <div
-      className="card shadow-sm h-100 border-0"
-      style={{ borderRadius: "10px" }}
+    className="card shadow-sm h-100 border-0"
+    style={{
+      borderRadius: "10px",
+      height: "330px",
+      width: "100%",
+    }}
     >
       <div
         className="card-header d-flex justify-content-between align-items-center"
@@ -129,7 +133,20 @@ function HolidaysCard({}) {
 
       <div className="card-body text-center">
         <i className=" bi bi-calendar3 fs-2 " style={{ color: "#3A5FBE" }}></i>
-        <p className="mb-0 fw-semibold" style={{ color: "#3A5FBE" }}>
+        <p
+          className="mb-0 fw-semibold"
+          style={{
+            color: "#3A5FBE",
+            textTransform: "capitalize",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            wordBreak: "break-word",
+            minHeight: "48px",
+          }}
+        >
           {holiday.name
             ? holiday.name
                 .toLowerCase()

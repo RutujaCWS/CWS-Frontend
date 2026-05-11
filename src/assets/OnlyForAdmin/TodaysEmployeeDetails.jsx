@@ -246,7 +246,7 @@ function TodaysEmployeeDetails() {
             const hours = dt.getHours();
             const minutes = dt.getMinutes();
         
-            if (hours > 10 || (hours === 10 && minutes > 0)) {
+            if (hours > 9 || (hours === 9 && minutes > 10)){
               lateCheckIn++;
             }
           }

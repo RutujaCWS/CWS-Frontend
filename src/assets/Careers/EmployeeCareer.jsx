@@ -2638,16 +2638,24 @@ useEffect(() => {
                         Referral submitted successfully!
                       </h5>
                       <button
-                        className="btn btn-outline-primary me-2"
-                        onClick={() => setReferralSuccess(false)}
+                        className="btn btn-sm custom-outline-btn me-2"
+                        onClick={() => {
+                          setReferralSuccess(false);
+                          setPhone("");
+                          setErrors({});
+                        }}
                       >
                         Refer More Candidates
                       </button>
                       <button
-                        className="btn btn-primary"
-                        onClick={() =>
-                          alert(JSON.stringify(referredCandidates))
-                        }
+                         className="btn btn-sm custom-outline-btn"
+                        onClick={() => {
+                          setShowReferralModal(false); 
+                          setActiveTab("My Referral");   
+                          setReferralSuccess(false);    
+                          setJobsPage(0);                
+                          setReferralPage(0);            
+                        }}
                       >
                         View Applications
                       </button>

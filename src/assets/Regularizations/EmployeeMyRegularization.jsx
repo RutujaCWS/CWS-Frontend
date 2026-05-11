@@ -758,6 +758,7 @@ function EmployeeMyRegularization({ employeeId, refreshKey }) {
                           fontSize: "14px",
                           borderBottom: "1px solid #dee2e6",
                           whiteSpace: "nowrap",
+                          maxWidth: "250px", overflow: "hidden"
                         }}
                       >
                         {req?.regularizationRequest?.reason || "—"}

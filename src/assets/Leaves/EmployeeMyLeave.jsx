@@ -261,41 +261,41 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
   };
 
   // prateek code 
-  useEffect(() => {
-    const fetchPreview = async () => {
-      const map = {};
+  // useEffect(() => {
+  //   const fetchPreview = async () => {
+  //     const map = {};
   
-      for (let leave of leaves) {
-        try {
-          const res = await axios.post(
-            "https://cws-backend-roan.vercel.app/leave/calculate",
-            {
-              // employeeId: leave.employee,
-              employeeId:
-                typeof leave.employee === "object"
-                ? leave.employee._id
-                : leave.employee,
-              // start: leave.dateFrom,
-              // end: leave.dateTo,
-              dateFrom: leave.dateFrom,
-              dateTo: leave.dateTo,
-              leaveType: leave.leaveType,
-            }
-          );
+  //     for (let leave of leaves) {
+  //       try {
+  //         const res = await axios.post(
+  //           "https://cws-backend-roan.vercel.app/leave/calculate",
+  //           {
+  //             // employeeId: leave.employee,
+  //             employeeId:
+  //               typeof leave.employee === "object"
+  //               ? leave.employee._id
+  //               : leave.employee,
+  //             // start: leave.dateFrom,
+  //             // end: leave.dateTo,
+  //             dateFrom: leave.dateFrom,
+  //             dateTo: leave.dateTo,
+  //             leaveType: leave.leaveType,
+  //           }
+  //         );
   
-          map[leave._id] = res.data.totalDays;
-        } catch (err) {
-          map[leave._id] = leave.totalDays || 1;
-        }
-      }
+  //         map[leave._id] = res.data.totalDays;
+  //       } catch (err) {
+  //         map[leave._id] = leave.totalDays || 1;
+  //       }
+  //     }
   
-      setPreviewDaysMap(map);
-    };
+  //     setPreviewDaysMap(map);
+  //   };
   
-    if (leaves.length > 0) {
-      fetchPreview();
-    }
-  }, [leaves]);
+  //   if (leaves.length > 0) {
+  //     fetchPreview();
+  //   }
+  // }, [leaves]);
   
   
   
@@ -700,7 +700,12 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
                     }}
                   >
                    {/* {calculateDays(l.dateFrom, l.dateTo)} */}
-                   {l.status === "approved" ? (l.totalDays ?? 1) : (previewDaysMap[l._id] ?? l.totalDays ?? 1)}
+                   {/* {l.status === "approved" ? (l.totalDays ?? 1) : (previewDaysMap[l._id] ?? l.totalDays ?? 1)} */}
+                   {l.duration === "half"
+                          ? "0.5"
+                          : l.isSandwich && l.totalDays === 0
+                          ? "Sandwich Leave"
+                          : l.totalDays}
                   </td>
                   <td
                     style={{
@@ -883,12 +888,16 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
                       )}
                     </div>
                   </div>
-
                   <div className="row mb-2">
                     <div className="col-5 col-sm-3 fw-semibold">Duration</div>
                     <div className="col-sm-9 col-7">
                      {/* {calculateDays(selectedLeave.dateFrom, selectedLeave.dateTo)} */}
-                     {selectedLeave.totalDays}
+                     {/* {selectedLeave.totalDays} */}
+                     {selectedLeave.isSandwich && selectedLeave.totalDays === 0
+                          ? "Sandwich leave calculated in previous applied leave"
+                          : `${selectedLeave.totalDays} ${
+                          selectedLeave.totalDays === 1 ? "day" : "days"
+                          }`}
                     </div>
                   </div>
 

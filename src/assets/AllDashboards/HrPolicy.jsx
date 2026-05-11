@@ -852,7 +852,8 @@ const getFileType = (url) => {
 
               {/* BODY */}
               <div className="modal-body">
-                <div className="mb-2 row">
+                <div className="mb-2 row" style={{wordBreak:"break-word",
+              overflowWrap:"break-word"}}>
                   <label className="col-4 form-label fw-semibold mb-0">
                     Policy Title
                   </label>
@@ -863,7 +864,7 @@ const getFileType = (url) => {
 
                 <div className="mb-2 row">
                   <label className="col-4 form-label fw-semibold mb-0">
-                    Description
+                    Descriptio
                   </label>
                   <div className="col-8">
                     <p

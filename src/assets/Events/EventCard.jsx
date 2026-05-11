@@ -77,9 +77,13 @@ const EventCard = () => {
 
   return (
     <div
-      className="card shadow-sm h-100 border-0 "
-      style={{ borderRadius: "10px" }}
-    >
+          className="card shadow-sm h-100 border-0"
+        style={{
+          borderRadius: "10px",
+          height: "340px",
+          width: "100%",
+        }}
+        >
       <div
         className="card-header d-flex justify-content-between align-items-center "
         style={{ backgroundColor: "#fff", borderRadius: "12px 12px 0 0" }}
@@ -126,7 +130,19 @@ const EventCard = () => {
           <i className="bi bi-calendar-event fs-2" style={{ color: "#3A5FBE" }}></i>
         )}
 
-        <p className="mb-0 fw-semibold" style={{ textTransform: "capitalize" }}>
+        <p
+          className="mb-0 fw-semibold"
+          style={{
+            textTransform: "capitalize",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            wordBreak: "break-word",
+            minHeight: "48px",
+          }}
+        >
           {currentEvent.type} - {currentEvent.name}
         </p>
 

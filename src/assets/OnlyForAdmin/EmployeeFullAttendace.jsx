@@ -292,7 +292,47 @@ const handleReset = () => {
       const key = d.toDateString();
 
       if (byDate.has(key)) {
-        result.push(byDate.get(key));
+        const attendance = byDate.get(key);
+      
+        let updatedStatus = attendance.dayStatus;
+      
+        const today = new Date().toDateString();
+      
+        // Today check-in only -> Working
+        if (
+          key === today &&
+          attendance.checkIn &&
+          !attendance.checkOut
+        ) {
+          updatedStatus = "Working";
+        }
+      
+        // Previous dates validation
+        else {
+      
+          // Missing checkIn/checkOut
+          if (!attendance.checkIn || !attendance.checkOut) {
+            updatedStatus = "Absent";
+          }
+      
+          // Working hours less than 8
+          if (
+            attendance.checkIn &&
+            attendance.checkOut &&
+            attendance.workingHours
+          ) {
+            const hours = parseFloat(attendance.workingHours);
+      
+            if (hours < 8) {
+              updatedStatus = "Absent";
+            }
+          }
+        }
+      
+        result.push({
+          ...attendance,
+          dayStatus: updatedStatus,
+        });
       } else {
         const day = d.getDay(); // 0 = Sunday, 6 = Saturday
 
@@ -432,7 +472,7 @@ const statusBg = {
   "Weekly Off": { background: "#d9d9d9", color: "#000" },
   Holiday: { background: "#fff3cd", color: "#856404" },
   Leave: { background: "#c8e3f1", color: "#6c757d" },
-
+  Working: { background: "#cff4fc" }
 };
   //jacy code
   //const sortedAndFilteredData =filteredAttendance()

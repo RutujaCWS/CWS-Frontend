@@ -366,6 +366,10 @@ function MyAttendanceCalendar({ employeeId }) {
       if (hours >= 4) return "Regularized (Half Day)";
       return "Regularized";
     }
+    if (record.regStatus === "Pending") {
+  return "Pending Regularization";
+}
+if (hours >= 8) return "Full Day";
 
     if (recordDate.getTime() === today.getTime()) {
       if (record.checkIn && !record.checkOut) return "Working";
@@ -454,7 +458,7 @@ function MyAttendanceCalendar({ employeeId }) {
       if (ds === "Regularized (Half Day)" || ds.includes("Half") && reg === "Approved") {
         return "halfday-day";
       }
-
+if (reg === "Pending") return "pending-regularization-day";
       if (
         ds === "Working" ||
         ds === "Full Day" ||
@@ -464,7 +468,7 @@ function MyAttendanceCalendar({ employeeId }) {
         return "present-day";
       }
       if (ds === "Half Day" || ds.includes("Half")) return "halfday-day";
-      if (reg === "Pending") return "pending-regularization-day";
+      
 
       // leaves (after present checks)
       if (rec.leaveRef) {

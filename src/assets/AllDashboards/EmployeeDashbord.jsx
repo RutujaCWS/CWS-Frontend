@@ -1115,7 +1115,7 @@ const handleStartBreak = async () => {
         style={{ marginTop: "-25px", backgroundColor: "#f5f7fb" }}
       >
         <div className="row">
-          <div className="col-md-8 mb-3 mt-2">
+          <div className="col-md-8 mb-3 mt-2 g-3">
             <div
               className="card shadow-sm p-4 h-100 border-0"
               style={{ borderRadius: "12px" }}
@@ -1386,23 +1386,23 @@ const handleStartBreak = async () => {
                         Type :
                       </span>
                     <select
-  className="form-select form-select-sm"
-  style={{ maxWidth: "200px" }}
-  value={breakType}
-  disabled={onBreak}
-  onChange={(e) => setBreakType(e.target.value)}
->
-  {workMode === "WFH" ? (
-    <option value="Lunch">Lunch</option>
-  ) : (
-    <>
-      <option value="Tea">Tea</option>
-      <option value="Lunch">Lunch</option>
-      <option value="Personal">Personal</option>
-      <option value="Other">Other</option>
-    </>
-  )}
-</select>
+                    className="form-select form-select-sm"
+                    style={{ maxWidth: "200px" }}
+                    value={breakType}
+                    disabled={onBreak}
+                    onChange={(e) => setBreakType(e.target.value)}
+                  >
+                    {workMode === "WFH" ? (
+                      <option value="Lunch">Lunch</option>
+                    ) : (
+                      <>
+                        <option value="Tea">Tea</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Personal">Personal</option>
+                        <option value="Other">Other</option>
+                      </>
+                    )}
+                  </select>
                     </div>
 
                     {breakType === "Other" && (
@@ -1519,9 +1519,9 @@ const handleStartBreak = async () => {
             </div>
           </div>
 
-          <div className="col-md-8 mt-2">
+          <div className="col-md-8  ">
             <div className="row">
-              <div className="col-md-6 ">
+              <div className="col-md-6 g-4"        style={{ marginTop: "7px"}}>
                 <div>
                   <div className="card shadow-sm border-0 mb-2">
                     <div className="card-body d-flex justify-content-between align-items-center">
@@ -1571,8 +1571,8 @@ const handleStartBreak = async () => {
                     </div>
                   </div>
                   {/* Pending Request */}
-                  <div className="mt-4 ">
-                    <div className="card shadow-sm border-0 mb-2">
+                  <div className="mt-3 ">
+                    <div className="card shadow-sm border-0 ">
                       <div className="card-body d-flex justify-content-between align-items-center">
                         {/* Left Content */}
                         {/* <div style={{ color: "#3A5FBE", fontSize: "25px" }}>
@@ -1643,34 +1643,37 @@ const handleStartBreak = async () => {
               </div>
 
               {/* Quick apply leave */}
-              <div className="col-md-6 " style={{ height: "280px" }}>
+              <div className="col-md-6 g-4" style={{ height: "272px" , marginTop: "7px"}}>
                 <QuickApplyLeave user={user} />
               </div>
             </div>
-
-      <div className="row g-3 mt-2">
-              <div className="col-md-6 ">
-                {" "}
+          <div className="row g-4 mt-1" >
+            <div className="col-md-6 d-flex" style={{marginTop:"15px"}}>
+              <div className="w-100">
                 <EventCard />
               </div>
-              <div className="col-md-6 mb-2 ">
+            </div>
+
+            <div className="col-md-6 d-flex"style={{marginTop:"15px"}}>
+              <div className="w-100">
                 <HolidaysCard />
               </div>
             </div>
+          </div>
 
             {/* addeded samiksha code */}
 
             {/* ✅ Break Card */}
           </div>
 
-      <div className="col-md-4 mb-4 mt-2">
+      <div className="col-md-4 mb-4 mt-4" >
             <div
               className="w-100"
               style={{
-                minHeight: "540px",
-    height: "535px",
+                minHeight: "547px",
+                 height: "535px",
                 display: "flex",
-                marginTop:"-10px"
+                marginTop:"-25px"
               }}
             >
               <MyAttendanceCalender employeeId={user._id} />
@@ -1679,8 +1682,8 @@ const handleStartBreak = async () => {
           
         </div>
 
-        <div className="row g-4 ">
-  <div className="col-12 col-md-4">
+     <div className="row g-4 ">
+    <div className="col-12 col-md-4">
     <ActivePolls user={user} />
   </div>
   </div>
